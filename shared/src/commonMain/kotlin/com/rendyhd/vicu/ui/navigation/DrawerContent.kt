@@ -38,6 +38,7 @@ import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -134,6 +135,7 @@ fun DrawerContent(
     /** The assistant's Ask is set up and on (docs/ai-assistant-v1.md, section 5). */
     showAsk: Boolean = false,
 ) {
+    val strings = LocalStrings.current
     val haptic = LocalHapticFeedback.current
     val listState = rememberLazyListState()
     val identity = LocalVicuColors.current.identity
@@ -210,28 +212,28 @@ fun DrawerContent(
                 items(views, key = { "smart_${it.name.lowercase()}" }, contentType = { "smart" }) { view ->
                     when (view) {
                         DrawerView.TODAY -> SmartListItem(
-                            label = "Today",
+                            label = strings.today,
                             icon = SmartListIdentity.TODAY.icon,
                             iconTint = SmartListIdentity.TODAY.color(identity),
                             selected = currentRoute == "TodayRoute",
                             onClick = { onNavigate(TodayRoute) },
                         )
                         DrawerView.UPCOMING -> SmartListItem(
-                            label = "Upcoming",
+                            label = strings.calendar,
                             icon = SmartListIdentity.UPCOMING.icon,
                             iconTint = SmartListIdentity.UPCOMING.color(identity),
                             selected = currentRoute == "UpcomingRoute",
                             onClick = { onNavigate(UpcomingRoute) },
                         )
                         DrawerView.ANYTIME -> SmartListItem(
-                            label = "Anytime",
+                            label = strings.anytime,
                             icon = SmartListIdentity.ANYTIME.icon,
                             iconTint = SmartListIdentity.ANYTIME.color(identity),
                             selected = currentRoute == "AnytimeRoute",
                             onClick = { onNavigate(AnytimeRoute) },
                         )
                         DrawerView.LOGBOOK -> SmartListItem(
-                            label = "Logbook",
+                            label = strings.logbook,
                             icon = SmartListIdentity.LOGBOOK.icon,
                             iconTint = SmartListIdentity.LOGBOOK.color(identity),
                             selected = currentRoute == "LogbookRoute",

@@ -7,6 +7,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -20,7 +21,7 @@ import androidx.compose.ui.semantics.semantics
 fun VicuFab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "New task",
+    label: String = LocalStrings.current.newTask,
     expanded: Boolean = true,
 ) {
     ExtendedFloatingActionButton(

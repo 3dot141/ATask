@@ -124,6 +124,10 @@ import com.rendyhd.vicu.ui.navigation.TagRoute
 import com.rendyhd.vicu.ui.navigation.SharedContentSaver
 import com.rendyhd.vicu.ui.navigation.TodayRoute
 import com.rendyhd.vicu.ui.navigation.UpcomingRoute
+import com.rendyhd.vicu.ui.i18n.EnglishStrings
+import com.rendyhd.vicu.ui.i18n.LocalStrings
+import com.rendyhd.vicu.ui.i18n.Strings
+import com.rendyhd.vicu.ui.i18n.deviceStrings
 import com.rendyhd.vicu.ui.navigation.ViewTarget
 import com.rendyhd.vicu.ui.navigation.awaitGraph
 import com.rendyhd.vicu.ui.navigation.currentRouteKey
@@ -196,23 +200,24 @@ internal fun resolveBottomBarItems(
     customLists: List<CustomList>,
     inboxProjectId: Long,
     smartListColors: Boolean = true,
+    strings: Strings = EnglishStrings,
 ): List<BottomNavItem> {
     fun identity(of: SmartListIdentity) = of.takeIf { smartListColors }
     val items = mutableListOf(
-        BottomNavItem("Inbox", SmartListIdentity.INBOX.icon, InboxRoute, "InboxRoute", identity = identity(SmartListIdentity.INBOX)),
+        BottomNavItem(strings.inbox, SmartListIdentity.INBOX.icon, InboxRoute, "InboxRoute", identity = identity(SmartListIdentity.INBOX)),
     )
     for (slot in slots) {
         val item = when (slot.type) {
             BottomBarSlotType.TODAY -> BottomNavItem(
-                "Today", IconRegistry.resolveIcon(slot), TodayRoute, "TodayRoute",
+                strings.today, IconRegistry.resolveIcon(slot), TodayRoute, "TodayRoute",
                 identity = identity(SmartListIdentity.TODAY),
             )
             BottomBarSlotType.UPCOMING -> BottomNavItem(
-                "Upcoming", IconRegistry.resolveIcon(slot), UpcomingRoute, "UpcomingRoute",
+                strings.calendar, IconRegistry.resolveIcon(slot), UpcomingRoute, "UpcomingRoute",
                 identity = identity(SmartListIdentity.UPCOMING),
             )
             BottomBarSlotType.ANYTIME -> BottomNavItem(
-                "Anytime", IconRegistry.resolveIcon(slot), AnytimeRoute, "AnytimeRoute",
+                strings.anytime, IconRegistry.resolveIcon(slot), AnytimeRoute, "AnytimeRoute",
                 identity = identity(SmartListIdentity.ANYTIME),
             )
             BottomBarSlotType.PROJECT -> {
@@ -658,6 +663,8 @@ fun VicuApp(
         }
     }
 
+    val strings = remember { deviceStrings() }
+
     // What every surface of the app is composed under, the sheets and dialogs as much as the
     // screens: the current day and zone, the user's clock and the date phrasing, the row actions.
     val appLocals = arrayOf<ProvidedValue<*>>(
@@ -671,6 +678,7 @@ fun VicuApp(
         LocalCollab provides collabUi,
         LocalProjectCategories provides drawerUiState.categories,
         LocalOpenAsk provides openAsk,
+        LocalStrings provides strings,
     )
 
     // Build dynamic bottom bar items from config
@@ -687,6 +695,7 @@ fun VicuApp(
             drawerUiState.customLists,
             drawerUiState.inboxProjectId,
             smartListColors = drawerUiState.bottomBarSmartListColors,
+            strings = strings,
         )
     }
 

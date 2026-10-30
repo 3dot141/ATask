@@ -8,6 +8,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -82,7 +83,7 @@ private val FAB_HEIGHT = 56.dp
 fun ScreenFab(
     onClick: () -> Unit,
     expanded: Boolean = true,
-    label: String = "New task",
+    label: String = LocalStrings.current.newTask,
     taskDefaults: TaskDefaults? = TaskDefaults(),
 ) {
     val host = LocalAppFabHost.current

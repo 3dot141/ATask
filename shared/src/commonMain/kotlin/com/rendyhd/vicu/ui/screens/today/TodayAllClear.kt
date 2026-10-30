@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,8 +73,8 @@ internal fun TodayAllClear(
     ) {
         EmptyState(
             icon = SmartListIdentity.TODAY.icon,
-            title = "All clear",
-            subtitle = "Nothing is due today",
+            title = LocalStrings.current.nothingToday,
+            subtitle = LocalStrings.current.todaySubtitle,
             iconTint = iconTint,
             extra = nextUpcoming?.let { next -> { NextUpOffer(next, onOpenUpcoming) } },
         )

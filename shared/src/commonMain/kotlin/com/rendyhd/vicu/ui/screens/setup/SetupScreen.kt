@@ -57,6 +57,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.material3.TextButton
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.runtime.Composable
@@ -340,11 +341,11 @@ private fun ServerUrlStep(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "Welcome to Vicu",
+            text = LocalStrings.current.welcomeTitle,
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "Enter your Vikunja server URL to get started.",
+            text = LocalStrings.current.welcomeSubtitle,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -352,7 +353,7 @@ private fun ServerUrlStep(
         OutlinedTextField(
             value = url,
             onValueChange = onUrlChange,
-            label = { Text("Server URL") },
+            label = { Text(LocalStrings.current.serverUrlLabel) },
             placeholder = { Text("https://app.vikunja.cloud") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
@@ -366,7 +367,7 @@ private fun ServerUrlStep(
             isError = error != null,
             supportingText = when {
                 error != null -> ({ Text(error, color = MaterialTheme.colorScheme.error) })
-                url.isBlank() -> ({ Text("Leave empty to use Vikunja Cloud") })
+                url.isBlank() -> ({ Text(LocalStrings.current.cloudHint) })
                 else -> null
             },
             enabled = !isLoading,
@@ -381,18 +382,18 @@ private fun ServerUrlStep(
                 CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text("Continue")
+            Text(LocalStrings.current.continueLabel)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         val signUpText = buildAnnotatedString {
             withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant)) {
-                append("Don't have an account? ")
+                append(LocalStrings.current.noAccount)
             }
             withLink(LinkAnnotation.Url("https://vikunja.cloud/register")) {
                 withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)) {
-                    append("Sign up")
+                    append(LocalStrings.current.signUp)
                 }
             }
         }
@@ -420,11 +421,11 @@ private fun AuthMethodPickerStep(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "Sign In",
+            text = LocalStrings.current.signInTitle,
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "Choose how to authenticate with your server.",
+            text = LocalStrings.current.signInSubtitle,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -475,8 +476,8 @@ private fun AuthMethodPickerStep(
                     Icon(Icons.Filled.Lock, contentDescription = null)
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text("Sign in with password", style = MaterialTheme.typography.titleSmall)
-                        Text("Username and password", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(LocalStrings.current.signInWithPassword, style = MaterialTheme.typography.titleSmall)
+                        Text(LocalStrings.current.signInPasswordSubtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -495,8 +496,8 @@ private fun AuthMethodPickerStep(
                 Icon(Icons.Filled.Key, contentDescription = null)
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
-                    Text("Use API token", style = MaterialTheme.typography.titleSmall)
-                    Text("Manual token entry", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(LocalStrings.current.useApiToken, style = MaterialTheme.typography.titleSmall)
+                    Text(LocalStrings.current.apiTokenSubtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -522,7 +523,7 @@ private fun PasswordLoginStep(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "Sign In",
+            text = LocalStrings.current.signInTitle,
             style = MaterialTheme.typography.headlineMedium,
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -535,7 +536,7 @@ private fun PasswordLoginStep(
         OutlinedTextField(
             value = username,
             onValueChange = onUsernameChange,
-            label = { Text("Username") },
+            label = { Text(LocalStrings.current.usernameLabel) },
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -584,7 +585,7 @@ private fun PasswordLoginStep(
                 CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(if (showTotpField) "Verify" else "Sign In")
+            Text(if (showTotpField) "Verify" else LocalStrings.current.signInTitle)
         }
     }
 }

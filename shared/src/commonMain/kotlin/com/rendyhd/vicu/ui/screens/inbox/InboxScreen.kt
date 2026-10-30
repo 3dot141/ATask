@@ -25,6 +25,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -115,7 +116,7 @@ fun InboxScreen(
                 )
             } else {
                 VicuTopAppBar(
-                    title = { Text("Inbox") },
+                    title = { Text(LocalStrings.current.inbox) },
                     onOpenDrawer = onOpenDrawer,
                     scroll = topBarScroll,
                     onNavigateToSearch = onNavigateToSearch,

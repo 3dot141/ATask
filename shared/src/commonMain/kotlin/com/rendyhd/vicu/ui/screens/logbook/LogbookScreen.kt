@@ -20,6 +20,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -71,7 +72,7 @@ fun LogbookScreen(
         modifier = topBarScroll.modifier,
         topBar = {
             VicuTopAppBar(
-                title = { Text("Logbook") },
+                title = { Text(LocalStrings.current.logbook) },
                 onOpenDrawer = onOpenDrawer,
                 scroll = topBarScroll,
                 onNavigateToSearch = onNavigateToSearch,
@@ -91,8 +92,8 @@ fun LogbookScreen(
                     item {
                         EmptyState(
                             icon = Icons.Outlined.CheckCircle,
-                            title = "No completed tasks",
-                            subtitle = "Tasks you complete will appear here",
+                            title = LocalStrings.current.nothingLogged,
+                            subtitle = LocalStrings.current.logbookSubtitle,
                         )
                     }
                 } else {

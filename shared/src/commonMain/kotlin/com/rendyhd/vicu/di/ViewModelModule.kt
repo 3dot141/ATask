@@ -26,6 +26,7 @@ import com.rendyhd.vicu.ui.components.location.PlacesViewModel
 import com.rendyhd.vicu.ui.screens.taskdetail.TaskDetailViewModel
 import com.rendyhd.vicu.ui.screens.taskentry.TaskEntryViewModel
 import com.rendyhd.vicu.ui.screens.today.TodayViewModel
+import com.rendyhd.vicu.ui.screens.calendar.CalendarViewModel
 import com.rendyhd.vicu.ui.screens.upcoming.UpcomingViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
@@ -79,6 +80,7 @@ val viewModelModule = module {
     viewModelOf(::TaskEntryViewModel)
     viewModelOf(::TodayViewModel)
     viewModelOf(::UpcomingViewModel)
+    viewModelOf(::CalendarViewModel)
     viewModelOf(::CollabViewModel)
     viewModelOf(::TaskCommentsViewModel)
     viewModelOf(::PlacesViewModel)

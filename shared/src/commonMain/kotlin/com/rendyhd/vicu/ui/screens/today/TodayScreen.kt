@@ -26,6 +26,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import com.rendyhd.vicu.ui.i18n.LocalStrings
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -135,7 +136,7 @@ fun TodayScreen(
                 VicuTopAppBar(
                     title = {
                         Column {
-                            Text("Today")
+                            Text(LocalStrings.current.today)
                             // The date is a small line under the title in the bar.
                             Text(
                                 text = DateDisplay.formatDay(DateContext.HEADER_FULL, LocalToday.current, LocalToday.current, LocalDateFormat.current),
@@ -221,7 +222,7 @@ fun TodayScreen(
                     if (showSectionTitles) {
                         item(key = "overdue_title", contentType = "title") {
                             SectionHeader(
-                                title = "Overdue",
+                                title = LocalStrings.current.overdue,
                                 count = state.overdueGroups.sumOf { openCount(it.tasks, state.completedTaskIds) },
                                 tone = SectionTone.OVERDUE,
                             )
@@ -242,7 +243,7 @@ fun TodayScreen(
                     if (showSectionTitles && state.projectGroups.isNotEmpty()) {
                         item(key = "today_title", contentType = "title") {
                             SectionHeader(
-                                title = "Today",
+                                title = LocalStrings.current.today,
                                 count = state.projectGroups.sumOf { openCount(it.tasks, state.completedTaskIds) },
                                 modifier = Modifier.fabDropTarget(LocalClockDay.current.let { FabDropTarget.day(it.date, it.zone) }),
                             )

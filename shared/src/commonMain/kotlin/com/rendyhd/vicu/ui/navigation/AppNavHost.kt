@@ -34,6 +34,7 @@ import com.rendyhd.vicu.ui.screens.ask.AskScreen
 import com.rendyhd.vicu.ui.screens.setup.SetupScreen
 import com.rendyhd.vicu.ui.screens.tag.TagScreen
 import com.rendyhd.vicu.ui.screens.today.TodayScreen
+import com.rendyhd.vicu.ui.screens.calendar.CalendarScreen
 import com.rendyhd.vicu.ui.screens.upcoming.UpcomingScreen
 import com.rendyhd.vicu.permission.NotificationPermissionCoordinator
 import com.rendyhd.vicu.voice.TaskDefaults
@@ -103,7 +104,7 @@ fun AppNavHost(
             )
         }
         screen<UpcomingRoute>(reveal) {
-            UpcomingScreen(
+            CalendarScreen(
                 onTaskClick = onTaskClick,
                 onOpenDrawer = onOpenDrawer,
                 onNavigateToSearch = onNavigateToSearch,
