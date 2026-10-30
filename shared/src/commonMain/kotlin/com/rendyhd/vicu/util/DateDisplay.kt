@@ -127,6 +127,26 @@ object DateDisplay {
     private const val TOMORROW = "Tomorrow"
     private fun daysAgo(n: Int) = "$n days ago"
 
+    /**
+     * The relative day words of one language. English keeps the contract's fixed strings; Chinese
+     * says 今天/昨天/明天/…天前, which is what a Chinese phone reads on every row.
+     */
+    private class RelativeWords(
+        val today: String,
+        val yesterday: String,
+        val tomorrow: String,
+        private val daysAgoFormat: String,
+    ) {
+        fun daysAgo(n: Int) = daysAgoFormat.replace("{n}", n.toString())
+    }
+
+    private fun wordsFor(localeTag: String): RelativeWords =
+        if (languageOf(localeTag) == "zh") {
+            RelativeWords("今天", "昨天", "明天", "{n}天前")
+        } else {
+            RelativeWords(TODAY, YESTERDAY, TOMORROW, "{n} days ago")
+        }
+
     /** Patterns and names for one locale. */
     private class Phrases(val pattern: Pattern, val names: Names)
 
@@ -194,12 +214,12 @@ object DateDisplay {
     private fun Phrases.withTime(day: String, value: LocalDateTime, dateOnly: Boolean, fmt: DateDisplayFormat) =
         if (dateOnly) day else "$day, ${time(value, fmt.hour12)}"
 
-    private fun Phrases.rowDay(diff: Int, value: LocalDateTime, today: LocalDate): String = when {
+    private fun Phrases.rowDay(diff: Int, value: LocalDateTime, today: LocalDate, w: RelativeWords): String = when {
         diff <= -7 -> shortDate(value, today)
-        diff <= -2 -> daysAgo(-diff)
-        diff == -1 -> YESTERDAY
-        diff == 0 -> TODAY
-        diff == 1 -> TOMORROW
+        diff <= -2 -> w.daysAgo(-diff)
+        diff == -1 -> w.yesterday
+        diff == 0 -> w.today
+        diff == 1 -> w.tomorrow
         diff <= 6 -> weekdayShort(value)
         else -> shortDate(value, today)
     }
@@ -218,36 +238,37 @@ object DateDisplay {
         fmt: DateDisplayFormat,
     ): String {
         val p = phrasesFor(fmt.localeTag)
+        val w = wordsFor(fmt.localeTag)
         val diff = today.daysUntil(value.date)
         return when (context) {
-            DateContext.ROW -> p.withTime(p.rowDay(diff, value, today), value, dateOnly, fmt)
+            DateContext.ROW -> p.withTime(p.rowDay(diff, value, today, w), value, dateOnly, fmt)
             DateContext.ROW_IN_TODAY ->
                 if (diff == 0) {
                     if (dateOnly) "" else p.time(value, fmt.hour12)
                 } else {
-                    p.withTime(p.rowDay(diff, value, today), value, dateOnly, fmt)
+                    p.withTime(p.rowDay(diff, value, today, w), value, dateOnly, fmt)
                 }
             DateContext.ROW_IN_DAY_GROUP -> if (dateOnly) "" else p.time(value, fmt.hour12)
             DateContext.CHIP -> p.withTime(p.weekdayDate(value, today), value, dateOnly, fmt)
             DateContext.HEADER_DAY -> when {
-                diff == 0 -> TODAY
-                diff == 1 -> TOMORROW
+                diff == 0 -> w.today
+                diff == 1 -> w.tomorrow
                 diff in 2..6 -> p.weekdayDay(value)
                 else -> p.weekdayDate(value, today)
             }
             DateContext.HEADER_FULL -> p.fullDate(value, value.year != today.year)
             // A completion a little in the future (a clock that is ahead) counts as today.
             DateContext.LOGBOOK_GROUP -> when {
-                diff >= 0 -> TODAY
-                diff == -1 -> YESTERDAY
+                diff >= 0 -> w.today
+                diff == -1 -> w.yesterday
                 diff >= -6 -> p.weekdayDate(value, today)
                 else -> p.monthYear(value)
             }
             DateContext.LOGBOOK_TIME -> p.time(value, fmt.hour12)
             // A comment a little in the future counts as today.
             DateContext.COMMENT_DAY -> when {
-                diff >= 0 -> TODAY
-                diff == -1 -> YESTERDAY
+                diff >= 0 -> w.today
+                diff == -1 -> w.yesterday
                 else -> p.weekdayDate(value, today)
             }
         }

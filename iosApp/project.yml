@@ -40,6 +40,12 @@ targets:
     info:
       path: Vicu/Info.plist
       properties:
+        # The app follows the device language: Chinese when the phone is Chinese, English otherwise.
+        CFBundleLocalizations:
+          - en
+          - zh-Hans
+        NSCalendarsFullAccessUsageDescription: Vicu shows the events of your calendar next to your tasks. It stays on this phone.
+        NSCalendarsUsageDescription: Vicu shows the events of your calendar next to your tasks. It stays on this phone.
         CFBundleDisplayName: $(VICU_DISPLAY_NAME)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
@@ -127,6 +133,12 @@ targets:
     info:
       path: VicuWidgets/Info.plist
       properties:
+        # The app follows the device language: Chinese when the phone is Chinese, English otherwise.
+        CFBundleLocalizations:
+          - en
+          - zh-Hans
+        NSCalendarsFullAccessUsageDescription: Vicu shows the events of your calendar next to your tasks. It stays on this phone.
+        NSCalendarsUsageDescription: Vicu shows the events of your calendar next to your tasks. It stays on this phone.
         CFBundleDisplayName: $(VICU_DISPLAY_NAME)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
@@ -156,6 +168,12 @@ targets:
     info:
       path: VicuShare/Info.plist
       properties:
+        # The app follows the device language: Chinese when the phone is Chinese, English otherwise.
+        CFBundleLocalizations:
+          - en
+          - zh-Hans
+        NSCalendarsFullAccessUsageDescription: Vicu shows the events of your calendar next to your tasks. It stays on this phone.
+        NSCalendarsUsageDescription: Vicu shows the events of your calendar next to your tasks. It stays on this phone.
         CFBundleDisplayName: $(VICU_DISPLAY_NAME)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)

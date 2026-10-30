@@ -53,9 +53,9 @@
 		<true/>
 	</dict>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Vicu shows the events of your calendar next to your tasks.</string>
+	<string>Vicu shows the events of your calendar next to your tasks. It stays on this phone.</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Vicu shows the events of your calendar next to your tasks.</string>
+	<string>Vicu shows the events of your calendar next to your tasks. It stays on this phone.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Vicu connects to your Vikunja server, which may be on your local network.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
