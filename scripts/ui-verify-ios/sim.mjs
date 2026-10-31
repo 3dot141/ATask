@@ -11,8 +11,8 @@ import { fileURLToPath } from 'node:url'
 
 export const HERE = dirname(fileURLToPath(import.meta.url))
 export const REPO = resolve(HERE, '..', '..')
-export const BUNDLE_ID = 'com.rendyhd.vicu.debug'
-export const APP_GROUP = 'group.com.rendyhd.vicu.debug'
+export const BUNDLE_ID = 'com.yes365.atask.debug'
+export const APP_GROUP = 'group.com.yes365.atask.debug'
 export const SCHEME = 'vicu-debug'
 export const DEFAULT_DEVICE = 'iPhone 17'
 

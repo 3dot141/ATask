@@ -1,0 +1,7 @@
+package com.yes365.atask.ui
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable
+expect fun Modifier.imagePasteReceiver(onImagePasted: (String) -> Unit): Modifier

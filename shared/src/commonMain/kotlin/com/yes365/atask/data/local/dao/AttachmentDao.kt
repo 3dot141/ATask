@@ -1,0 +1,34 @@
+package com.yes365.atask.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Upsert
+import com.yes365.atask.data.local.entity.AttachmentEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface AttachmentDao {
+
+    @Query("SELECT * FROM attachments WHERE taskId = :taskId")
+    fun getByTaskId(taskId: Long): Flow<List<AttachmentEntity>>
+
+    @Upsert
+    suspend fun upsert(attachment: AttachmentEntity)
+
+    @Upsert
+    suspend fun upsertAll(attachments: List<AttachmentEntity>)
+
+    @Query("DELETE FROM attachments WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM attachments WHERE taskId = :taskId")
+    suspend fun deleteByTaskId(taskId: Long)
+
+    /** The task's attachments become exactly [attachments]: the server's list, so deleted ones go. */
+    @Transaction
+    suspend fun replaceForTask(taskId: Long, attachments: List<AttachmentEntity>) {
+        deleteByTaskId(taskId)
+        upsertAll(attachments)
+    }
+}

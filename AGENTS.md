@@ -16,13 +16,13 @@ The desktop app is at `C:\Users\rendy\vscode\vicu`. Consult its source when you 
 ```bash
 ./gradlew test                  # All JVM unit tests: :app and :shared (commonTest + androidHostTest)
 ./gradlew lint                  # Android lint (see the note below)
-./gradlew assembleDebug         # Debug APK (applicationId com.rendyhd.vicu.debug, installs beside the release)
+./gradlew assembleDebug         # Debug APK (applicationId com.yes365.atask.debug, installs beside the release)
 ./gradlew :app:assembleRelease  # Release APK with R8 (signs when keystore.properties exists)
 ./gradlew installDebug          # Build and install on a connected device or emulator
 ./gradlew connectedAndroidTest  # Instrumented tests (app/src/androidTest; needs a device)
 
-./gradlew :shared:testAndroidHostTest --tests "com.rendyhd.vicu.worker.SyncEngineFailedActionsTest"
-./gradlew :app:testDebugUnitTest --tests "com.rendyhd.vicu.di.KoinGraphTest"
+./gradlew :shared:testAndroidHostTest --tests "com.yes365.atask.worker.SyncEngineFailedActionsTest"
+./gradlew :app:testDebugUnitTest --tests "com.yes365.atask.di.KoinGraphTest"
 ```
 
 The gate for a change is `./gradlew test lint assembleDebug`; CI runs exactly that, and a release additionally builds `:app:assembleRelease`. Use JDK 17 or newer (CI uses Temurin 17; Android Studio's bundled JDK works locally).
@@ -58,10 +58,10 @@ Versions live in `gradle/libs.versions.toml`. Compose Multiplatform dependencies
 
 Two Gradle modules:
 
-- **`:shared`** - Kotlin Multiplatform library (`com.android.kotlin.multiplatform.library` plugin, namespace `com.rendyhd.vicu.shared`). Almost all code lives in `commonMain`: data layer, sync engine, repositories, ViewModels, Compose screens and components. `androidMain` has the platform actuals (token storage, DataStore and Room builders, files, network monitor, OIDC launcher, pickers). `iosMain` has the iOS implementations (see `docs/ios.md`). Tests: `commonTest` (the bulk, run on the JVM) and `androidHostTest` (SQL against sqlite-jdbc using the exported Room schemas).
-- **`:app`** - the Android application (`com.rendyhd.vicu`): `MainActivity`, `VicuApplication`, the Android DI modules, alarms and notifications, Glance widgets, WorkManager workers, the OIDC login activity, the quick-add tile. Tests: `src/test` (JVM) and `src/androidTest` (instrumented).
+- **`:shared`** - Kotlin Multiplatform library (`com.android.kotlin.multiplatform.library` plugin, namespace `com.yes365.atask.shared`). Almost all code lives in `commonMain`: data layer, sync engine, repositories, ViewModels, Compose screens and components. `androidMain` has the platform actuals (token storage, DataStore and Room builders, files, network monitor, OIDC launcher, pickers). `iosMain` has the iOS implementations (see `docs/ios.md`). Tests: `commonTest` (the bulk, run on the JVM) and `androidHostTest` (SQL against sqlite-jdbc using the exported Room schemas).
+- **`:app`** - the Android application (`com.yes365.atask`): `MainActivity`, `VicuApplication`, the Android DI modules, alarms and notifications, Glance widgets, WorkManager workers, the OIDC login activity, the quick-add tile. Tests: `src/test` (JVM) and `src/androidTest` (instrumented).
 
-Package map (`com.rendyhd.vicu`):
+Package map (`com.yes365.atask`):
 
 ```
 shared/commonMain
@@ -228,7 +228,7 @@ Android classes are stubbed in JVM tests with `isReturnDefaultValues = true`. Co
 ## CI / Releases
 
 - `.github/workflows/ci.yml` runs `./gradlew test lint assembleDebug` on every push and pull request (JDK 17, Gradle cache).
-- `.github/workflows/release.yml` builds a **signed release APK and AAB** when a GitHub release is published, with the repository secrets `KEYSTORE_BASE64`, `KEY_ALIAS`, `KEY_PASSWORD` and `STORE_PASSWORD`, attaches both, and uploads the AAB to **Google Play** (`com.rendyhd.vicu`) with the service account in `PLAY_SERVICE_ACCOUNT_JSON` (`github-play-publisher@vicu-play-publishing.iam.gserviceaccount.com`). The repository variable `PLAY_TRACK` picks the track (`alpha`, the closed test) and `PLAY_RELEASE_STATUS` the status (default `draft`; `completed` rolls out without the Play Console). The GitHub APK and Play use the same signing key (Play App Signing was set up with the release key), so installs from either update each other; the package and key are registered for Android developer verification.
+- `.github/workflows/release.yml` builds a **signed release APK and AAB** when a GitHub release is published, with the repository secrets `KEYSTORE_BASE64`, `KEY_ALIAS`, `KEY_PASSWORD` and `STORE_PASSWORD`, attaches both, and uploads the AAB to **Google Play** (`com.yes365.atask`) with the service account in `PLAY_SERVICE_ACCOUNT_JSON` (`github-play-publisher@vicu-play-publishing.iam.gserviceaccount.com`). The repository variable `PLAY_TRACK` picks the track (`alpha`, the closed test) and `PLAY_RELEASE_STATUS` the status (default `draft`; `completed` rolls out without the Play Console). The GitHub APK and Play use the same signing key (Play App Signing was set up with the release key), so installs from either update each other; the package and key are registered for Android developer verification.
 - `adi-registration.yml` (Android developer verification APK) and `play-signing-key.yml` (the release key exported for Play App Signing) are one-off manual workflows; the listing texts, images and app content answers for Play are in `docs/store/google-play/`, the privacy policy in `docs/privacy-policy.md`.
 - **When creating a release**: bump `versionCode` and `versionName` in `app/build.gradle.kts`, write the notes in `docs/releases/vX.Y.Z.md`, then `gh release create <tag> --title "..." --notes-file docs/releases/vX.Y.Z.md` **without attaching a local APK**. CI builds and uploads the signed APK. Never attach a debug APK manually.
 

@@ -1,0 +1,276 @@
+package com.yes365.atask.ui.components.picker
+
+import com.yes365.atask.ui.i18n.t
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import com.yes365.atask.ui.components.shared.LocalClockDay
+import com.yes365.atask.ui.components.shared.LocalDateFormat
+import com.yes365.atask.ui.components.shared.LocalIs24Hour
+import com.yes365.atask.ui.components.shared.VicuDragHandle
+import com.yes365.atask.util.DueDates
+import com.yes365.atask.util.SystemTimeSource
+import com.yes365.atask.util.WhenLogic
+import com.yes365.atask.util.WhenQuickChoice
+import com.yes365.atask.util.WhenValue
+import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toLocalDateTime
+
+/**
+ * The When sheet (design review card 3.4b), the Android counterpart of the desktop When panel:
+ * a text field read by the quick-add parser, the quick choices, a month calendar whose weeks start
+ * on Monday ([MonthCalendar]) and a row of times. A quick choice or Done finishes; the calendar and the time chips only change the value,
+ * and the text follows them. The rules live in [WhenLogic]. A day without a time becomes a
+ * date-only due date (local 23:59:59, see [DueDates]).
+ *
+ * [onDateSelected] gets the due date as the ISO instant the task stores; [onClearDate] is offered
+ * only when [currentDate] holds a date.
+ */
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@Composable
+fun WhenSheet(
+    currentDate: String?,
+    onDateSelected: (String) -> Unit,
+    onClearDate: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val clockDay = LocalClockDay.current
+    val zone = clockDay.zone
+    val today = clockDay.date
+    val fmt = LocalDateFormat.current
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val initial = remember { WhenLogic.valueOfDue(currentDate, zone) }
+    var selected by remember { mutableStateOf(initial) }
+    // What the text reads as while the user types: shown in the calendar and the time chips, and
+    // taken over by Done (or the keyboard's Done).
+    var typed by remember { mutableStateOf<WhenValue?>(null) }
+    var text by remember { mutableStateOf(WhenLogic.text(initial, today, fmt)) }
+    var showCustomTime by remember { mutableStateOf(false) }
+    val shown = typed ?: selected
+
+    fun close(after: () -> Unit = {}) {
+        scope.launch { sheetState.hide() }.invokeOnCompletion {
+            after()
+            onDismiss()
+        }
+    }
+
+    fun finish(value: WhenValue) {
+        val due = WhenLogic.dueOf(value, zone)
+        close { if (due != null) onDateSelected(due.toString()) }
+    }
+
+    /** A value picked by hand: the text follows it. */
+    fun apply(value: WhenValue) {
+        typed = null
+        selected = value
+        text = WhenLogic.text(value, today, fmt)
+    }
+
+    val typedReadsNothing = typed == null && text.isNotBlank() && text != WhenLogic.text(selected, today, fmt)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        dragHandle = { VicuDragHandle() },
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().imePadding().navigationBarsPadding()) {
+            Column(
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(t("When"), style = MaterialTheme.typography.titleMedium)
+
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { raw ->
+                        text = raw
+                        val now = SystemTimeSource.now().toLocalDateTime(zone)
+                        typed = WhenLogic.parseText(raw, now, zone)?.value
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(t("Date and time")) },
+                    placeholder = { Text(t("Type a day, a date or a time")) },
+                    singleLine = true,
+                    isError = typedReadsNothing,
+                    supportingText = {
+                        val value = typed
+                        when {
+                            value != null && text != WhenLogic.text(value, today, fmt) ->
+                                Text(WhenLogic.text(value, today, fmt))
+                            typedReadsNothing -> Text(t("No date found"))
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { typed?.let(::finish) }),
+                )
+
+                val choices = remember(today) { WhenLogic.quickChoices(today) }
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    for (pair in choices.chunked(2)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                            for (choice in pair) {
+                                QuickChoiceButton(
+                                    choice = choice,
+                                    hint = WhenLogic.hint(choice, fmt),
+                                    onClick = { finish(WhenLogic.withDate(shown, choice.date)) },
+                                    modifier = Modifier.weight(1f),
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // The calendar shows the value (a quick choice or typed text moves it); a tap on a
+                // day picks it and keeps the time.
+                MonthCalendar(
+                    selected = shown.date,
+                    onSelect = { picked -> if (picked != shown.date) apply(WhenLogic.withDate(shown, picked)) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Text(t("Time"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                val timeIsPreset = shown.time != null && shown.time in WhenLogic.TIME_CHOICES
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
+                ) {
+                    FilterChip(
+                        selected = shown.time == null,
+                        onClick = { apply(WhenLogic.withTime(shown, null, today)) },
+                        label = { Text(t("None")) },
+                    )
+                    for (time in WhenLogic.TIME_CHOICES) {
+                        FilterChip(
+                            selected = shown.time == time,
+                            onClick = { apply(WhenLogic.withTime(shown, time, today)) },
+                            label = { Text(WhenLogic.timeLabel(time, fmt)) },
+                        )
+                    }
+                    FilterChip(
+                        selected = shown.time != null && !timeIsPreset,
+                        onClick = { showCustomTime = true },
+                        label = {
+                            Text(shown.time?.takeIf { !timeIsPreset }?.let { WhenLogic.timeLabel(it, fmt) } ?: "Custom")
+                        },
+                    )
+                }
+            }
+
+            // Pinned under the scrolling content so Done is always in reach.
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (initial.date != null) {
+                    TextButton(onClick = { close(onClearDate) }) {
+                        Text(t("Clear date"), color = MaterialTheme.colorScheme.error)
+                    }
+                }
+                Spacer(Modifier.weight(1f))
+                Button(onClick = { if (shown.date != null) finish(shown) else close() }) {
+                    Text(t("Done"))
+                }
+            }
+        }
+    }
+
+    if (showCustomTime) {
+        CustomTimeDialog(
+            initial = shown.time ?: LocalTime(9, 0),
+            onPick = { time ->
+                showCustomTime = false
+                apply(WhenLogic.withTime(shown, time, today))
+            },
+            onDismiss = { showCustomTime = false },
+        )
+    }
+}
+
+@Composable
+private fun QuickChoiceButton(
+    choice: WhenQuickChoice,
+    hint: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .semantics(mergeDescendants = true) { contentDescription = "${choice.label}, $hint" },
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(choice.label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            Text(hint, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun CustomTimeDialog(initial: LocalTime, onPick: (LocalTime) -> Unit, onDismiss: () -> Unit) {
+    val state = rememberTimePickerState(
+        initialHour = initial.hour,
+        initialMinute = initial.minute,
+        is24Hour = LocalIs24Hour.current,
+    )
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(t("Set time")) },
+        text = { TimePicker(state = state) },
+        confirmButton = { TextButton(onClick = { onPick(LocalTime(state.hour, state.minute)) }) { Text(t("OK")) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
+    )
+}

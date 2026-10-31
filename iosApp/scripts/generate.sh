@@ -1,5 +1,5 @@
 #!/bin/sh
-# Writes Configuration/Version.xcconfig from version.properties and generates Vicu.xcodeproj.
+# Writes Configuration/Version.xcconfig from version.properties and generates ATask.xcodeproj.
 # BUILD_ATTEMPT (default 0) is added to the build number, so the same version can be uploaded to
 # TestFlight again without a new Android versionCode.
 set -eu

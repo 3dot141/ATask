@@ -1,0 +1,402 @@
+package com.yes365.atask.ui.screens.settings
+
+import com.yes365.atask.ui.i18n.t
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.yes365.atask.data.local.SubprojectDisplayMode
+import com.yes365.atask.domain.model.CustomList
+import com.yes365.atask.domain.model.CustomListSyncStatus
+import com.yes365.atask.domain.model.Label
+import com.yes365.atask.domain.model.Project
+import com.yes365.atask.util.countOf
+
+// The sections of the Projects tab other than the project tree itself (ProjectsTab).
+
+/** The Inbox: which project it is, and whether dated tasks leave it. */
+internal fun LazyListScope.inboxSection(
+    state: SettingsUiState,
+    viewModel: SettingsViewModel,
+    openDialog: (SettingsDialog) -> Unit,
+) {
+    item(key = "inbox_header") {
+        SubsectionHeading("Inbox")
+    }
+
+    item(key = "inbox_project") {
+        val activeInbox = state.projects.find { it.id == state.inboxProjectId }
+        val archivedInbox = state.archivedProjects.find { it.id == state.inboxProjectId }
+        val inboxName = activeInbox?.title
+            ?: archivedInbox?.let { "${it.title} (archived — select another project)" }
+            ?: "Not set"
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = { openDialog(SettingsDialog.InboxPicker) })
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = t("Inbox Project"),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = inboxName,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (archivedInbox != null) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    },
+                )
+            }
+            Icon(
+                Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                contentDescription = t("Choose inbox project"),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+    }
+
+    item(key = "inbox_exclude_dated") {
+        SwitchRow(
+            label = t("Move dated tasks out of Inbox"),
+            description = t("Tasks with a due date no longer appear in Inbox."),
+            checked = state.behaviorPrefs.inboxExcludeDated,
+            onCheckedChange = viewModel::setInboxExcludeDated,
+        )
+    }
+
+    item(key = "inbox_divider") {
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+    }
+}
+
+/**
+ * How projects are shown: the order of their tasks, subprojects in a project view, and the
+ * drawer's progress rings.
+ */
+internal fun LazyListScope.displaySection(
+    state: SettingsUiState,
+    viewModel: SettingsViewModel,
+    openDialog: (SettingsDialog) -> Unit,
+) {
+    item(key = "display_header") {
+        SubsectionHeading("Display")
+    }
+
+    item(key = "task_order") {
+        SettingsValueRow(
+            label = t("Task order"),
+            value = state.taskOrders.global.label,
+            onClick = { openDialog(SettingsDialog.TaskOrderPicker) },
+        )
+    }
+
+    // The projects given their own order from their screen ("Sort tasks"), and a way back.
+    val ownOrderCount = projectsWithOwnTaskOrder(state)
+    if (ownOrderCount > 0) {
+        item(key = "task_order_overrides") {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = if (ownOrderCount == 1) {
+                        "1 project has its own order"
+                    } else {
+                        "$ownOrderCount projects have their own order"
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(onClick = viewModel::clearProjectTaskOrders) { Text(t("Reset")) }
+            }
+        }
+    }
+
+    item(key = "subproject_display_mode") {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            Text(text = t("Subprojects in project views"), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = t("Combine child tasks into sections or open each child as its own project"),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            @OptIn(ExperimentalMaterial3Api::class)
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                val options = listOf(
+                    SubprojectDisplayMode.SECTIONS to "Sections",
+                    SubprojectDisplayMode.PROJECT_ROWS to "Project rows",
+                )
+                options.forEachIndexed { index, (mode, label) ->
+                    SegmentedButton(
+                        selected = state.behaviorPrefs.subprojectDisplayMode == mode,
+                        onClick = { viewModel.setSubprojectDisplayMode(mode) },
+                        shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                    ) {
+                        Text(label)
+                    }
+                }
+            }
+        }
+    }
+
+    item(key = "show_project_progress") {
+        SwitchRow(
+            label = t("Show project progress"),
+            description = t("Progress rings next to the projects in the drawer"),
+            checked = state.behaviorPrefs.showProjectProgress,
+            onCheckedChange = viewModel::setShowProjectProgress,
+        )
+    }
+
+    item(key = "show_project_task_count") {
+        SwitchRow(
+            label = t("Show task count"),
+            description = t("How many open tasks each project has, next to it in the drawer"),
+            checked = state.behaviorPrefs.showProjectTaskCount,
+            onCheckedChange = viewModel::setShowProjectTaskCount,
+        )
+    }
+
+    item(key = "display_divider") {
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+    }
+}
+
+/** How many of the user's projects (archived ones too) have an order of their own. */
+internal fun projectsWithOwnTaskOrder(state: SettingsUiState): Int {
+    val ids = state.taskOrders.projectOverrides.keys
+    return state.projects.count { it.id in ids } + state.archivedProjects.count { it.id in ids }
+}
+
+/** The summary of the "Excluded from review" row: the project's name when there is one, else how many. */
+internal fun excludedFromReviewSummary(projects: List<Project>): String =
+    projects.singleOrNull()?.title ?: countOf(projects.size, "project")
+
+/** Review tracking, and the projects left out of it. */
+internal fun LazyListScope.reviewSection(
+    state: SettingsUiState,
+    viewModel: SettingsViewModel,
+    openDialog: (SettingsDialog) -> Unit,
+) {
+    item(key = "review_header") {
+        SubsectionHeading("Review")
+    }
+    item(key = "review_enabled") {
+        SwitchRow(
+            label = t("Enable project review tracking"),
+            description = t("Periodically review your projects"),
+            checked = state.reviewPrefs.enabled,
+            onCheckedChange = viewModel::setReviewEnabled,
+        )
+    }
+    if (state.reviewPrefs.enabled) {
+        item(key = "review_cadence") {
+            SettingsValueRow(
+                label = t("Default review cadence"),
+                value = "${state.reviewPrefs.defaultCadenceDays} days",
+                onClick = { openDialog(SettingsDialog.ReviewCadence) },
+            )
+        }
+        item(key = "review_exclude_inbox") {
+            SwitchRow(
+                label = t("Exclude Inbox from review"),
+                description = t("Don't track the inbox project"),
+                checked = state.reviewPrefs.excludeInbox,
+                onCheckedChange = viewModel::setReviewExcludeInbox,
+            )
+        }
+        if (state.excludedFromReview.isNotEmpty()) {
+            item(key = "review_excluded") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = { openDialog(SettingsDialog.ExcludedFromReview) })
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = t("Excluded from review"),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                        Text(
+                            text = excludedFromReviewSummary(state.excludedFromReview),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Icon(
+                        Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
+        }
+    }
+    item(key = "review_divider") {
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+    }
+}
+
+internal fun LazyListScope.labelsSection(
+    state: SettingsUiState,
+    viewModel: SettingsViewModel,
+    openDialog: (SettingsDialog) -> Unit,
+) {
+    fun deleteLabel(label: Label) {
+        if (state.behaviorPrefs.confirmBeforeDelete) {
+            openDialog(SettingsDialog.DeleteLabel(label.id))
+        } else {
+            viewModel.deleteLabel(label.id)
+        }
+    }
+
+    item(key = "labels_header") {
+        SectionTitle(
+            title = t("Labels"),
+            onAdd = { openDialog(SettingsDialog.LabelEditor(null)) },
+        )
+    }
+
+    if (state.labels.isEmpty()) {
+        item(key = "labels_empty") {
+            Text(
+                text = t("No labels yet"),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
+    } else {
+        items(state.labels, key = { "label_${it.id}" }, contentType = { "label" }) { label ->
+            LabelRow(
+                label = label,
+                onEdit = { openDialog(SettingsDialog.LabelEditor(label.id)) },
+                onDelete = { deleteLabel(label) },
+            )
+        }
+    }
+
+    item(key = "labels_divider") {
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+    }
+}
+
+internal fun LazyListScope.customListsSection(
+    state: SettingsUiState,
+    viewModel: SettingsViewModel,
+    openDialog: (SettingsDialog) -> Unit,
+) {
+    fun deleteCustomList(list: CustomList) {
+        if (state.behaviorPrefs.confirmBeforeDelete) {
+            openDialog(SettingsDialog.DeleteCustomList(list.id))
+        } else {
+            viewModel.deleteCustomList(list.id)
+        }
+    }
+
+    item(key = "lists_header") {
+        SectionTitle(
+            title = t("Custom Lists"),
+            onAdd = { openDialog(SettingsDialog.CustomListEditor(null)) },
+        )
+    }
+
+    if (state.customListSyncStatus !is CustomListSyncStatus.Idle) {
+        item(key = "lists_sync_status") {
+            val status = state.customListSyncStatus
+            val message = when (status) {
+                CustomListSyncStatus.Idle -> ""
+                CustomListSyncStatus.Syncing -> "Syncing custom lists…"
+                CustomListSyncStatus.Pending -> "Custom-list changes are pending"
+                is CustomListSyncStatus.Offline -> status.message
+                is CustomListSyncStatus.Error -> status.message
+                is CustomListSyncStatus.UpdateRequired -> status.message
+            }
+            val canRetry = status is CustomListSyncStatus.Pending ||
+                status is CustomListSyncStatus.Offline ||
+                status is CustomListSyncStatus.Error
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (status is CustomListSyncStatus.Error ||
+                        status is CustomListSyncStatus.UpdateRequired
+                    ) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                if (canRetry) {
+                    TextButton(onClick = viewModel::retryCustomListSync) { Text(t("Retry")) }
+                }
+            }
+        }
+    }
+
+    if (state.customLists.isEmpty()) {
+        item(key = "lists_empty") {
+            Text(
+                text = t("No custom lists yet"),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
+    } else {
+        items(state.customLists, key = { "list_${it.id}" }, contentType = { "list" }) { list ->
+            CustomListRow(
+                customList = list,
+                onEdit = { openDialog(SettingsDialog.CustomListEditor(list.id)) },
+                onDelete = { deleteCustomList(list) },
+            )
+        }
+    }
+
+    item(key = "lists_divider") {
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+    }
+}

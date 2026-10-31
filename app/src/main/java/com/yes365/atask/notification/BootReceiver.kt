@@ -1,0 +1,75 @@
+package com.yes365.atask.notification
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import com.yes365.atask.auth.AuthManager
+import com.yes365.atask.data.local.NotificationPrefsStore
+import com.yes365.atask.location.LocationReminderCoordinator
+import com.yes365.atask.widget.WidgetUpdateScheduler
+import com.yes365.atask.widget.RoutineWidget
+import com.yes365.atask.worker.PeriodicSyncScheduler
+import com.yes365.atask.worker.RoutineMaintenanceScheduler
+import com.yes365.atask.worker.SyncScheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+
+class BootReceiver : BroadcastReceiver(), KoinComponent {
+
+    companion object {
+        private const val TAG = "BootReceiver"
+    }
+
+    private val alarmScheduler: AlarmScheduler by inject()
+    private val dailySummaryScheduler: DailySummaryScheduler by inject()
+    private val routineAlarmScheduler: RoutineAlarmScheduler by inject()
+    private val prefsStore: NotificationPrefsStore by inject()
+    private val authManager: AuthManager by inject()
+    private val locationReminders: LocationReminderCoordinator by inject()
+
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
+        Log.d(TAG, "Boot completed — rescheduling alarms")
+
+        val pendingResult = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                alarmScheduler.rescheduleAll()
+                alarmScheduler.rescheduleSnoozes()
+                routineAlarmScheduler.rescheduleAll()
+                // Play services drops its geofences on a reboot.
+                locationReminders.replan(force = true)
+                RoutineWidget().updateAllWidgets(context)
+                WidgetUpdateScheduler.enqueueImmediateUpdateAll(context)
+                // The rest is the account's background work, which sign-out cancelled; signing in
+                // schedules it again.
+                if (authManager.getVikunjaUrl().isNullOrBlank()) return@launch
+                RoutineMaintenanceScheduler.reschedule(context)
+                val prefs = prefsStore.getPrefs().first()
+                dailySummaryScheduler.scheduleIfEnabled(
+                    prefs.dailySummaryEnabled,
+                    prefs.dailySummaryHour,
+                    prefs.dailySummaryMinute,
+                )
+                dailySummaryScheduler.scheduleIfEnabled(
+                    DailySummaryScheduler.SLOT_AFTERNOON,
+                    prefs.afternoonSummaryEnabled,
+                    prefs.afternoonSummaryHour,
+                    prefs.afternoonSummaryMinute,
+                )
+                SyncScheduler.enqueueWhenOnline(context)
+                // WorkManager keeps the schedule across a reboot; this only makes sure it exists.
+                PeriodicSyncScheduler.schedule(context)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to reschedule after boot", e)
+            } finally {
+                pendingResult.finish()
+            }
+        }
+    }
+}

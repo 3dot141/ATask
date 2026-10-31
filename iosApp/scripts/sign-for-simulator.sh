@@ -5,18 +5,18 @@
 # entities: in the simulator the Tasks widget then ignores the list chosen in Edit Widget and
 # shows Today. Builds for a device are always signed with a team and do not need this.
 #
-#   scripts/sign-for-simulator.sh build/dd/Build/Products/Debug-iphonesimulator/Vicu.app
-#   xcrun simctl install <simulator> build/dd/Build/Products/Debug-iphonesimulator/Vicu.app
+#   scripts/sign-for-simulator.sh build/dd/Build/Products/Debug-iphonesimulator/ATask.app
+#   xcrun simctl install <simulator> build/dd/Build/Products/Debug-iphonesimulator/ATask.app
 #
 # SIGN_IDENTITY picks the certificate; the first Apple Development one is used otherwise.
 set -eu
-app=${1:?usage: sign-for-simulator.sh path/to/Vicu.app}
+app=${1:?usage: sign-for-simulator.sh path/to/ATask.app}
 identity=${SIGN_IDENTITY:-$(security find-identity -v -p codesigning | sed -n 's/.*"\(Apple Development[^"]*\)".*/\1/p' | head -n 1)}
 [ -n "$identity" ] || { echo "No Apple Development certificate in the keychain" >&2; exit 1; }
 
 # Only the App Group: with application-identifier but no provisioning profile the simulator
 # refuses to start the extension.
-group=$(/usr/libexec/PlistBuddy -c 'Print :VicuAppGroup' "$app/Info.plist")
+group=$(/usr/libexec/PlistBuddy -c 'Print :ATaskAppGroup' "$app/Info.plist")
 entitlements=$(mktemp)
 trap 'rm -f "$entitlements"' EXIT
 cat > "$entitlements" <<PLIST

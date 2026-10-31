@@ -1,0 +1,340 @@
+package com.yes365.atask.data.mapper
+
+import com.yes365.atask.data.local.entity.TaskEntity
+import com.yes365.atask.data.remote.api.AttachmentDto
+import com.yes365.atask.data.remote.api.CreateTaskDto
+import com.yes365.atask.data.remote.api.LabelDto
+import com.yes365.atask.data.remote.api.TaskDto
+import com.yes365.atask.data.remote.api.TaskReminderDto
+import com.yes365.atask.data.remote.api.UserDto
+import com.yes365.atask.domain.model.Attachment
+import com.yes365.atask.domain.model.Label
+import com.yes365.atask.domain.model.Task
+import com.yes365.atask.domain.model.TaskReminder
+import com.yes365.atask.domain.model.User
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.Json
+import com.yes365.atask.util.Constants
+import com.yes365.atask.util.DateUtils
+
+class TaskMapper(private val json: Json) {
+
+    fun TaskDto.toEntity(): TaskEntity = TaskEntity(
+        id = id,
+        title = title,
+        description = description,
+        done = done,
+        doneAt = DateUtils.normalizeToUtc(doneAt),
+        dueDate = DateUtils.normalizeToUtc(dueDate),
+        priority = priority,
+        projectId = projectId,
+        repeatAfter = repeatAfter,
+        repeatMode = repeatMode,
+        startDate = DateUtils.normalizeToUtc(startDate),
+        endDate = DateUtils.normalizeToUtc(endDate),
+        hexColor = hexColor,
+        percentDone = percentDone,
+        taskIndex = index,
+        position = position,
+        kanbanPosition = kanbanPosition,
+        bucketId = bucketId,
+        created = DateUtils.normalizeToUtc(created),
+        updated = DateUtils.normalizeToUtc(updated),
+        createdById = createdBy?.id ?: 0,
+        createdByUsername = createdBy?.username ?: "",
+        labelsJson = json.encodeToString(
+            ListSerializer(LabelDto.serializer()),
+            labels ?: emptyList()
+        ),
+        remindersJson = json.encodeToString(
+            ListSerializer(TaskReminderDto.serializer()),
+            reminders ?: emptyList()
+        ),
+        attachmentsJson = json.encodeToString(
+            ListSerializer(AttachmentDto.serializer()),
+            attachments ?: emptyList()
+        ),
+        relatedTasksJson = json.encodeToString(
+            MapSerializer(
+                String.serializer(),
+                ListSerializer(TaskDto.serializer())
+            ),
+            relatedTasks ?: emptyMap()
+        ),
+        isFavorite = isFavorite,
+        assigneesJson = json.encodeToString(ListSerializer(UserDto.serializer()), assignees ?: emptyList()),
+    )
+
+    fun TaskEntity.toDomain(): Task {
+        val labelDtos: List<LabelDto> = try {
+            json.decodeFromString(
+                ListSerializer(LabelDto.serializer()),
+                labelsJson
+            )
+        } catch (_: Exception) { emptyList() }
+
+        val reminderDtos: List<TaskReminderDto> = try {
+            json.decodeFromString(
+                ListSerializer(TaskReminderDto.serializer()),
+                remindersJson
+            )
+        } catch (_: Exception) { emptyList() }
+
+        val attachmentDtos: List<AttachmentDto> = try {
+            json.decodeFromString(
+                ListSerializer(AttachmentDto.serializer()),
+                attachmentsJson
+            )
+        } catch (_: Exception) { emptyList() }
+
+        val relatedTaskDtos: Map<String, List<TaskDto>> = try {
+            json.decodeFromString(
+                MapSerializer(String.serializer(), ListSerializer(TaskDto.serializer())),
+                relatedTasksJson
+            )
+        } catch (_: Exception) { emptyMap() }
+
+        val assigneeDtos: List<UserDto> = try {
+            json.decodeFromString(ListSerializer(UserDto.serializer()), assigneesJson)
+        } catch (_: Exception) { emptyList() }
+
+        return Task(
+            id = id,
+            title = title,
+            description = description,
+            done = done,
+            doneAt = doneAt,
+            dueDate = dueDate,
+            priority = priority,
+            projectId = projectId,
+            repeatAfter = repeatAfter,
+            repeatMode = repeatMode,
+            startDate = startDate,
+            endDate = endDate,
+            hexColor = hexColor,
+            percentDone = percentDone,
+            index = taskIndex,
+            position = position,
+            kanbanPosition = kanbanPosition,
+            bucketId = bucketId,
+            created = created,
+            updated = updated,
+            createdBy = User(id = createdById, username = createdByUsername, name = ""),
+            labels = labelDtos.map { it.toDomainLabel() },
+            reminders = reminderDtos.map { it.toDomain() },
+            attachments = attachmentDtos.map { it.toDomainAttachment() },
+            relatedTasks = relatedTaskDtos.mapValues { (_, taskDtos) ->
+                taskDtos.map { dto ->
+                    Task(
+                        id = dto.id,
+                        title = dto.title,
+                        description = dto.description,
+                        done = dto.done,
+                        doneAt = dto.doneAt,
+                        dueDate = dto.dueDate,
+                        priority = dto.priority,
+                        projectId = dto.projectId,
+                        repeatAfter = dto.repeatAfter,
+                        repeatMode = dto.repeatMode,
+                        created = dto.created,
+                        updated = dto.updated,
+                    )
+                }
+            },
+            isFavorite = isFavorite,
+            assignees = assigneeDtos.map { User(id = it.id, username = it.username, name = it.name) },
+        )
+    }
+
+    /** This row with [assignees] as its assignees (an optimistic assign or unassign). */
+    fun TaskEntity.withAssignees(assignees: List<User>): TaskEntity = copy(
+        assigneesJson = json.encodeToString(
+            ListSerializer(UserDto.serializer()),
+            assignees.map { UserDto(id = it.id, username = it.username, name = it.name) },
+        ),
+    )
+
+    /**
+     * Applies the editable fields of [edited] onto this cached row and keeps everything else:
+     * relations, attachments, labels, ordering (`position`, `task_index`, kanban), creation
+     * metadata and `updated`. A [Task] edit patch never carries those, so an optimistic row that
+     * rebuilt them from the domain object (which has no relations or attachments in its DTO form)
+     * would silently drop subtasks and attachments until the next sync.
+     *
+     * Dates go through the same conversion as a full mapping, so the stored form of "no date"
+     * is unchanged.
+     */
+    fun TaskEntity.withEditedFields(edited: Task): TaskEntity {
+        val scalars = edited.toDto().toEntity()
+        return copy(
+            title = scalars.title,
+            description = scalars.description,
+            isMetadata = scalars.isMetadata,
+            done = scalars.done,
+            doneAt = scalars.doneAt,
+            dueDate = scalars.dueDate,
+            priority = scalars.priority,
+            projectId = scalars.projectId,
+            repeatAfter = scalars.repeatAfter,
+            repeatMode = scalars.repeatMode,
+            startDate = scalars.startDate,
+            endDate = scalars.endDate,
+            hexColor = scalars.hexColor,
+            percentDone = scalars.percentDone,
+            bucketId = scalars.bucketId,
+            isFavorite = scalars.isFavorite,
+            remindersJson = scalars.remindersJson,
+        )
+    }
+
+    /**
+     * Applies only a completion change onto this cached row. A done toggle patches `done` alone,
+     * so the optimistic row must not take any other field from the (possibly older) task the
+     * caller happened to hold.
+     */
+    fun TaskEntity.withDoneState(done: Boolean, doneAt: String): TaskEntity =
+        copy(done = done, doneAt = DateUtils.normalizeToUtc(dateOrNull(doneAt)))
+
+    private val relatedTasksSerializer =
+        MapSerializer(String.serializer(), ListSerializer(TaskDto.serializer()))
+
+    private fun decodeRelatedTasks(encoded: String): Map<String, List<TaskDto>> =
+        try {
+            json.decodeFromString(relatedTasksSerializer, encoded)
+        } catch (_: Exception) {
+            emptyMap()
+        }
+
+    fun TaskEntity.withRelatedTaskAdded(kind: String, other: TaskDto): TaskEntity {
+        val current = decodeRelatedTasks(relatedTasksJson)
+        val list = current[kind].orEmpty().filterNot { it.id == other.id } + other
+        val updated = current + (kind to list)
+        return copy(relatedTasksJson = json.encodeToString(relatedTasksSerializer, updated))
+    }
+
+    fun TaskEntity.withRelatedTaskRemoved(kind: String, otherId: Long): TaskEntity {
+        val current = decodeRelatedTasks(relatedTasksJson)
+        val list = current[kind].orEmpty().filterNot { it.id == otherId }
+        val updated = if (list.isEmpty()) current - kind else current + (kind to list)
+        return copy(relatedTasksJson = json.encodeToString(relatedTasksSerializer, updated))
+    }
+
+    fun TaskEntity.withRelatedTaskDone(otherId: Long, done: Boolean): TaskEntity {
+        val current = decodeRelatedTasks(relatedTasksJson)
+        val updated = current.mapValues { (_, tasks) ->
+            tasks.map {
+                if (it.id == otherId) {
+                    it.copy(done = done, doneAt = if (done) DateUtils.nowIso() else "")
+                } else {
+                    it
+                }
+            }
+        }
+        return copy(relatedTasksJson = json.encodeToString(relatedTasksSerializer, updated))
+    }
+
+    private val labelsSerializer = ListSerializer(LabelDto.serializer())
+
+    private fun decodeLabels(encoded: String): List<LabelDto> =
+        try {
+            json.decodeFromString(labelsSerializer, encoded)
+        } catch (_: Exception) {
+            emptyList()
+        }
+
+    fun TaskEntity.withLabelAdded(label: LabelDto): TaskEntity {
+        val current = decodeLabels(labelsJson)
+        if (current.any { it.id == label.id }) return this
+        return copy(labelsJson = json.encodeToString(labelsSerializer, current + label))
+    }
+
+    fun TaskEntity.withLabelRemoved(labelId: Long): TaskEntity {
+        val current = decodeLabels(labelsJson)
+        return copy(labelsJson = json.encodeToString(labelsSerializer, current.filterNot { it.id == labelId }))
+    }
+
+    private fun dateOrNull(value: String): String =
+        if (value.isBlank()) Constants.NULL_DATE_STRING else value
+
+    private fun dateOrNullable(value: String): String? =
+        if (value.isBlank() || DateUtils.isNullDate(value)) null else value
+
+    fun Task.toCreateDto(): CreateTaskDto = CreateTaskDto(
+        title = title,
+        description = description,
+        done = done,
+        dueDate = dateOrNullable(dueDate),
+        startDate = dateOrNullable(startDate),
+        priority = priority,
+        repeatAfter = repeatAfter,
+        repeatMode = repeatMode,
+        reminders = reminders.map { it.toDto() }.ifEmpty { null },
+    )
+
+    fun Task.toDto(): TaskDto = TaskDto(
+        id = id,
+        title = title,
+        description = description,
+        done = done,
+        doneAt = dateOrNull(doneAt),
+        dueDate = dateOrNull(dueDate),
+        priority = priority,
+        projectId = projectId,
+        repeatAfter = repeatAfter,
+        repeatMode = repeatMode,
+        startDate = dateOrNull(startDate),
+        endDate = dateOrNull(endDate),
+        hexColor = hexColor,
+        percentDone = percentDone,
+        index = index,
+        position = position,
+        kanbanPosition = kanbanPosition,
+        bucketId = bucketId,
+        created = dateOrNull(created),
+        updated = dateOrNull(updated),
+        createdBy = null,
+        labels = labels.map { it.toLabelDto() },
+        reminders = reminders.map { it.toDto() },
+        isFavorite = isFavorite,
+    )
+
+    private fun TaskReminderDto.toDomain(): TaskReminder = TaskReminder(
+        reminder = reminder.orEmpty(),
+        relativePeriod = relativePeriod,
+        relativeTo = relativeTo.orEmpty(),
+    )
+
+    private fun TaskReminder.toDto(): TaskReminderDto = TaskReminderDto(
+        reminder = dateOrNullable(reminder),
+        relativePeriod = relativePeriod,
+        relativeTo = relativeTo.ifBlank { null },
+    )
+
+    private fun AttachmentDto.toDomainAttachment(): Attachment = Attachment(
+        id = id,
+        taskId = taskId,
+        fileName = file?.name ?: "",
+        mimeType = file?.mime ?: "",
+        fileSize = file?.size ?: 0,
+        createdAt = created,
+    )
+
+    private fun LabelDto.toDomainLabel(): Label = Label(
+        id = id,
+        title = title,
+        description = description,
+        hexColor = hexColor,
+        createdById = createdBy?.id ?: 0,
+        created = created,
+        updated = updated,
+    )
+
+    private fun Label.toLabelDto(): LabelDto = LabelDto(
+        id = id,
+        title = title,
+        description = description,
+        hexColor = hexColor.removePrefix("#"),
+    )
+}

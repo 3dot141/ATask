@@ -15,7 +15,7 @@ kotlin {
     // The AGP 9 library plugin for Kotlin Multiplatform (the old com.android.library plugin is not
     // compatible with the Kotlin Multiplatform plugin from AGP 9).
     androidLibrary {
-        namespace = "com.rendyhd.vicu.shared"
+        namespace = "com.yes365.atask.shared"
         compileSdk = 36
         minSdk = 26
 
@@ -148,11 +148,11 @@ val generateIosTestPaths by tasks.registering {
     inputs.property("repoRoot", repoRoot)
     outputs.dir(outputDir)
     doLast {
-        val file = outputDir.get().file("com/rendyhd/vicu/util/TestPaths.kt").asFile
+        val file = outputDir.get().file("com/yes365/atask/util/TestPaths.kt").asFile
         file.parentFile.mkdirs()
         val escaped = repoRoot.replace("\\", "\\\\").replace("\"", "\\\"").replace("$", "\\$")
         file.writeText(
-            "package com.rendyhd.vicu.util\n\n" +
+            "package com.yes365.atask.util\n\n" +
                 "internal object TestPaths {\n    const val REPO_ROOT = \"$escaped\"\n}\n",
         )
     }
@@ -184,10 +184,10 @@ val generateAiContract by tasks.registering {
             append('"')
         }
         val pieces = text.chunked(8_000).joinToString(",\n        ") { literal(it) }
-        val file = outputDir.get().file("com/rendyhd/vicu/ai/AiContractSource.kt").asFile
+        val file = outputDir.get().file("com/yes365/atask/ai/AiContractSource.kt").asFile
         file.parentFile.mkdirs()
         file.writeText(
-            "package com.rendyhd.vicu.ai\n\n" +
+            "package com.yes365.atask.ai\n\n" +
                 "/** Generated from test-fixtures/ai-tools-v1.json by :shared:generateAiContract. Do not edit. */\n" +
                 "internal object AiContractSource {\n" +
                 "    val json: String get() = PIECES.joinToString(\"\")\n\n" +

@@ -29,7 +29,7 @@
 -keepattributes RuntimeVisibleAnnotations,AnnotationDefault
 
 # Keep all @Serializable data classes in our packages
--keep @kotlinx.serialization.Serializable class com.rendyhd.vicu.** { *; }
+-keep @kotlinx.serialization.Serializable class com.yes365.atask.** { *; }
 
 # =============================================================================
 # Reflection metadata (generic signatures and annotations that Ktor, kotlinx.serialization and
@@ -61,10 +61,10 @@
 # Glance (Widgets)
 # =============================================================================
 # Keep widget classes referenced by name in manifest/XML
--keep class com.rendyhd.vicu.widget.TaskListWidget { *; }
--keep class com.rendyhd.vicu.widget.TaskWidgetReceiver { *; }
--keep class com.rendyhd.vicu.widget.TaskWidgetWorker { *; }
--keep class com.rendyhd.vicu.widget.ToggleTaskCallback { *; }
+-keep class com.yes365.atask.widget.TaskListWidget { *; }
+-keep class com.yes365.atask.widget.TaskWidgetReceiver { *; }
+-keep class com.yes365.atask.widget.TaskWidgetWorker { *; }
+-keep class com.yes365.atask.widget.ToggleTaskCallback { *; }
 
 # Keep ActionCallback subclasses (Glance resolves them by class name)
 -keep class * extends androidx.glance.appwidget.action.ActionCallback { *; }
@@ -72,9 +72,9 @@
 # =============================================================================
 # BroadcastReceivers (resolved by name from AndroidManifest)
 # =============================================================================
--keep class com.rendyhd.vicu.notification.AlarmReceiver { *; }
--keep class com.rendyhd.vicu.notification.NotificationActionReceiver { *; }
--keep class com.rendyhd.vicu.notification.BootReceiver { *; }
+-keep class com.yes365.atask.notification.AlarmReceiver { *; }
+-keep class com.yes365.atask.notification.NotificationActionReceiver { *; }
+-keep class com.yes365.atask.notification.BootReceiver { *; }
 
 # =============================================================================
 # WorkManager Workers (resolved by class name)
@@ -103,7 +103,7 @@
     public static int d(...);
     public static int i(...);
 }
--assumenosideeffects class com.rendyhd.vicu.util.Logger {
+-assumenosideeffects class com.yes365.atask.util.Logger {
     public void d(java.lang.String, java.lang.String);
     public void i(java.lang.String, java.lang.String);
 }
@@ -123,7 +123,7 @@
 # =============================================================================
 # Navigation Compose (type-safe routes are @Serializable)
 # =============================================================================
--keep @kotlinx.serialization.Serializable class com.rendyhd.vicu.ui.navigation.** { *; }
+-keep @kotlinx.serialization.Serializable class com.yes365.atask.ui.navigation.** { *; }
 
 # =============================================================================
 # Enum classes
@@ -137,6 +137,6 @@
 # Local speech (JNI)
 # =============================================================================
 # libvicu_speech.so binds its functions by class and method name (native/speech/vicu_speech_jni.cpp).
--keep class com.rendyhd.vicu.speech.VicuSpeechJni {
+-keep class com.yes365.atask.speech.VicuSpeechJni {
     native <methods>;
 }

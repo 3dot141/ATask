@@ -1,0 +1,240 @@
+package com.yes365.atask.ui.screens.upcoming
+
+import com.yes365.atask.ui.i18n.t
+import com.yes365.atask.ui.components.fab.FabDropTarget
+import com.yes365.atask.ui.components.fab.fabDropTarget
+import com.yes365.atask.ui.components.shared.LocalClockDay
+import com.yes365.atask.ui.navigation.ScreenReady
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.yes365.atask.ui.components.section.ProjectMeta
+import com.yes365.atask.ui.components.section.SectionLevel
+import com.yes365.atask.ui.components.section.showsGroupHeader
+import com.yes365.atask.util.parseHexColor
+import com.yes365.atask.ui.components.section.SectionHeader
+import com.yes365.atask.ui.components.section.openCount
+import com.yes365.atask.ui.components.shared.FabClearance
+import com.yes365.atask.util.DateContext
+import com.yes365.atask.util.DateDisplay
+import com.yes365.atask.voice.TaskDefaults
+import org.koin.compose.viewmodel.koinViewModel
+import com.yes365.atask.ui.components.selection.SelectionAction
+import com.yes365.atask.ui.components.selection.SelectionPickers
+import com.yes365.atask.ui.components.selection.SelectionTopBar
+import com.yes365.atask.ui.components.selection.SelectionViewModel
+import com.yes365.atask.ui.components.shared.EmptyState
+import com.yes365.atask.ui.components.shared.LocalDateFormat
+import com.yes365.atask.ui.components.shared.LocalFabAlignStart
+import com.yes365.atask.ui.components.shared.LocalToday
+import com.yes365.atask.ui.components.shared.ScreenFab
+import com.yes365.atask.ui.components.shared.VicuTopAppBar
+import com.yes365.atask.ui.components.shared.rememberVicuTopBarScroll
+import com.yes365.atask.ui.components.task.SwipeableTaskItem
+import com.yes365.atask.ui.components.task.UpcomingRowView
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UpcomingScreen(
+    onTaskClick: (Long) -> Unit = {},
+    onOpenDrawer: () -> Unit = {},
+    onNavigateToSearch: () -> Unit = {},
+    onShowTaskEntry: (Long?, String?) -> Unit = { _, _ -> },
+    viewModel: UpcomingViewModel = koinViewModel(),
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    // A screen navigated to fades in once this is true (ScreenReveal).
+    ScreenReady(!state.isLoading)
+
+    // Rows kept on screen after completing them are let go when the screen is left.
+    val snackbarHostState = remember { SnackbarHostState() }
+    val listState = rememberLazyListState()
+    val topBarScroll = rememberVicuTopBarScroll()
+
+    val selectionVm: SelectionViewModel = koinViewModel()
+    val selectedIds by selectionVm.selectedIds.collectAsStateWithLifecycle()
+    val selectionActive = selectedIds.isNotEmpty()
+    var selectionAction by remember { mutableStateOf<SelectionAction?>(null) }
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = selectionActive,
+    ) { selectionVm.clear() }
+
+    Scaffold(
+
+        modifier = topBarScroll.modifier,
+        topBar = {
+            if (selectionActive) {
+                SelectionTopBar(
+                    count = selectedIds.size,
+                    onClose = { selectionVm.clear() },
+                    onToday = { selectionVm.bulkToday() },
+                    onComplete = { selectionVm.bulkComplete(viewModel.completions) },
+                    onSchedule = { selectionAction = SelectionAction.SCHEDULE },
+                    onSetPriority = { selectionAction = SelectionAction.SET_PRIORITY },
+                    onMove = { selectionAction = SelectionAction.MOVE_PROJECT },
+                    onApplyLabel = { selectionAction = SelectionAction.APPLY_LABEL },
+                    onRemove = { selectionAction = SelectionAction.REMOVE },
+                )
+            } else {
+                VicuTopAppBar(
+                    title = { Text(t("Upcoming")) },
+                    onOpenDrawer = onOpenDrawer,
+                    scroll = topBarScroll,
+                    onNavigateToSearch = onNavigateToSearch,
+                )
+            }
+        },
+        floatingActionButton = {
+            if (!selectionActive) {
+                ScreenFab(
+                    onClick = { onShowTaskEntry(null, null) },
+                    expanded = !listState.canScrollBackward,
+                    taskDefaults = TaskDefaults(listName = "Upcoming"),
+                )
+            }
+        },
+        floatingActionButtonPosition = if (LocalFabAlignStart.current) FabPosition.Start else FabPosition.End,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { padding ->
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { viewModel.refresh(showSpinner = true) },
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+        ) {
+            val today = LocalToday.current
+            val dateFormat = LocalDateFormat.current
+            LazyColumn(state = listState, modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = FabClearance)) {
+                if (state.days.isEmpty() && !state.isLoading) {
+                    item {
+                        EmptyState(
+                            icon = Icons.Outlined.CalendarMonth,
+                            title = t("Nothing upcoming"),
+                            subtitle = t("Tasks with future due dates appear here"),
+                        )
+                    }
+                } else {
+                    state.days.forEach { day ->
+                        stickyHeader(key = "day_${day.date}", contentType = "header") {
+                            // Pinned to the top while the day's tasks scroll under it.
+                            SectionHeader(
+                                title = DateDisplay.formatDay(DateContext.HEADER_DAY, day.date, today, dateFormat),
+                                count = openCount(day.tasks, state.completedTaskIds),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.background)
+                                    // Drop the + here for a task due that day; pinned over the rows.
+                                    .fabDropTarget(FabDropTarget.day(day.date, LocalClockDay.current.zone), layer = 1),
+                            )
+                        }
+                        day.groups.forEach { group ->
+                            // A group of one task has no header: its project goes on the row's meta line.
+                            val hasHeader = showsGroupHeader(group.tasks.size)
+                            val projectMeta = if (hasHeader) null else ProjectMeta(group.title, group.hexColor)
+                            if (hasHeader) {
+                                item(key = "group_${day.date}_${group.projectId}", contentType = "header") {
+                                    SectionHeader(
+                                        title = group.title,
+                                        level = SectionLevel.TWO,
+                                        dotColor = parseHexColor(group.hexColor),
+                                        count = openCount(group.tasks, state.completedTaskIds),
+                                        modifier = Modifier.fabDropTarget(
+                                            FabDropTarget.day(day.date, LocalClockDay.current.zone, group.projectId.takeIf { it > 0 }),
+                                        ),
+                                    )
+                                }
+                            }
+                            items(group.tasks, key = { it.id }, contentType = { "task" }) { task ->
+                                val displayTask =
+                                    if (task.id in state.completedTaskIds) task.copy(done = true) else task
+                                SwipeableTaskItem(
+                                    task = displayTask,
+                                    onToggleDone = {
+                                        if (task.id in state.completedTaskIds) {
+                                            viewModel.undoComplete(task)
+                                        } else {
+                                            viewModel.toggleDone(task)
+                                        }
+                                    },
+                                    onClick = {
+                                        if (selectionActive) {
+                                            selectionVm.toggle(task.id)
+                                        } else {
+                                            onTaskClick(task.id)
+                                        }
+                                    },
+                                    onSubtaskToggleDone = viewModel::toggleDone,
+                                    onSubtaskClick = { child -> onTaskClick(child.id) },
+                                    selectionActive = selectionActive,
+                                    selected = task.id in selectedIds,
+                                    onLongClick = { selectionVm.toggle(task.id) },
+                                    modifier = Modifier.animateItem(),
+                                    rowView = UpcomingRowView,
+                                    projectMeta = projectMeta,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    SelectionPickers(
+        selectionVm = selectionVm,
+        action = selectionAction,
+        selectedCount = selectedIds.size,
+        onDismiss = { selectionAction = null },
+    )
+
+    LaunchedEffect(state.error) {
+        state.error?.let { msg ->
+            val result = snackbarHostState.showSnackbar(
+                message = msg,
+                actionLabel = "Retry",
+                duration = SnackbarDuration.Short,
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                viewModel.refresh(true)
+            }
+            viewModel.clearError()
+        }
+    }
+}

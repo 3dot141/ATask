@@ -41,12 +41,12 @@ scripts/generate.sh
 version=$(sed -n 's/^MARKETING_VERSION = //p' Configuration/Version.xcconfig)
 build=$(sed -n 's/^CURRENT_PROJECT_VERSION = //p' Configuration/Version.xcconfig)
 out=build/testflight/$version-$build
-archive=$out/Vicu.xcarchive
-echo "Vicu $version ($build), team $team -> $archive"
+archive=$out/ATask.xcarchive
+echo "ATask $version ($build), team $team -> $archive"
 
 rm -rf "$out"
 xcodebuild archive \
-  -project Vicu.xcodeproj -scheme Vicu -configuration Release \
+  -project ATask.xcodeproj -scheme ATask -configuration Release \
   -destination 'generic/platform=iOS' \
   -archivePath "$archive" \
   -allowProvisioningUpdates ${auth[@]+"${auth[@]}"} \
@@ -64,4 +64,4 @@ xcodebuild -exportArchive \
   -exportOptionsPlist ExportOptions.plist \
   -allowProvisioningUpdates ${auth[@]+"${auth[@]}"}
 
-echo "Uploaded Vicu $version ($build). It shows in TestFlight once App Store Connect has processed it."
+echo "Uploaded ATask $version ($build). It shows in TestFlight once App Store Connect has processed it."

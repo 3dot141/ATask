@@ -25,13 +25,13 @@ if (keystorePropsFile.exists()) {
 }
 
 android {
-    namespace = "com.rendyhd.vicu"
+    namespace = "com.yes365.atask"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.rendyhd.vicu"
+        applicationId = "com.yes365.atask"
         minSdk = 26
         targetSdk = 36
         versionCode = versionProps.getProperty("versionCode").toInt()

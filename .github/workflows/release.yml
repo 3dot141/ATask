@@ -69,7 +69,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: com.rendyhd.vicu
+          packageName: com.yes365.atask
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           releaseName: ${{ github.event.release.tag_name }}
           track: ${{ vars.PLAY_TRACK || 'internal' }}

@@ -1,0 +1,255 @@
+package com.yes365.atask.ui.components.shared
+
+import com.yes365.atask.ui.i18n.t
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.yes365.atask.domain.model.Project
+import com.yes365.atask.util.PRESET_COLORS
+import com.yes365.atask.util.parseHexColor
+
+/**
+ * Collects all descendant project ids of [rootId] with a visited guard, so pre-existing
+ * cyclic parent data can't cause infinite recursion.
+ */
+private fun collectDescendantIds(rootId: Long, projects: List<Project>): Set<Long> {
+    val childrenByParent = projects.groupBy { it.parentProjectId }
+    val result = mutableSetOf<Long>()
+    val stack = ArrayDeque<Long>()
+    childrenByParent[rootId]?.forEach { stack.addLast(it.id) }
+    while (stack.isNotEmpty()) {
+        val id = stack.removeLast()
+        if (!result.add(id)) continue // visited guard breaks cycles
+        childrenByParent[id]?.forEach { stack.addLast(it.id) }
+    }
+    return result
+}
+
+/**
+ * The parent the dialog starts with: the edited project's own, or [initialParentId] for a new one
+ * (0 is top level; "Add subproject" passes the project it was chosen on).
+ */
+internal fun startingParentId(project: Project?, initialParentId: Long): Long =
+    project?.parentProjectId ?: initialParentId
+
+/**
+ * "Create Project" for a null [project], "Edit Project" otherwise. A new project starts below
+ * [initialParentId] (top level for 0), which the user can still change.
+ */
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun ProjectEditDialog(
+    project: Project? = null,
+    projects: List<Project>,
+    onSave: (name: String, hexColor: String, parentProjectId: Long) -> Unit,
+    onDismiss: () -> Unit,
+    initialParentId: Long = 0L,
+) {
+    val isEdit = project != null
+    var name by remember { mutableStateOf(project?.title ?: "") }
+    // New projects default to "None" (empty hex → renderer falls back to the theme color).
+    var selectedColor by remember { mutableStateOf(project?.hexColor.orEmpty()) }
+    var parentId by remember { mutableLongStateOf(startingParentId(project, initialParentId)) }
+    var parentDropdownExpanded by remember { mutableStateOf(false) }
+
+    // Exclude the project being edited AND its descendants from parent options, so a cycle
+    // (A→B→A) can't be created — such a cycle would StackOverflow any recursive tree walk.
+    val availableParents = remember(projects, project?.id) {
+        if (project == null) {
+            projects
+        } else {
+            val descendants = collectDescendantIds(project.id, projects)
+            projects.filter { it.id != project.id && it.id !in descendants }
+        }
+    }
+
+    val parentLabel = if (parentId == 0L) {
+        "None (top-level)"
+    } else {
+        availableParents.find { it.id == parentId }?.title ?: "None (top-level)"
+    }
+
+    // A sheet from the bottom edge, full width, like the routine editor.
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            Text(
+                if (isEdit) t("Edit Project") else t("Create Project"),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            // The sharing section can make the sheet taller than the screen.
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 520.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text(t("Name")) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ExposedDropdownMenuBox(
+                    expanded = parentDropdownExpanded,
+                    onExpandedChange = { parentDropdownExpanded = it },
+                ) {
+                    OutlinedTextField(
+                        value = parentLabel,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(t("Parent Project")) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = parentDropdownExpanded)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = parentDropdownExpanded,
+                        onDismissRequest = { parentDropdownExpanded = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(t("None (top-level)")) },
+                            onClick = {
+                                parentId = 0L
+                                parentDropdownExpanded = false
+                            },
+                        )
+                        availableParents.forEach { p ->
+                            DropdownMenuItem(
+                                text = { Text(p.title) },
+                                onClick = {
+                                    parentId = p.id
+                                    parentDropdownExpanded = false
+                                },
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = t("Color"),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    // "None" — hollow swatch; empty hex renders with the theme color.
+                    val noneSelected = selectedColor.isBlank()
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .border(
+                                width = if (noneSelected) 3.dp else 1.dp,
+                                color = if (noneSelected) {
+                                    MaterialTheme.colorScheme.onSurface
+                                } else {
+                                    MaterialTheme.colorScheme.outline
+                                },
+                                shape = CircleShape,
+                            )
+                            .clickable { selectedColor = "" },
+                    )
+                    PRESET_COLORS.forEach { hex ->
+                        val color = parseHexColor(hex) ?: Color.Gray
+                        val normalizedSelected = selectedColor.let {
+                            if (it.startsWith("#")) it else "#$it"
+                        }
+                        val isSelected = hex == normalizedSelected
+
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                                .then(
+                                    if (isSelected) Modifier.border(
+                                        3.dp,
+                                        MaterialTheme.colorScheme.onSurface,
+                                        CircleShape,
+                                    )
+                                    else Modifier
+                                )
+                                .clickable { selectedColor = hex },
+                        )
+                    }
+                }
+
+                // Sharing applies at once, apart from Save (admins of an existing project only).
+                if (project != null) {
+                    ProjectSharingSection(project = project, modifier = Modifier.padding(top = 24.dp))
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onDismiss) { Text(t("Cancel")) }
+                TextButton(
+                    onClick = {
+                        if (name.isNotBlank()) {
+                            onSave(name.trim(), selectedColor, parentId)
+                        }
+                    },
+                    enabled = name.isNotBlank(),
+                ) {
+                    Text(if (isEdit) t("Save") else t("Create"))
+                }
+            }
+        }
+    }
+}

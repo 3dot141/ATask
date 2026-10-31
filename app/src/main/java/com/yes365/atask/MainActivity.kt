@@ -1,0 +1,293 @@
+package com.yes365.atask
+
+import com.yes365.atask.voice.AndroidSpeechInput
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import com.yes365.atask.auth.AuthDebugLog
+import com.yes365.atask.auth.AuthManager
+import com.yes365.atask.auth.AuthState
+import com.yes365.atask.data.local.NotificationPrefsStore
+import com.yes365.atask.data.local.ThemeMode
+import com.yes365.atask.data.local.ThemePrefsStore
+import com.yes365.atask.data.remote.BaseUrlHolder
+import com.yes365.atask.domain.model.SharedContent
+import com.yes365.atask.notification.DailySummaryScheduler
+import com.yes365.atask.location.AndroidLocationPermissionPlatform
+import com.yes365.atask.permission.AndroidNotificationPermissionPlatform
+import com.yes365.atask.ui.VicuApp
+import com.yes365.atask.ui.navigation.ViewTarget
+import com.yes365.atask.worker.PeriodicSyncScheduler
+import com.yes365.atask.worker.RoutineMaintenanceScheduler
+import com.yes365.atask.worker.TokenRefreshScheduler
+import com.yes365.atask.worker.SyncScheduler
+import com.yes365.atask.ui.theme.VicuTheme
+import com.yes365.atask.widget.WidgetUpdateScheduler
+import org.koin.android.ext.android.inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+
+class MainActivity : ComponentActivity() {
+
+    companion object {
+        const val EXTRA_SHOW_TASK_ENTRY = "show_task_entry"
+        const val EXTRA_DEFAULT_PROJECT_ID = "default_project_id"
+
+        /** The launcher's Dictate shortcut: smart dictation or the voice card (`AppLink.Dictate`). */
+        const val EXTRA_START_DICTATION = "start_dictation"
+    }
+
+    private val authManager: AuthManager by inject()
+    private val baseUrlHolder: BaseUrlHolder by inject()
+    private val themePrefsStore: ThemePrefsStore by inject()
+    private val notificationPrefsStore: NotificationPrefsStore by inject()
+    private val dailySummaryScheduler: DailySummaryScheduler by inject()
+    private val notificationPermissionPlatform: AndroidNotificationPermissionPlatform by inject()
+    private val locationPermissionPlatform: AndroidLocationPermissionPlatform by inject()
+    private val speechInput: AndroidSpeechInput by inject()
+
+    private val _initialTaskId = MutableStateFlow<Long?>(null)
+    private val _showTaskEntry = MutableStateFlow(false)
+    private val _showTaskEntryProjectId = MutableStateFlow<Long?>(null)
+    private val _navigateToView = MutableStateFlow<ViewTarget?>(null)
+    private val _sharedContent = MutableStateFlow<SharedContent?>(null)
+    private val _startDictation = MutableStateFlow(false)
+
+    private val launchNotificationPermissionRequest: () -> Unit = {
+        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* no-op: alarms are scheduled regardless; Settings re-checks the state on resume */ }
+
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { result -> locationPermissionPlatform.onResult(result.keys) }
+
+    private val launchLocationPermissionRequest: (Array<String>) -> Unit = { permissions ->
+        locationPermissionLauncher.launch(permissions)
+    }
+
+    // Holding + to say a task asks for the microphone on the first hold.
+    private val microphonePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> speechInput.onPermissionResult(granted) }
+
+    private val launchMicrophonePermissionRequest: () -> Unit = {
+        microphonePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        AuthDebugLog.init(applicationContext)
+        AuthDebugLog.lifecycle("onCreate (savedState=${savedInstanceState != null})")
+
+        // The launch intent is still the activity's intent after a rotation or a restore. Handling
+        // it again would reopen a share, a task or a widget "add" the user had already finished
+        // with; what was in progress comes back through the saved state instead.
+        if (savedInstanceState == null) handleIntent(intent)
+        // The notification permission is not asked for here: the shared coordinator asks after setup
+        // or when a reminder or summary is turned on (see NotificationPermissionCoordinator).
+        notificationPermissionPlatform.attach(launchNotificationPermissionRequest)
+        locationPermissionPlatform.attach(launchLocationPermissionRequest)
+        speechInput.attach(launchMicrophonePermissionRequest)
+
+        lifecycleScope.launch {
+            val storedUrl = authManager.getVikunjaUrl()
+            if (!storedUrl.isNullOrBlank()) {
+                baseUrlHolder.baseUrl = storedUrl
+            }
+            authManager.initialize()
+            // Schedule periodic token refresh if authenticated
+            if (authManager.authState.value == com.yes365.atask.auth.AuthState.Authenticated) {
+                TokenRefreshScheduler.schedule(this@MainActivity)
+                SyncScheduler.enqueueWhenOnline(this@MainActivity)
+                PeriodicSyncScheduler.schedule(this@MainActivity)
+            }
+        }
+
+        // A sync that stopped because the session ended (401 after a failed token refresh) left
+        // the queued changes pending; signing in again resumes it.
+        lifecycleScope.launch {
+            var neededReAuth = false
+            var signedOut = false
+            var ensuredAtStart = false
+            authManager.authState.collect { state ->
+                if (state == AuthState.Authenticated && !ensuredAtStart) {
+                    // A cheap check on every start: a summary queued already is left alone.
+                    ensuredAtStart = true
+                    dailySummaryScheduler.ensureScheduled(notificationPrefsStore.getPrefs().first())
+                }
+                if (state == AuthState.Authenticated && neededReAuth) {
+                    SyncScheduler.enqueueImmediate(this@MainActivity)
+                }
+                if (state == AuthState.Authenticated && signedOut) {
+                    // Sign-out cancelled the daily summaries, the routine maintenance and the periodic sync.
+                    // A device that started signed out never scheduled the widget refresh either.
+                    RoutineMaintenanceScheduler.schedule(this@MainActivity)
+                    WidgetUpdateScheduler.schedulePeriodicRefresh(this@MainActivity)
+                    PeriodicSyncScheduler.schedule(this@MainActivity)
+                    dailySummaryScheduler.scheduleFromPrefs(notificationPrefsStore.getPrefs().first())
+                }
+                neededReAuth = state == AuthState.NeedsReAuth
+                signedOut = state == AuthState.Unauthenticated
+            }
+        }
+
+        setContent {
+            val themeMode = themePrefsStore.themeMode.collectAsStateWithLifecycle(
+                initialValue = ThemeMode.System,
+            )
+            val useDeviceColors = themePrefsStore.useDeviceColors.collectAsStateWithLifecycle(
+                initialValue = false,
+            )
+            val pureBlack = themePrefsStore.pureBlack.collectAsStateWithLifecycle(
+                initialValue = false,
+            )
+            VicuTheme(
+                themeMode = themeMode.value,
+                dynamicColor = useDeviceColors.value,
+                pureBlack = pureBlack.value,
+            ) {
+                VicuApp(
+                    authManager = authManager,
+                    initialTaskId = _initialTaskId,
+                    onInitialTaskConsumed = { _initialTaskId.value = null },
+                    showTaskEntry = _showTaskEntry,
+                    showTaskEntryProjectId = _showTaskEntryProjectId,
+                    onShowTaskEntryConsumed = {
+                        _showTaskEntry.value = false
+                        _showTaskEntryProjectId.value = null
+                    },
+                    navigateToView = _navigateToView,
+                    onNavigateToViewConsumed = { _navigateToView.value = null },
+                    sharedContent = _sharedContent,
+                    onSharedContentConsumed = { _sharedContent.value = null },
+                    startDictation = _startDictation,
+                    onStartDictationConsumed = { _startDictation.value = false },
+                )
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        AuthDebugLog.lifecycle("onNewIntent")
+        handleIntent(intent)
+        // Re-check auth state — JWT may have expired while app was in background
+        lifecycleScope.launch { authManager.initialize() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AuthDebugLog.lifecycle("onResume (authState=${authManager.authState.value})")
+        if (authManager.authState.value == com.yes365.atask.auth.AuthState.Authenticated) {
+            SyncScheduler.enqueueWhenOnline(this)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        AuthDebugLog.lifecycle("onStop (authState=${authManager.authState.value})")
+    }
+
+    override fun onDestroy() {
+        AuthDebugLog.lifecycle("onDestroy (isFinishing=$isFinishing)")
+        notificationPermissionPlatform.detach(launchNotificationPermissionRequest)
+        locationPermissionPlatform.detach(launchLocationPermissionRequest)
+        speechInput.detach(launchMicrophonePermissionRequest)
+        super.onDestroy()
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        if (intent == null) return
+
+        val taskId = intent.getLongExtra("task_id", 0L)
+        if (taskId != 0L) {
+            _initialTaskId.value = taskId
+        }
+        if (intent.getBooleanExtra(EXTRA_SHOW_TASK_ENTRY, false)) {
+            _showTaskEntry.value = true
+            val projectId = intent.getLongExtra(EXTRA_DEFAULT_PROJECT_ID, 0L)
+            if (projectId != 0L) {
+                _showTaskEntryProjectId.value = projectId
+            }
+        }
+
+        if (intent.getBooleanExtra(EXTRA_START_DICTATION, false)) {
+            _startDictation.value = true
+        }
+
+        intent.viewTargetOrNull()?.let { _navigateToView.value = it }
+
+        when (intent.action) {
+            Intent.ACTION_SEND -> handleSendIntent(intent)
+            Intent.ACTION_SEND_MULTIPLE -> handleSendMultipleIntent(intent)
+        }
+    }
+
+    private fun handleSendIntent(intent: Intent) {
+        val text = intent.getStringExtra(Intent.EXTRA_TEXT)
+        val subject = intent.getStringExtra(Intent.EXTRA_SUBJECT)
+        val streamUri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(Intent.EXTRA_STREAM)
+        }
+
+        grantUriReadPermission(streamUri)
+
+        _sharedContent.value = SharedContent(
+            text = text,
+            subject = subject,
+            fileUris = listOfNotNull(streamUri).map { it.toString() },
+            mimeType = intent.type,
+        )
+    }
+
+    private fun handleSendMultipleIntent(intent: Intent) {
+        val uris: List<Uri> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)
+        } ?: emptyList()
+
+        for (uri in uris) {
+            grantUriReadPermission(uri)
+        }
+
+        _sharedContent.value = SharedContent(
+            text = intent.getStringExtra(Intent.EXTRA_TEXT),
+            subject = intent.getStringExtra(Intent.EXTRA_SUBJECT),
+            fileUris = uris.map { it.toString() },
+            mimeType = intent.type,
+        )
+    }
+
+    private fun grantUriReadPermission(uri: Uri?) {
+        uri ?: return
+        try {
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION,
+            )
+        } catch (_: SecurityException) {
+            // Not all URIs support persistable permissions — that's OK,
+            // the temporary grant from the share intent is sufficient.
+        }
+    }
+}

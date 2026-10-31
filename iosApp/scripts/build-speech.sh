@@ -1,5 +1,5 @@
 #!/bin/sh
-# Builds Vicu's local speech engine (native/speech: vicu_speech.h over whisper.cpp) for iOS as one
+# Builds ATask's local speech engine (native/speech: vicu_speech.h over whisper.cpp) for iOS as one
 # static library, libvicu_speech_all.a (vicu_speech, whisper, parakeet and ggml with Metal and
 # Accelerate), which the shared module's cinterop links into the Kotlin framework and the iOS tests.
 # Gradle runs it before the cinterop of each iOS target (shared/build.gradle.kts); by hand:
@@ -9,7 +9,7 @@
 # The output folder (default shared/build/speech-ios/<sdk>) gets lib/libvicu_speech_all.a and
 # include/vicu_speech.h. Nothing is rebuilt while the sources and this script are unchanged.
 # CMake comes from PATH or the Android SDK (cmake/<version>/bin); whisper.cpp is downloaded by
-# CMake (pinned by SHA-256) unless VICU_WHISPER_SOURCE_DIR names an unpacked copy.
+# CMake (pinned by SHA-256) unless ATASK_WHISPER_SOURCE_DIR names an unpacked copy.
 set -eu
 
 SDK="${1:-}"
@@ -26,7 +26,7 @@ LIB="$OUT/lib/libvicu_speech_all.a"
 
 # Up to date when the inputs hash the same as for the library there.
 STAMP_VALUE=$( (cat "$SRC/CMakeLists.txt" "$SRC/vicu_speech.cpp" "$SRC/vicu_speech.h" "$0"; \
-  echo "$SDK $DEPLOYMENT_TARGET ${VICU_WHISPER_SOURCE_DIR:-}") | shasum -a 256 | cut -d' ' -f1)
+  echo "$SDK $DEPLOYMENT_TARGET ${ATASK_WHISPER_SOURCE_DIR:-}") | shasum -a 256 | cut -d' ' -f1)
 if [ -f "$LIB" ] && [ -f "$OUT/stamp" ] && [ "$(cat "$OUT/stamp")" = "$STAMP_VALUE" ]; then
   echo "vicu_speech for $SDK is up to date"
   exit 0
@@ -54,13 +54,13 @@ set -- \
   -DCMAKE_OSX_SYSROOT="$SDK" \
   -DCMAKE_OSX_ARCHITECTURES=arm64 \
   -DCMAKE_OSX_DEPLOYMENT_TARGET="$DEPLOYMENT_TARGET" \
-  -DVICU_SPEECH_SHARED=OFF \
+  -DATASK_SPEECH_SHARED=OFF \
   -DGGML_METAL=ON \
   -DGGML_METAL_EMBED_LIBRARY=ON \
   -DGGML_BLAS=ON \
   -DGGML_BLAS_VENDOR=Apple
-if [ -n "${VICU_WHISPER_SOURCE_DIR:-}" ]; then
-  set -- "$@" -DVICU_WHISPER_SOURCE_DIR="$VICU_WHISPER_SOURCE_DIR"
+if [ -n "${ATASK_WHISPER_SOURCE_DIR:-}" ]; then
+  set -- "$@" -DATASK_WHISPER_SOURCE_DIR="$ATASK_WHISPER_SOURCE_DIR"
 fi
 
 echo "Building vicu_speech for $SDK with $(cmake --version | head -1) ($GENERATOR)"

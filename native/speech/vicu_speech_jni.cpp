@@ -1,4 +1,4 @@
-// JNI for com.rendyhd.vicu.speech.VicuSpeechJni (app/src/main/java/com/rendyhd/vicu/speech/), the
+// JNI for com.yes365.atask.speech.VicuSpeechJni (app/src/main/java/com/yes365/atask/speech/), the
 // Android side of vicu_speech.h. Handles travel as jlong (0 is none). Strings cross as UTF-16 both
 // ways, converted here, because JNI's "UTF" functions use modified UTF-8, which encodes characters
 // outside the Basic Multilingual Plane (emoji in a project name) differently from whisper.cpp.
@@ -103,20 +103,20 @@ jlong to_handle(const void * pointer) {
 extern "C" {
 
 JNIEXPORT jstring JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_version(JNIEnv * env, jclass) {
+Java_com_yes365_atask_speech_VicuSpeechJni_version(JNIEnv * env, jclass) {
     const char * version = vs_version();
     return version == nullptr ? nullptr : env->NewStringUTF(version);
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_vadOpen(JNIEnv * env, jclass, jstring path, jint threads) {
+Java_com_yes365_atask_speech_VicuSpeechJni_vadOpen(JNIEnv * env, jclass, jstring path, jint threads) {
     if (path == nullptr) return 0;
     const std::string file = to_utf8(env, path);
     return to_handle(vs_vad_open(file.c_str(), threads));
 }
 
 JNIEXPORT jint JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_vadFeed(JNIEnv * env, jclass, jlong vad, jfloatArray samples, jint count,
+Java_com_yes365_atask_speech_VicuSpeechJni_vadFeed(JNIEnv * env, jclass, jlong vad, jfloatArray samples, jint count,
                                                     jfloatArray outProbs) {
     if (vad == 0 || samples == nullptr || outProbs == nullptr || count < 0) return -1;
     if (count > env->GetArrayLength(samples)) return -1;
@@ -133,24 +133,24 @@ Java_com_rendyhd_vicu_speech_VicuSpeechJni_vadFeed(JNIEnv * env, jclass, jlong v
 }
 
 JNIEXPORT void JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_vadReset(JNIEnv *, jclass, jlong vad) {
+Java_com_yes365_atask_speech_VicuSpeechJni_vadReset(JNIEnv *, jclass, jlong vad) {
     vs_vad_reset(from_handle<vs_vad>(vad));
 }
 
 JNIEXPORT void JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_vadClose(JNIEnv *, jclass, jlong vad) {
+Java_com_yes365_atask_speech_VicuSpeechJni_vadClose(JNIEnv *, jclass, jlong vad) {
     vs_vad_close(from_handle<vs_vad>(vad));
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_modelOpen(JNIEnv * env, jclass, jstring path, jint engine, jboolean useGpu) {
+Java_com_yes365_atask_speech_VicuSpeechJni_modelOpen(JNIEnv * env, jclass, jstring path, jint engine, jboolean useGpu) {
     if (path == nullptr) return 0;
     const std::string file = to_utf8(env, path);
     return to_handle(vs_model_open(file.c_str(), engine, useGpu ? 1 : 0));
 }
 
 JNIEXPORT jstring JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_transcribe(JNIEnv * env, jclass, jlong model, jfloatArray samples, jint count,
+Java_com_yes365_atask_speech_VicuSpeechJni_transcribe(JNIEnv * env, jclass, jlong model, jfloatArray samples, jint count,
                                                        jstring language, jstring prompt, jint threads) {
     if (model == 0 || samples == nullptr || count <= 0 || count > env->GetArrayLength(samples)) return nullptr;
     const std::string lang = to_utf8(env, language);
@@ -170,12 +170,12 @@ Java_com_rendyhd_vicu_speech_VicuSpeechJni_transcribe(JNIEnv * env, jclass, jlon
 }
 
 JNIEXPORT void JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_abort(JNIEnv *, jclass, jlong model) {
+Java_com_yes365_atask_speech_VicuSpeechJni_abort(JNIEnv *, jclass, jlong model) {
     vs_abort(from_handle<vs_model>(model));
 }
 
 JNIEXPORT void JNICALL
-Java_com_rendyhd_vicu_speech_VicuSpeechJni_modelClose(JNIEnv *, jclass, jlong model) {
+Java_com_yes365_atask_speech_VicuSpeechJni_modelClose(JNIEnv *, jclass, jlong model) {
     vs_model_close(from_handle<vs_model>(model));
 }
 

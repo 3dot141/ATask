@@ -12,8 +12,8 @@ import { PNG } from 'pngjs'
 export const HERE = dirname(fileURLToPath(import.meta.url))
 export const REPO = resolve(HERE, '..', '..')
 export const SERIAL = 'emulator-5554'
-export const APP_ID = 'com.rendyhd.vicu.debug'
-export const MAIN_ACTIVITY = `${APP_ID}/com.rendyhd.vicu.MainActivity`
+export const APP_ID = 'com.yes365.atask.debug'
+export const MAIN_ACTIVITY = `${APP_ID}/com.yes365.atask.MainActivity`
 
 // ---- adb location -------------------------------------------------------------------------------
 

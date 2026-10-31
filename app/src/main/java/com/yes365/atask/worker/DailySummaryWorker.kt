@@ -1,0 +1,140 @@
+package com.yes365.atask.worker
+
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import com.yes365.atask.MainActivity
+import com.yes365.atask.R
+import com.yes365.atask.auth.AuthManager
+import com.yes365.atask.data.local.DailySummaryReader
+import com.yes365.atask.data.local.NotificationPrefsStore
+import com.yes365.atask.data.remote.BaseUrlHolder
+import com.yes365.atask.notification.DailySummaryScheduler
+import com.yes365.atask.notification.NotificationChannelManager
+import com.yes365.atask.util.DailySummary
+import com.yes365.atask.util.DayClock
+import com.yes365.atask.util.TimeSource
+import kotlinx.coroutines.flow.first
+import kotlin.time.Instant
+import kotlin.time.Duration.Companion.seconds
+
+/**
+ * Posts one daily summary and queues the next one. The summary is preceded by a sync attempt, so it
+ * reports what the server has when the device can reach it, and what the device has when it cannot.
+ */
+class DailySummaryWorker(
+    appContext: Context,
+    workerParams: WorkerParameters,
+    private val reader: DailySummaryReader,
+    private val notificationPrefsStore: NotificationPrefsStore,
+    private val dayClock: DayClock,
+    private val time: TimeSource,
+    private val syncEngine: SyncEngine,
+    private val scheduler: DailySummaryScheduler,
+    private val authManager: AuthManager,
+    private val baseUrlHolder: BaseUrlHolder,
+) : CoroutineWorker(appContext, workerParams) {
+
+    companion object {
+        private const val TAG = "DailySummaryWorker"
+        private const val NOTIFICATION_ID = 999_999
+        private const val NOTIFICATION_ID_AFTERNOON = 999_998
+        const val KEY_SLOT = DailySummaryScheduler.KEY_SLOT
+        const val SLOT_AFTERNOON = DailySummaryScheduler.SLOT_AFTERNOON
+
+        /** The most a sync attempt may delay the summary. */
+        private val SYNC_TIMEOUT = 45.seconds
+    }
+
+    override suspend fun doWork(): Result {
+        val slot = inputData.getString(KEY_SLOT) ?: DailySummaryScheduler.SLOT_MORNING
+        val targetMillis = inputData.getLong(DailySummaryScheduler.KEY_TARGET_MILLIS, 0L)
+        Log.d(TAG, "Running daily summary (slot=$slot)")
+
+        DailySummaryRun(
+            isSignedIn = {
+                baseUrlHolder.ensureInitialized()
+                !authManager.getVikunjaUrl().isNullOrBlank()
+            },
+            syncAttempt = { syncEngine.performSync() },
+            syncTimeout = SYNC_TIMEOUT,
+            summarize = { postSummary(slot) },
+            scheduleNext = { scheduleNext(slot, targetMillis) },
+        ).run()
+        // Never retry: a late retry would post a duplicate, and the next day's job is already queued.
+        return Result.success()
+    }
+
+    private suspend fun postSummary(slot: String) {
+        val isAfternoon = slot == SLOT_AFTERNOON
+        val notificationId = if (isAfternoon) NOTIFICATION_ID_AFTERNOON else NOTIFICATION_ID
+        val heading = DailySummary.heading(slot)
+
+        // The day is re-read first: this may run long after the clock last ticked.
+        dayClock.refresh()
+        val day = dayClock.day.value
+        val prefs = notificationPrefsStore.getPrefs().first()
+        val content = reader.read(
+            day,
+            includeOverdue = prefs.notifyOverdueEnabled,
+            includeDueToday = prefs.notifyDueTodayEnabled,
+            includeTomorrow = prefs.notifyUpcomingEnabled,
+        )
+        val counts = content.counts
+        if (counts.total == 0) {
+            Log.d(TAG, "No tasks to report")
+            return
+        }
+
+        val tapIntent = Intent(applicationContext, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val tapPending = PendingIntent.getActivity(
+            applicationContext,
+            notificationId,
+            tapIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+
+        val style = NotificationCompat.InboxStyle().setBigContentTitle(heading)
+        content.lines().forEach { style.addLine(it) }
+
+        val notification = NotificationCompat.Builder(
+            applicationContext,
+            NotificationChannelManager.CHANNEL_DAILY_SUMMARY,
+        )
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(heading)
+            .setContentText(DailySummary.headline(counts))
+            .setStyle(style)
+            .setAutoCancel(true)
+            .setContentIntent(tapPending)
+            .build()
+
+        try {
+            NotificationManagerCompat.from(applicationContext).notify(notificationId, notification)
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Missing POST_NOTIFICATIONS permission", e)
+        }
+    }
+
+    /** Queues the next occurrence from the current settings; nothing when the summary was switched off. */
+    private suspend fun scheduleNext(slot: String, targetMillis: Long) {
+        val prefs = notificationPrefsStore.getPrefs().first()
+        val afternoon = slot == SLOT_AFTERNOON
+        val enabled = if (afternoon) prefs.afternoonSummaryEnabled else prefs.dailySummaryEnabled
+        if (!enabled) return
+        val hour = if (afternoon) prefs.afternoonSummaryHour else prefs.dailySummaryHour
+        val minute = if (afternoon) prefs.afternoonSummaryMinute else prefs.dailySummaryMinute
+
+        // After this run's own due time as well as now: starting a little early must not pick the
+        // same time again.
+        val after = maxOf(time.now(), Instant.fromEpochMilliseconds(targetMillis))
+        scheduler.scheduleNext(slot, hour, minute, after, replaceRunning = targetMillis == 0L)
+    }
+}
