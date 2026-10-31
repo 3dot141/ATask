@@ -63,6 +63,8 @@ interface Strings {
     val allowCalendarAccess: String
     val calendarPermissionDenied: String
     val allDay: String
+    val chooseCalendars: String
+    val calendarsHint: String
 
     // Setup
     val welcomeTitle: String
@@ -160,6 +162,8 @@ object EnglishStrings : Strings {
     override val allowCalendarAccess = "Allow calendar access"
     override val calendarPermissionDenied = "Calendar access is off. Turn it on in Settings to see events."
     override val allDay = "All day"
+    override val chooseCalendars = "Calendars"
+    override val calendarsHint = "Only the calendars you tick are shown here."
     override val welcomeTitle = "Welcome to Vicu"
     override val welcomeSubtitle = "Enter your Vikunja server URL to get started."
     override val serverUrlLabel = "Server URL"
@@ -228,6 +232,8 @@ object ChineseStrings : Strings {
     override val allowCalendarAccess = "允许访问日历"
     override val calendarPermissionDenied = "日历权限已关闭。可在系统设置中开启后查看日程。"
     override val allDay = "全天"
+    override val chooseCalendars = "选择日历"
+    override val calendarsHint = "只显示勾选的日历中的日程"
     override val welcomeTitle = "欢迎使用 Vicu"
     override val welcomeSubtitle = "填写你的 Vikunja 服务器地址即可开始。"
     override val serverUrlLabel = "服务器地址"

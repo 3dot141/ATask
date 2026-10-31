@@ -3,7 +3,9 @@ package com.rendyhd.vicu.ui.screens.calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rendyhd.vicu.device.CalendarAccess
+import com.rendyhd.vicu.data.local.CalendarPrefsStore
 import com.rendyhd.vicu.device.DeviceCalendar
+import com.rendyhd.vicu.device.DeviceCalendarInfo
 import com.rendyhd.vicu.device.DeviceEvent
 import com.rendyhd.vicu.domain.model.Task
 import com.rendyhd.vicu.domain.repository.TaskRepository
@@ -42,6 +44,10 @@ data class CalendarUiState(
     val dayEvents: List<DeviceEvent> = emptyList(),
     val access: CalendarAccess = CalendarAccess.NotDetermined,
     val isLoading: Boolean = true,
+    /** The phone's calendars, for the visibility setting; empty until access is granted. */
+    val calendars: List<DeviceCalendarInfo> = emptyList(),
+    /** The calendars the person turned off. */
+    val hiddenCalendarIds: Set<String> = emptySet(),
 )
 
 /**
@@ -55,6 +61,7 @@ data class CalendarUiState(
 class CalendarViewModel(
     private val taskRepository: TaskRepository,
     private val dayClock: DayClock,
+    private val calendarPrefs: CalendarPrefsStore,
 ) : ViewModel() {
 
     private val deviceCalendar = DeviceCalendar()
@@ -73,6 +80,7 @@ class CalendarViewModel(
     private var eventsByDay: Map<LocalDate, List<DeviceEvent>> = emptyMap()
     private var zone: TimeZone = TimeZone.currentSystemDefault()
     private var monthTouched = false
+    private var hiddenCalendarIds: Set<String> = emptySet()
 
     init {
         _uiState.update { it.copy(access = deviceCalendar.access()) }
@@ -89,7 +97,21 @@ class CalendarViewModel(
                     publish()
                 }
         }
-        viewModelScope.launch { loadEvents() }
+        viewModelScope.launch {
+            calendarPrefs.hiddenCalendarIds().collect { hidden ->
+                val changed = hidden != hiddenCalendarIds
+                hiddenCalendarIds = hidden
+                _uiState.update { it.copy(hiddenCalendarIds = hidden) }
+                if (changed) loadEvents()
+            }
+        }
+        viewModelScope.launch {
+            if (deviceCalendar.access() == CalendarAccess.Granted) {
+                val calendars = deviceCalendar.calendars()
+                _uiState.update { it.copy(calendars = calendars) }
+            }
+            loadEvents()
+        }
     }
 
     fun showMonth(offset: Int) {
@@ -114,12 +136,23 @@ class CalendarViewModel(
         viewModelScope.launch {
             val access = deviceCalendar.requestAccess()
             _uiState.update { it.copy(access = access) }
-            if (access == CalendarAccess.Granted) loadEvents()
+            if (access == CalendarAccess.Granted) {
+                _uiState.update { it.copy(calendars = deviceCalendar.calendars()) }
+                loadEvents()
+            }
         }
     }
 
     fun toggleDone(task: Task) {
         viewModelScope.launch { taskRepository.toggleDone(task) }
+    }
+
+    /** Turns one of the phone's calendars on or off; the choice is remembered on this device. */
+    fun setCalendarVisible(id: String, visible: Boolean) {
+        viewModelScope.launch {
+            val next = if (visible) hiddenCalendarIds - id else hiddenCalendarIds + id
+            calendarPrefs.setHidden(next)
+        }
     }
 
     fun refresh() {
@@ -133,7 +166,7 @@ class CalendarViewModel(
         val last = grid.last().last().date
         val startMillis = first.atStartOfDayIn(zone).toEpochMilliseconds()
         val endMillis = WhenLogic.addMonths(last, 1).atStartOfDayIn(zone).toEpochMilliseconds()
-        val events = deviceCalendar.events(startMillis, endMillis)
+        val events = deviceCalendar.events(startMillis, endMillis, hiddenCalendarIds)
         eventsByDay = events.groupBy {
             Instant.fromEpochMilliseconds(it.startMillis).toLocalDateTime(zone).date
         }

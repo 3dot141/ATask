@@ -78,6 +78,7 @@ val databaseModule = module {
     single { CustomListStore(createDataStore(get(), "custom_lists")) }
     single { LabelOrderPrefsStore(createDataStore(get(), "label_order_prefs")) }
     single { LogbookPrefsStore(createDataStore(get(), "logbook_prefs")) }
+    single { CalendarPrefsStore(createDataStore(get(), "calendar_prefs")) }
     single { NlpPrefsStore(createDataStore(get(), "nlp_prefs")) }
     single { NotificationPermissionStore(createDataStore(get(), "notification_permission")) }
     single { NotificationPrefsStore(createDataStore(get(), "notification_prefs")) }

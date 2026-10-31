@@ -24,7 +24,11 @@ import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
@@ -36,6 +40,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rendyhd.vicu.device.CalendarAccess
+import com.rendyhd.vicu.device.DeviceCalendarInfo
 import com.rendyhd.vicu.device.DeviceEvent
 import com.rendyhd.vicu.domain.model.Task
 import com.rendyhd.vicu.ui.components.shared.FabClearance
@@ -82,6 +90,7 @@ fun CalendarScreen(
     val listState = rememberLazyListState()
     val topBarScroll = rememberVicuTopBarScroll()
     val zone = LocalClockDay.current.zone
+    var showCalendarPicker by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = topBarScroll.modifier,
@@ -91,6 +100,15 @@ fun CalendarScreen(
                 onOpenDrawer = onOpenDrawer,
                 scroll = topBarScroll,
                 onNavigateToSearch = onNavigateToSearch,
+                extraActions = if (state.access == CalendarAccess.Granted && state.calendars.isNotEmpty()) {
+                    {
+                        IconButton(onClick = { showCalendarPicker = true }) {
+                            Icon(Icons.Outlined.Tune, contentDescription = s.chooseCalendars)
+                        }
+                    }
+                } else {
+                    null
+                },
             )
         },
         floatingActionButton = {
@@ -175,6 +193,69 @@ fun CalendarScreen(
             }
         }
     }
+
+    if (showCalendarPicker) {
+        CalendarPickerDialog(
+            calendars = state.calendars,
+            hiddenIds = state.hiddenCalendarIds,
+            title = s.chooseCalendars,
+            hint = s.calendarsHint,
+            close = s.cancel,
+            onToggle = viewModel::setCalendarVisible,
+            onDismiss = { showCalendarPicker = false },
+        )
+    }
+}
+
+/** The phone's calendars with a tick each: an unticked one is left out of the grid and the day. */
+@Composable
+private fun CalendarPickerDialog(
+    calendars: List<DeviceCalendarInfo>,
+    hiddenIds: Set<String>,
+    title: String,
+    hint: String,
+    close: String,
+    onToggle: (String, Boolean) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column {
+                Text(
+                    hint,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(8.dp))
+                for (calendar in calendars) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            onToggle(calendar.id, calendar.id in hiddenIds)
+                        },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(
+                            checked = calendar.id !in hiddenIds,
+                            onCheckedChange = { onToggle(calendar.id, it) },
+                        )
+                        Column(Modifier.weight(1f)) {
+                            Text(calendar.title, style = MaterialTheme.typography.bodyLarge)
+                            if (calendar.source.isNotBlank()) {
+                                Text(
+                                    calendar.source,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(close) } },
+    )
 }
 
 @Composable

@@ -7,6 +7,7 @@ import platform.EventKit.EKAuthorizationStatusDenied
 import platform.EventKit.EKAuthorizationStatusFullAccess
 import platform.EventKit.EKAuthorizationStatusRestricted
 import platform.EventKit.EKEntityType
+import platform.EventKit.EKCalendar
 import platform.EventKit.EKEvent
 import platform.EventKit.EKEventStore
 import platform.Foundation.NSDate
@@ -43,11 +44,37 @@ actual class DeviceCalendar actual constructor() {
         }
     }
 
-    actual suspend fun events(startMillis: Long, endMillis: Long): List<DeviceEvent> {
+    actual suspend fun calendars(): List<DeviceCalendarInfo> {
+        if (access() != CalendarAccess.Granted) return emptyList()
+        return store.calendarsForEntityType(EKEntityType.EKEntityTypeEvent)
+            .filterIsInstance<EKCalendar>()
+            .map { calendar ->
+                DeviceCalendarInfo(
+                    id = calendar.calendarIdentifier,
+                    title = calendar.title,
+                    source = calendar.source?.title.orEmpty(),
+                )
+            }
+            .sortedBy { it.title.lowercase() }
+    }
+
+    actual suspend fun events(
+        startMillis: Long,
+        endMillis: Long,
+        excludedCalendarIds: Set<String>,
+    ): List<DeviceEvent> {
         if (access() != CalendarAccess.Granted) return emptyList()
         val start = NSDate.dateWithTimeIntervalSince1970(startMillis / 1000.0)
         val end = NSDate.dateWithTimeIntervalSince1970(endMillis / 1000.0)
-        val predicate = store.predicateForEventsWithStartDate(start, end, null)
+        // null asks EventKit for every calendar; otherwise the predicate takes only the shown ones.
+        val calendars = if (excludedCalendarIds.isEmpty()) {
+            null
+        } else {
+            store.calendarsForEntityType(EKEntityType.EKEntityTypeEvent)
+                .filterIsInstance<EKCalendar>()
+                .filter { it.calendarIdentifier !in excludedCalendarIds }
+        }
+        val predicate = store.predicateForEventsWithStartDate(start, end, calendars)
         return store.eventsMatchingPredicate(predicate)
             .orEmpty()
             .filterIsInstance<EKEvent>()

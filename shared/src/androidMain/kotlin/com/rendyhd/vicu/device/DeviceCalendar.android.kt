@@ -7,5 +7,11 @@ package com.rendyhd.vicu.device
 actual class DeviceCalendar actual constructor() {
     actual fun access(): CalendarAccess = CalendarAccess.Granted
     actual suspend fun requestAccess(): CalendarAccess = CalendarAccess.Granted
-    actual suspend fun events(startMillis: Long, endMillis: Long): List<DeviceEvent> = emptyList()
+    actual suspend fun calendars(): List<DeviceCalendarInfo> = emptyList()
+
+    actual suspend fun events(
+        startMillis: Long,
+        endMillis: Long,
+        excludedCalendarIds: Set<String>,
+    ): List<DeviceEvent> = emptyList()
 }
