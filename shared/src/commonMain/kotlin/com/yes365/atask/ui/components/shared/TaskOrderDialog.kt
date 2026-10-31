@@ -43,14 +43,14 @@ fun TaskOrderDialog(
             Column(Modifier.selectableGroup()) {
                 if (inheritedOrder != null) {
                     OrderRow(
-                        label = "Default (${inheritedOrder.label})",
+                        label = "${t("Default")} (${t(inheritedOrder.label)})",
                         selected = selected == null,
                         onClick = { onSelect(null) },
                     )
                 }
                 TaskOrder.entries.forEach { order ->
                     OrderRow(
-                        label = order.label,
+                        label = t(order.label),
                         selected = selected == order,
                         onClick = { onSelect(order) },
                     )

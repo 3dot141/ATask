@@ -129,7 +129,7 @@ internal fun LazyListScope.drawerSection(
 
     item(key = "drawer_desc") {
         Text(
-            text = "Choose the views listed above your projects. Today, Upcoming and Anytime are in the drawer only when they are not in the bottom bar.",
+            text = t("Choose the views listed above your projects. Today, Upcoming and Anytime are in the drawer only when they are not in the bottom bar."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -167,6 +167,7 @@ private fun DrawerViewRow(
     val identity = when (view) {
         DrawerView.TODAY -> SmartListIdentity.TODAY
         DrawerView.UPCOMING -> SmartListIdentity.UPCOMING
+        DrawerView.CALENDAR -> SmartListIdentity.UPCOMING
         DrawerView.ANYTIME -> SmartListIdentity.ANYTIME
         DrawerView.LOGBOOK -> SmartListIdentity.LOGBOOK
         DrawerView.ROUTINES -> SmartListIdentity.ROUTINES
@@ -174,13 +175,14 @@ private fun DrawerViewRow(
         DrawerView.ASK -> null
     }
     val label = when (view) {
-        DrawerView.TODAY -> "Today"
-        DrawerView.UPCOMING -> "Upcoming"
-        DrawerView.ANYTIME -> "Anytime"
-        DrawerView.LOGBOOK -> "Logbook"
-        DrawerView.ROUTINES -> "Routines"
-        DrawerView.REVIEW -> "Review"
-        DrawerView.ASK -> "Ask"
+        DrawerView.TODAY -> t("Today")
+        DrawerView.UPCOMING -> t("Upcoming")
+        DrawerView.CALENDAR -> t("Calendar")
+        DrawerView.ANYTIME -> t("Anytime")
+        DrawerView.LOGBOOK -> t("Logbook")
+        DrawerView.ROUTINES -> t("Routines")
+        DrawerView.REVIEW -> t("Review")
+        DrawerView.ASK -> t("Ask")
     }
     Row(
         modifier = Modifier

@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.FilterList
@@ -220,11 +221,18 @@ fun DrawerContent(
                             onClick = { onNavigate(TodayRoute) },
                         )
                         DrawerView.UPCOMING -> SmartListItem(
-                            label = strings.calendar,
+                            label = strings.upcoming,
                             icon = SmartListIdentity.UPCOMING.icon,
                             iconTint = SmartListIdentity.UPCOMING.color(identity),
                             selected = currentRoute == "UpcomingRoute",
                             onClick = { onNavigate(UpcomingRoute) },
+                        )
+                        DrawerView.CALENDAR -> SmartListItem(
+                            label = strings.calendar,
+                            icon = Icons.Outlined.CalendarToday,
+                            iconTint = SmartListIdentity.UPCOMING.color(identity),
+                            selected = currentRoute == "CalendarRoute",
+                            onClick = { onNavigate(CalendarRoute) },
                         )
                         DrawerView.ANYTIME -> SmartListItem(
                             label = strings.anytime,

@@ -61,22 +61,24 @@ fun BottomBarSlotEditor(
     var typeDropdownExpanded by remember { mutableStateOf(false) }
 
     val typeOptions = listOf(
-        BottomBarSlotType.TODAY to "Today",
-        BottomBarSlotType.UPCOMING to "Upcoming",
-        BottomBarSlotType.ANYTIME to "Anytime",
-        BottomBarSlotType.PROJECT to "Project",
-        BottomBarSlotType.CUSTOM_LIST to "Custom List",
+        BottomBarSlotType.TODAY to t("Today"),
+        BottomBarSlotType.UPCOMING to t("Upcoming"),
+        BottomBarSlotType.CALENDAR to t("Calendar"),
+        BottomBarSlotType.ANYTIME to t("Anytime"),
+        BottomBarSlotType.PROJECT to t("Project"),
+        BottomBarSlotType.CUSTOM_LIST to t("Custom List"),
     )
 
     val isValid = when (selectedType) {
-        BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.ANYTIME -> true
+        BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.CALENDAR,
+        BottomBarSlotType.ANYTIME -> true
         BottomBarSlotType.PROJECT -> selectedReferenceId.isNotEmpty() && projects.any { it.id.toString() == selectedReferenceId }
         BottomBarSlotType.CUSTOM_LIST -> selectedReferenceId.isNotEmpty() && customLists.any { it.id == selectedReferenceId }
     }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Bottom Bar Slot ${slotIndex + 1}") },
+        title = { Text("${t("Bottom Bar Slot")} ${slotIndex + 1}") },
         text = {
             // Scrolls on a short screen: the lists inside have a fixed maximum height.
             Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {

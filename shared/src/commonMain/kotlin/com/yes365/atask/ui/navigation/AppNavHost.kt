@@ -104,6 +104,14 @@ fun AppNavHost(
             )
         }
         screen<UpcomingRoute>(reveal) {
+            UpcomingScreen(
+                onTaskClick = onTaskClick,
+                onOpenDrawer = onOpenDrawer,
+                onNavigateToSearch = onNavigateToSearch,
+                onShowTaskEntry = onShowTaskEntry,
+            )
+        }
+        screen<CalendarRoute>(reveal) {
             CalendarScreen(
                 onTaskClick = onTaskClick,
                 onOpenDrawer = onOpenDrawer,

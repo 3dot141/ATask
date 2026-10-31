@@ -539,6 +539,7 @@ internal fun BottomBarSlotRow(
     val label = when (slot.type) {
         BottomBarSlotType.TODAY -> t("Today")
         BottomBarSlotType.UPCOMING -> t("Upcoming")
+        BottomBarSlotType.CALENDAR -> t("Calendar")
         BottomBarSlotType.ANYTIME -> t("Anytime")
         BottomBarSlotType.PROJECT -> {
             projects.find { it.id.toString() == slot.referenceId }?.title ?: t("Deleted project")
@@ -550,6 +551,7 @@ internal fun BottomBarSlotRow(
     val typeLabel = when (slot.type) {
         BottomBarSlotType.TODAY -> t("Smart List")
         BottomBarSlotType.UPCOMING -> t("Smart List")
+        BottomBarSlotType.CALENDAR -> t("Smart List")
         BottomBarSlotType.ANYTIME -> t("Smart List")
         BottomBarSlotType.PROJECT -> t("Project")
         BottomBarSlotType.CUSTOM_LIST -> t("Custom List")

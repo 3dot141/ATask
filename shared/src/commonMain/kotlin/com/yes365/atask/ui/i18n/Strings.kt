@@ -20,6 +20,7 @@ interface Strings {
     // Shell
     val inbox: String
     val today: String
+    val upcoming: String
     val calendar: String
     val anytime: String
     val logbook: String
@@ -124,6 +125,7 @@ object EnglishStrings : Strings {
     override val languageTag = "en"
     override val inbox = "Inbox"
     override val today = "Today"
+    override val upcoming = "Upcoming"
     override val calendar = "Calendar"
     override val anytime = "Anytime"
     override val logbook = "Logbook"
@@ -195,6 +197,7 @@ object ChineseStrings : Strings {
     override val languageTag = "zh-Hans"
     override val inbox = "收件箱"
     override val today = "今天"
+    override val upcoming = "未来"
     override val calendar = "日历"
     override val anytime = "随时"
     override val logbook = "日志"

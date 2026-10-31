@@ -111,7 +111,7 @@ internal fun LazyListScope.displaySection(
     item(key = "task_order") {
         SettingsValueRow(
             label = t("Task order"),
-            value = state.taskOrders.global.label,
+            value = t(state.taskOrders.global.label),
             onClick = { openDialog(SettingsDialog.TaskOrderPicker) },
         )
     }

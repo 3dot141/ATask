@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.FilterList
@@ -58,6 +59,7 @@ object IconRegistry {
     fun smartListIdentity(type: BottomBarSlotType): SmartListIdentity? = when (type) {
         BottomBarSlotType.TODAY -> SmartListIdentity.TODAY
         BottomBarSlotType.UPCOMING -> SmartListIdentity.UPCOMING
+        BottomBarSlotType.CALENDAR -> SmartListIdentity.UPCOMING
         BottomBarSlotType.ANYTIME -> SmartListIdentity.ANYTIME
         BottomBarSlotType.PROJECT, BottomBarSlotType.CUSTOM_LIST -> null
     }
@@ -65,6 +67,7 @@ object IconRegistry {
     private val SMART_LIST_ICONS: Map<BottomBarSlotType, ImageVector> = mapOf(
         BottomBarSlotType.TODAY to SmartListIdentity.TODAY.icon,
         BottomBarSlotType.UPCOMING to SmartListIdentity.UPCOMING.icon,
+        BottomBarSlotType.CALENDAR to Icons.Outlined.CalendarToday,
         BottomBarSlotType.ANYTIME to SmartListIdentity.ANYTIME.icon,
     )
 

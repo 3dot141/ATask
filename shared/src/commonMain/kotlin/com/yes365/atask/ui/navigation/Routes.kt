@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable object InboxRoute
 @Serializable object TodayRoute
 @Serializable object UpcomingRoute
+@Serializable object CalendarRoute
 @Serializable object AnytimeRoute
 @Serializable object LogbookRoute
 @Serializable object ReviewRoute

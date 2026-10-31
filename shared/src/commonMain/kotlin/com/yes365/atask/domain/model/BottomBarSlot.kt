@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 enum class BottomBarSlotType {
     TODAY,
     UPCOMING,
+    CALENDAR,
     ANYTIME,
     PROJECT,
     CUSTOM_LIST,

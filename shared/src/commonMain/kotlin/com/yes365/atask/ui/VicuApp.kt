@@ -124,6 +124,7 @@ import com.yes365.atask.ui.navigation.SetupRoute
 import com.yes365.atask.ui.navigation.TagRoute
 import com.yes365.atask.ui.navigation.SharedContentSaver
 import com.yes365.atask.ui.navigation.TodayRoute
+import com.yes365.atask.ui.navigation.CalendarRoute
 import com.yes365.atask.ui.navigation.UpcomingRoute
 import com.yes365.atask.ui.i18n.EnglishStrings
 import com.yes365.atask.ui.i18n.LocalStrings
@@ -215,7 +216,11 @@ internal fun resolveBottomBarItems(
                 identity = identity(SmartListIdentity.TODAY),
             )
             BottomBarSlotType.UPCOMING -> BottomNavItem(
-                strings.calendar, IconRegistry.resolveIcon(slot), UpcomingRoute, "UpcomingRoute",
+                strings.upcoming, IconRegistry.resolveIcon(slot), UpcomingRoute, "UpcomingRoute",
+                identity = identity(SmartListIdentity.UPCOMING),
+            )
+            BottomBarSlotType.CALENDAR -> BottomNavItem(
+                strings.calendar, IconRegistry.resolveIcon(slot), CalendarRoute, "CalendarRoute",
                 identity = identity(SmartListIdentity.UPCOMING),
             )
             BottomBarSlotType.ANYTIME -> BottomNavItem(

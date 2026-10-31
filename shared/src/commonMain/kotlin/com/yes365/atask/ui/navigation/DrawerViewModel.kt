@@ -117,6 +117,7 @@ internal fun drawerViewChoices(
     return buildList {
         if (BottomBarSlotType.TODAY !in inBar) add(DrawerView.TODAY)
         if (BottomBarSlotType.UPCOMING !in inBar) add(DrawerView.UPCOMING)
+        if (BottomBarSlotType.CALENDAR !in inBar) add(DrawerView.CALENDAR)
         if (BottomBarSlotType.ANYTIME !in inBar) add(DrawerView.ANYTIME)
         add(DrawerView.LOGBOOK)
         if (routinesEnabled) add(DrawerView.ROUTINES)
