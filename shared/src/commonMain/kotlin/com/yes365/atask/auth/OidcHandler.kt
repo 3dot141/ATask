@@ -1,5 +1,6 @@
 package com.yes365.atask.auth
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.remote.api.OidcCallbackDto
 import com.yes365.atask.data.remote.api.OidcProviderDto
 import com.yes365.atask.data.remote.api.VikunjaApiService
@@ -111,7 +112,7 @@ class OidcHandler(
             }
             val tokenResponse = response.body()
             if (tokenResponse == null || tokenResponse.token.isBlank()) {
-                OidcResult.Error("Empty token received from server")
+                OidcResult.Error(t("Empty token received from server"))
             } else {
                 val refreshToken = RefreshCookieExtractor.extractRefreshToken(response)
                 OidcResult.Success(tokenResponse.token, refreshToken)

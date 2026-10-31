@@ -1,5 +1,6 @@
 package com.yes365.atask.speech
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import com.yes365.atask.util.Logger
 import kotlinx.coroutines.CompletableDeferred
@@ -170,7 +171,7 @@ class LocalSpeechSession(
         val native = host.native()
         val vad = host.vad()
         if (vad == 0L) {
-            _state.update { it.copy(error = "The voice detector could not be loaded.") }
+            _state.update { it.copy(error = t("The voice detector could not be loaded.")) }
             done.complete("")
             _events.close()
             return false
@@ -239,7 +240,7 @@ class LocalSpeechSession(
             modelHandle = model
             Logger.d(TAG, "${spec.id}: ready after ${loading.elapsedNow().inWholeMilliseconds} ms")
             if (model == 0L) {
-                _state.update { it.copy(error = "The speech model could not be loaded.") }
+                _state.update { it.copy(error = t("The speech model could not be loaded.")) }
                 scope.launch { stopRecording() }
                 for (phrase in phrases) Unit
                 done.complete("")
@@ -285,7 +286,7 @@ class LocalSpeechSession(
         if (!started) {
             Logger.w(TAG, "the microphone could not start")
             audio.close()
-            _state.update { it.copy(error = it.error ?: "The microphone could not be used.") }
+            _state.update { it.copy(error = it.error ?: t("The microphone could not be used.")) }
             return false
         }
         Logger.d(TAG, "${spec.id}: recording")

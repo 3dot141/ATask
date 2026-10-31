@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.provider
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import com.yes365.atask.ai.ProviderPreset
 import io.ktor.client.HttpClient
@@ -62,7 +63,7 @@ class LlmClient(
             val retryWithout = sendStreaming(connection, protocol, request, body, this)
             if (retryWithout == null) return@flow
             refused.getOrPut(quirkKey) { mutableSetOf() } += retryWithout
-            if (++attempt > OPTIONAL_FIELDS.size) throw LlmException(LlmException.Kind.BAD_REQUEST, "The provider refused the request.")
+            if (++attempt > OPTIONAL_FIELDS.size) throw LlmException(LlmException.Kind.BAD_REQUEST, t("The provider refused the request."))
         }
     }
 
@@ -70,7 +71,7 @@ class LlmClient(
     suspend fun complete(connection: ProviderConnection, request: ChatRequest): ChatEvent.Finished {
         var finished: ChatEvent.Finished? = null
         stream(connection, request).collect { if (it is ChatEvent.Finished) finished = it }
-        return finished ?: throw LlmException(LlmException.Kind.BAD_ANSWER, "The answer ended early.")
+        return finished ?: throw LlmException(LlmException.Kind.BAD_ANSWER, t("The answer ended early."))
     }
 
     /** The models the provider lists (section 2.1), sorted. */
@@ -204,13 +205,13 @@ class LlmClient(
     } catch (e: LlmException) {
         throw e
     } catch (e: HttpRequestTimeoutException) {
-        throw LlmException(LlmException.Kind.TIMEOUT, "The model did not answer in time.")
+        throw LlmException(LlmException.Kind.TIMEOUT, t("The model did not answer in time."))
     } catch (e: SocketTimeoutException) {
-        throw LlmException(LlmException.Kind.TIMEOUT, "The model did not answer in time.")
+        throw LlmException(LlmException.Kind.TIMEOUT, t("The model did not answer in time."))
     } catch (e: ConnectTimeoutException) {
-        throw LlmException(LlmException.Kind.NETWORK, "Could not reach the provider.")
+        throw LlmException(LlmException.Kind.NETWORK, t("Could not reach the provider."))
     } catch (e: Exception) {
-        throw LlmException(LlmException.Kind.NETWORK, "Could not reach the provider.")
+        throw LlmException(LlmException.Kind.NETWORK, t("Could not reach the provider."))
     }
 
     private fun connectMs() = AiContract.limits.connectTimeoutSeconds * 1_000L

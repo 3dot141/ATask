@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.local.dao.AttachmentDao
 import com.yes365.atask.data.mapper.AttachmentMapper
 import com.yes365.atask.data.remote.api.VikunjaApiException
@@ -68,7 +69,7 @@ class AttachmentRepositoryImpl(
         val source = when (opened) {
             is UploadOpen.Ready -> opened.source
             is UploadOpen.TooLarge -> return NetworkResult.Error(tooLargeMessage(opened.fileName, opened.size, limit))
-            UploadOpen.Unreadable -> return NetworkResult.Error("Could not read the file")
+            UploadOpen.Unreadable -> return NetworkResult.Error(t("Could not read the file"))
         }
         return try {
             if (source.size > limit) {
@@ -88,7 +89,7 @@ class AttachmentRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to upload attachment")
+            NetworkResult.Error(e.message ?: t("Failed to upload attachment"))
         } finally {
             source.close()
         }
@@ -103,7 +104,7 @@ class AttachmentRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to download attachment")
+            NetworkResult.Error(e.message ?: t("Failed to download attachment"))
         }
     }
 
@@ -120,7 +121,7 @@ class AttachmentRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to delete attachment")
+            NetworkResult.Error(e.message ?: t("Failed to delete attachment"))
         }
     }
 
@@ -135,7 +136,7 @@ class AttachmentRepositoryImpl(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to refresh attachments")
+            NetworkResult.Error(e.message ?: t("Failed to refresh attachments"))
         }
     }
 

@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.dictation
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiSettingsStore
 import com.yes365.atask.util.AppMessages
 import com.yes365.atask.voice.HoldToTalk
@@ -125,7 +126,7 @@ class DictationMic(
                 return
             }
             SpeechAvailability.DENIED -> {
-                messages.post("Allow the microphone in Settings to keep talking.", "Settings") { speech.openSettings() }
+                messages.post(t("Allow the microphone in Settings to keep talking."), "Settings") { speech.openSettings() }
                 return
             }
             SpeechAvailability.UNAVAILABLE -> {

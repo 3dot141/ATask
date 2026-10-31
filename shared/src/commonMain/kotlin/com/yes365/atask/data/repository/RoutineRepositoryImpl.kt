@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.AuthManager
 import com.yes365.atask.data.local.RoutinePrefsStore
 import com.yes365.atask.data.local.dao.ProjectDao
@@ -99,9 +100,9 @@ class RoutineRepositoryImpl(
 ) : RoutineRepository {
     private companion object {
         const val TAG = "RoutineRepository"
-        const val OWNER_ONLY = "Only the person who shared this routine can do that."
-        const val READ_ONLY = "You can view this routine, but not tick it off."
-        const val SHARE_NEEDS_SERVER = "Connect to your server to change who this routine is shared with."
+        val OWNER_ONLY = t("Only the person who shared this routine can do that.")
+        val READ_ONLY = t("You can view this routine, but not tick it off.")
+        val SHARE_NEEDS_SERVER = t("Connect to your server to change who this routine is shared with.")
     }
 
     private data class ParsedCarriers(
@@ -138,7 +139,7 @@ class RoutineRepositoryImpl(
                 issues += RoutineParseIssue(
                     taskId = entity.id,
                     title = entity.title,
-                    message = parsed.error ?: "Cannot read routine metadata",
+                    message = parsed.error ?: t("Cannot read routine metadata"),
                     updateRequired = parsed.isNewerVersion,
                 )
             }
@@ -263,7 +264,7 @@ class RoutineRepositoryImpl(
         val validation = validateDraft(draft)
         if (validation != null) return NetworkResult.Error(validation)
         val inboxId = authManager.getInboxProjectId()
-            ?: return NetworkResult.Error("Choose an inbox project before creating routines")
+            ?: return NetworkResult.Error(t("Choose an inbox project before creating routines"))
         val now = RoutineTime.now(time)
         val deviceId = prefsStore.getOrCreateDeviceId()
         val routineId = randomUuid()
@@ -328,7 +329,7 @@ class RoutineRepositoryImpl(
     override suspend fun update(routineId: String, draft: RoutineDraft): NetworkResult<Routine> {
         val validation = validateDraft(draft)
         if (validation != null) return NetworkResult.Error(validation)
-        val routine = findRoutine(routineId) ?: return NetworkResult.Error("Routine not found")
+        val routine = findRoutine(routineId) ?: return NetworkResult.Error(t("Routine not found"))
         finalizePastHealthOccurrences(routine)
         val latest = findRoutine(routineId) ?: routine
         val now = RoutineTime.now(time)
@@ -362,14 +363,14 @@ class RoutineRepositoryImpl(
         status: OccurrenceStatus,
         note: String,
     ): NetworkResult<Routine> {
-        val routine = findRoutine(routineId) ?: return NetworkResult.Error("Routine not found")
+        val routine = findRoutine(routineId) ?: return NetworkResult.Error(t("Routine not found"))
         // A read-only member sees a shared routine but cannot tick it off (section 6.9); a widget
         // or a notification must not queue a change the server will refuse.
         if (isReadOnly(routine)) return NetworkResult.Error(READ_ONLY)
         val slot = routine.definition.slots.firstOrNull { it.id == slotId }
-            ?: return NetworkResult.Error("Routine slot not found")
+            ?: return NetworkResult.Error(t("Routine slot not found"))
         val localDate = runCatching { LocalDate.parse(date) }.getOrNull()
-            ?: return NetworkResult.Error("Invalid occurrence date")
+            ?: return NetworkResult.Error(t("Invalid occurrence date"))
         val now = RoutineTime.now(time)
         val deviceId = prefsStore.getOrCreateDeviceId()
         // A past day of a schedule is "not logged" once it is no longer done; an after-completion
@@ -402,7 +403,7 @@ class RoutineRepositoryImpl(
     }
 
     override suspend fun archive(routineId: String, archived: Boolean): NetworkResult<Routine> {
-        val routine = findRoutine(routineId) ?: return NetworkResult.Error("Routine not found")
+        val routine = findRoutine(routineId) ?: return NetworkResult.Error(t("Routine not found"))
         if (!isOwn(routine)) return NetworkResult.Error(OWNER_ONLY)
         val now = RoutineTime.now(time)
         val deviceId = prefsStore.getOrCreateDeviceId()
@@ -419,7 +420,7 @@ class RoutineRepositoryImpl(
     }
 
     override suspend fun deletePermanently(routineId: String): NetworkResult<Unit> {
-        val routine = findRoutine(routineId) ?: return NetworkResult.Error("Routine not found")
+        val routine = findRoutine(routineId) ?: return NetworkResult.Error(t("Routine not found"))
         if (!isOwn(routine)) return NetworkResult.Error(OWNER_ONLY)
         return archiveMutex.withLock {
             // The parts go first: if one cannot be deleted the routine stays and the delete can
@@ -434,7 +435,7 @@ class RoutineRepositoryImpl(
                 } catch (e: Exception) {
                     Logger.w(TAG, "Could not delete the archive of routine $routineId: ${e.message}")
                     return@withLock NetworkResult.Error(
-                        "The routine's archived history could not be deleted. Connect to your server and try again.",
+                        t("The routine's archived history could not be deleted. Connect to your server and try again."),
                     )
                 }
             }
@@ -475,7 +476,7 @@ class RoutineRepositoryImpl(
         } catch (error: CancellationException) {
             throw error
         } catch (error: Exception) {
-            NetworkResult.Error(error.message ?: "Failed to finalize routines")
+            NetworkResult.Error(error.message ?: t("Failed to finalize routines"))
         }
     }
 
@@ -529,13 +530,13 @@ class RoutineRepositoryImpl(
         shared: Boolean,
         projectId: suspend () -> Long?,
     ): NetworkResult<Routine> {
-        val routine = findRoutine(routineId) ?: return NetworkResult.Error("Routine not found")
+        val routine = findRoutine(routineId) ?: return NetworkResult.Error(t("Routine not found"))
         if (!isOwn(routine)) return NetworkResult.Error(OWNER_ONLY)
         // A routine created offline has no carrier on the server yet.
         if (routine.taskId <= 0L) return NetworkResult.Error(SHARE_NEEDS_SERVER)
         val target = projectId()?.takeIf { it > 0L }
-            ?: return NetworkResult.Error("Choose an inbox project before you stop sharing routines")
-        val entity = taskDao.getByIdSync(routine.taskId) ?: return NetworkResult.Error("Routine carrier not found")
+            ?: return NetworkResult.Error(t("Choose an inbox project before you stop sharing routines"))
+        val entity = taskDao.getByIdSync(routine.taskId) ?: return NetworkResult.Error(t("Routine carrier not found"))
         val hasParts = routine.payload.prunedBefore.isNotEmpty()
         return archiveMutex.withLock {
             try {
@@ -546,7 +547,7 @@ class RoutineRepositoryImpl(
                 val deviceId = prefsStore.getOrCreateDeviceId()
                 val written = archiveStore.carrierWriter.write(routine.taskId, entity.description, projectId = target) { merged ->
                     merged.copy(definition = merged.definition.copy(shared = shared, updatedAt = now, updatedBy = deviceId))
-                }.task ?: return@withLock NetworkResult.Error("Routine carrier not found")
+                }.task ?: return@withLock NetworkResult.Error(t("Routine carrier not found"))
                 val stored = with(taskMapper) { written.toEntity() }
                 taskDao.upsert(stored)
                 if (partsToFollow.isNotEmpty()) archiveStore.moveParts(partsToFollow, target)
@@ -556,13 +557,13 @@ class RoutineRepositoryImpl(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: RoutineEnvelope.UnreadableCarrierException) {
-                NetworkResult.Error(e.message ?: "This routine cannot be changed")
+                NetworkResult.Error(e.message ?: t("This routine cannot be changed"))
             } catch (e: Exception) {
                 Logger.w(TAG, "Could not change the sharing of routine $routineId: ${e.message}")
                 if (isNetworkFailure(e) || isRetriableNetworkError(e)) {
                     NetworkResult.Error(SHARE_NEEDS_SERVER)
                 } else {
-                    NetworkResult.Error(e.message ?: "The routine's sharing could not be changed")
+                    NetworkResult.Error(e.message ?: t("The routine's sharing could not be changed"))
                 }
             }
         }
@@ -615,7 +616,7 @@ class RoutineRepositoryImpl(
                     throw e
                 } catch (e: Exception) {
                     Logger.w(TAG, "Could not upload the phone-only history of routine $routineId: ${e.message}")
-                    failure = failure ?: (e.message ?: "Could not upload routine history")
+                    failure = failure ?: (e.message ?: t("Could not upload routine history"))
                 }
             }
             failure?.let { NetworkResult.Error(it) } ?: NetworkResult.Success(Unit)
@@ -660,7 +661,7 @@ class RoutineRepositoryImpl(
                     payload = archived
                 } else if (planned.archived.any { moved -> changed.any { it.key == moved.key } }) {
                     return@withLock NetworkResult.Error(
-                        "That day's history is stored on your server. Connect to it and try again.",
+                        t("That day's history is stored on your server. Connect to it and try again."),
                     )
                 }
             }
@@ -691,7 +692,7 @@ class RoutineRepositoryImpl(
             if (toArchive.isNotEmpty()) {
                 val projectId = fresh.projectId.takeIf { it > 0L }
                     ?: taskDao.getByIdSync(routine.taskId)?.projectId
-                    ?: error("The routine's project is unknown")
+                    ?: error(t("The routine's project is unknown"))
                 archiveStore.write(
                     projectId = projectId,
                     routineId = merged.definition.id,
@@ -708,14 +709,14 @@ class RoutineRepositoryImpl(
             // Offline and server trouble sort themselves out on a later write; anything else
             // (a refused part, a part that was not stored completely) is worth telling about.
             if (!isRetriableNetworkError(e) && !isNetworkFailure(e)) {
-                warning.value = "Older routine history could not be archived and stays in the routine for now."
+                warning.value = t("Older routine history could not be archived and stays in the routine for now.")
             }
             null
         }
 
     private suspend fun updateCarrier(routine: Routine): NetworkResult<Routine> {
         val entity = taskDao.getByIdSync(routine.taskId)
-            ?: return NetworkResult.Error("Routine carrier not found")
+            ?: return NetworkResult.Error(t("Routine carrier not found"))
         val task = with(taskMapper) { entity.toDomain() }
         val parsed = RoutineEnvelope.parse(task.description, json)
         // [routine] may be a copy read before another write here changed the carrier: a tick
@@ -727,7 +728,7 @@ class RoutineRepositoryImpl(
             RoutineEnvelope.upsert(parsed.body, payload, json)
         } catch (e: IllegalArgumentException) {
             return NetworkResult.Error(
-                e.message ?: "The routine's history is too large to save. Connect to your server so it can be archived.",
+                e.message ?: t("The routine's history is too large to save. Connect to your server so it can be archived."),
             )
         }
         val completeCarrier = task.copy(
@@ -803,10 +804,10 @@ class RoutineRepositoryImpl(
     }
 
     private fun validateDraft(draft: RoutineDraft): String? = when {
-        draft.name.isBlank() -> "Give the routine a name"
-        draft.slots.isEmpty() -> "Add at least one time"
+        draft.name.isBlank() -> t("Give the routine a name")
+        draft.slots.isEmpty() -> t("Add at least one time")
         draft.slots.size > RoutineDefinitionRules.MAX_TIMES -> "A routine has at most ${RoutineDefinitionRules.MAX_TIMES} times"
-        draft.slots.any { it.reminderMinutes !in 0..1439 } -> "Reminder time is invalid"
+        draft.slots.any { it.reminderMinutes !in 0..1439 } -> t("Reminder time is invalid")
         else -> null
     }
 

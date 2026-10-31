@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 /** Vikunja relation_kind wire values + display helpers. */
 object RelationKind {
     const val SUBTASK = "subtask"
@@ -25,16 +26,16 @@ object RelationKind {
 
     fun label(kind: String): String = when (kind) {
         SUBTASK -> "Subtask"
-        PARENTTASK -> "Parent task"
+        PARENTTASK -> t("Parent task")
         RELATED -> "Related"
-        DUPLICATEOF -> "Duplicate of"
+        DUPLICATEOF -> t("Duplicate of")
         DUPLICATES -> "Duplicates"
         BLOCKING -> "Blocking"
-        BLOCKED -> "Blocked by"
+        BLOCKED -> t("Blocked by")
         PRECEDES -> "Precedes"
         FOLLOWS -> "Follows"
-        COPIEDFROM -> "Copied from"
-        COPIEDTO -> "Copied to"
+        COPIEDFROM -> t("Copied from")
+        COPIEDTO -> t("Copied to")
         else -> kind.replaceFirstChar { it.uppercase() }
     }
 }

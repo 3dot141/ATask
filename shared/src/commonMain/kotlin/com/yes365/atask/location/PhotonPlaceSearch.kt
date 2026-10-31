@@ -1,5 +1,6 @@
 package com.yes365.atask.location
 
+import com.yes365.atask.ui.i18n.t
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
@@ -38,7 +39,7 @@ class PhotonPlaceSearch(
         }
     }
 
-    override val attribution: String = "Search by Photon · © OpenStreetMap contributors"
+    override val attribution: String = t("Search by Photon · © OpenStreetMap contributors")
 
     override suspend fun search(query: String, near: GeoPoint?): List<PlaceSuggestion> {
         val response = client.get("$baseUrl/api/") {

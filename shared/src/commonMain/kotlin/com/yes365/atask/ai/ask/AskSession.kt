@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.ask
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import com.yes365.atask.ai.AiProviders
 import com.yes365.atask.ai.AiSettingsStore
@@ -60,7 +61,7 @@ data class AskState(
     /** The answer as it streams in. */
     val streaming: String = "",
     val busy: Boolean = false,
-    /** What the assistant is doing between answers ("Looking at your tasks"). */
+    /** What the assistant is doing between answers (t("Looking at your tasks")). */
     val activity: String? = null,
     val pending: PendingProposal? = null,
     /**
@@ -181,7 +182,7 @@ class AskSession(
         val s = settings.current()
         val connection = providers.connection(s)
         if (connection == null || !s.askReady) {
-            _state.update { it.copy(error = "Set up Ask in the assistant settings first.") }
+            _state.update { it.copy(error = t("Set up Ask in the assistant settings first.")) }
             return
         }
         _state.update { it.copy(busy = true, error = null, streaming = "") }
@@ -208,7 +209,7 @@ class AskSession(
                         is ChatEvent.Finished -> finished = event
                     }
                 }
-                val answer = finished?.message ?: throw LlmException(LlmException.Kind.BAD_ANSWER, "The answer ended early.")
+                val answer = finished?.message ?: throw LlmException(LlmException.Kind.BAD_ANSWER, t("The answer ended early."))
                 val calls = if (final) emptyList() else answer.toolCalls
                 update { it.copy(messages = it.messages + answer.copy(toolCalls = calls).let { a -> if (final) a.copy(raw = null) else a }) }
                 _state.update { it.copy(streaming = "") }
@@ -226,7 +227,7 @@ class AskSession(
         } catch (e: LlmException) {
             _state.update { it.copy(error = e.message ?: "The model did not answer.") }
         } catch (e: Exception) {
-            _state.update { it.copy(error = e.message ?: "Something went wrong.") }
+            _state.update { it.copy(error = e.message ?: t("Something went wrong.")) }
         } finally {
             _state.update { it.copy(busy = false, streaming = "", activity = null, pending = null) }
             store.save(conversation)
@@ -343,7 +344,7 @@ class AskSession(
 
     companion object {
         const val ASK_MAX_TOKENS = 16_000
-        const val ACTIVITY_LOOKING = "Looking at your tasks"
+        val ACTIVITY_LOOKING = t("Looking at your tasks")
 
         /** The messages a request sends: the last 40, starting at a user message (section 5.1). */
         fun window(messages: List<ChatMessage>): List<ChatMessage> =

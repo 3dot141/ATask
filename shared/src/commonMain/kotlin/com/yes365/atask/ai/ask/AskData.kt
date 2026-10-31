@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.ask
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import com.yes365.atask.ai.AiText
 import com.yes365.atask.ai.dictation.ContextProject
@@ -266,7 +267,7 @@ class AskSnapshot(
         val open = tasks.filter { !it.done }
         val rows: List<Task> = when (view) {
             "inbox" -> {
-                val id = inboxId ?: return error("not_found", "No Inbox is chosen.")
+                val id = inboxId ?: return error("not_found", t("No Inbox is chosen."))
                 sortProjectTasks(open.filter { it.projectId == id }, order.orderFor(id, projects))
             }
             "today" -> {

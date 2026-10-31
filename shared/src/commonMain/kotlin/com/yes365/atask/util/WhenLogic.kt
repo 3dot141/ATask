@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.parser.DateOptions
 import com.yes365.atask.util.parser.extractDate
 import com.yes365.atask.util.parser.isDayFirstLocale
@@ -82,7 +83,7 @@ object WhenLogic {
     fun quickChoices(today: LocalDate): List<WhenQuickChoice> = listOf(
         WhenQuickChoice(WhenQuickChoice.Id.TODAY, "Today", today),
         WhenQuickChoice(WhenQuickChoice.Id.TOMORROW, "Tomorrow", today.plus(1, DateTimeUnit.DAY)),
-        WhenQuickChoice(WhenQuickChoice.Id.WEEKEND, "This weekend", comingSaturday(today)),
+        WhenQuickChoice(WhenQuickChoice.Id.WEEKEND, t("This weekend"), comingSaturday(today)),
         WhenQuickChoice(WhenQuickChoice.Id.NEXT_WEEK, "Next week", DueDates.nextWeekStart(today)),
     )
 

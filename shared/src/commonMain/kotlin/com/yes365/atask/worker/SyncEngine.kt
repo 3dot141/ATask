@@ -1,5 +1,6 @@
 package com.yes365.atask.worker
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.AuthManager
 import com.yes365.atask.auth.AuthState
 import com.yes365.atask.data.local.TempIdGenerator
@@ -154,7 +155,7 @@ class SyncEngine(
             // The session ended and the user has to sign in again. Every request would be
             // answered with 401, so send none: the queued changes stay as they are and signing
             // in again starts a new run. Reporting success keeps WorkManager from retrying.
-            Logger.w(TAG, "Sync paused: sign-in required, queued actions stay pending")
+            Logger.w(TAG, t("Sync paused: sign-in required, queued actions stay pending"))
             return true
         }
 

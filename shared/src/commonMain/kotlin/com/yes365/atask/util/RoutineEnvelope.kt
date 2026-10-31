@@ -2,6 +2,7 @@
 
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.RoutineArchivePart
 import com.yes365.atask.domain.model.RoutineArchivePartSerializer
 import com.yes365.atask.domain.model.RoutinePayload
@@ -82,9 +83,9 @@ object RoutineEnvelope {
         val any = anyMarkerRegex.find(description) ?: return Parsed(false, description)
         val body = description.removeRange(any.range).trimEnd()
         val marker = markerRegex.matchEntire(any.value)
-            ?: return Parsed(true, body, any.value, error = "Malformed routine metadata")
+            ?: return Parsed(true, body, any.value, error = t("Malformed routine metadata"))
         val version = marker.groupValues[1].toIntOrNull()
-            ?: return Parsed(true, body, any.value, error = "Invalid routine version")
+            ?: return Parsed(true, body, any.value, error = t("Invalid routine version"))
         if (version != CURRENT_VERSION) {
             return Parsed(
                 isCarrier = true,
@@ -98,7 +99,7 @@ object RoutineEnvelope {
             val encoded = marker.groupValues[2]
             val padded = encoded + "=".repeat((4 - encoded.length % 4) % 4)
             val bytes = Base64.UrlSafe.decode(padded)
-            require(bytes.size <= MAX_DECODED_BYTES) { "Routine metadata is too large" }
+            require(bytes.size <= MAX_DECODED_BYTES) { t("Routine metadata is too large") }
             val payload = json.decodeFromString(RoutinePayloadSerializer, bytes.decodeToString())
             if (payload.version > CURRENT_VERSION) {
                 return Parsed(
@@ -109,19 +110,19 @@ object RoutineEnvelope {
                     version = payload.version,
                 )
             }
-            require(payload.version == CURRENT_VERSION) { "Routine payload version mismatch" }
-            require(payload.definition.id.isNotBlank()) { "Routine id is missing" }
-            require(payload.definition.name.isNotBlank()) { "Routine name is missing" }
-            require(payload.definition.slots.isNotEmpty()) { "Routine has no slots" }
-            require(payload.definition.slots.all { it.id.isNotBlank() }) { "Routine slot id is missing" }
+            require(payload.version == CURRENT_VERSION) { t("Routine payload version mismatch") }
+            require(payload.definition.id.isNotBlank()) { t("Routine id is missing") }
+            require(payload.definition.name.isNotBlank()) { t("Routine name is missing") }
+            require(payload.definition.slots.isNotEmpty()) { t("Routine has no slots") }
+            require(payload.definition.slots.all { it.id.isNotBlank() }) { t("Routine slot id is missing") }
             require(payload.definition.slots.map { it.id }.distinct().size == payload.definition.slots.size) {
-                "Routine slot ids must be unique"
+                t("Routine slot ids must be unique")
             }
             LocalDate.parse(payload.definition.activeFrom)
             when (val schedule = payload.definition.schedule) {
                 is RoutineSchedule.Calendar -> LocalDate.parse(schedule.anchorDate)
                 is RoutineSchedule.AfterCompletion -> {
-                    require(schedule.intervalDays > 0) { "Routine interval must be positive" }
+                    require(schedule.intervalDays > 0) { t("Routine interval must be positive") }
                     LocalDate.parse(schedule.firstDueDate)
                 }
             }
@@ -131,7 +132,7 @@ object RoutineEnvelope {
                 isCarrier = true,
                 body = body,
                 rawMarker = any.value,
-                error = error.message ?: "Cannot decode routine metadata",
+                error = error.message ?: t("Cannot decode routine metadata"),
                 version = version,
             )
         }
@@ -139,7 +140,7 @@ object RoutineEnvelope {
 
     fun encode(payload: RoutinePayload, json: Json): String {
         val bytes = json.encodeToString(RoutinePayloadSerializer, payload).encodeToByteArray()
-        require(bytes.size <= MAX_DECODED_BYTES) { "Routine metadata is too large" }
+        require(bytes.size <= MAX_DECODED_BYTES) { t("Routine metadata is too large") }
         val encoded = Base64.UrlSafe.encode(bytes).trimEnd('=')
         return "<!-- vicu-routine:v$CURRENT_VERSION:$encoded -->"
     }
@@ -184,7 +185,7 @@ object RoutineEnvelope {
         val newer = local.isNewerVersion || remote.isNewerVersion
         throw UnreadableCarrierException(
             if (newer) {
-                "This routine was saved by a newer version of Vicu. Update Vicu to change it."
+                t("This routine was saved by a newer version of Vicu. Update Vicu to change it.")
             } else {
                 "This routine's record cannot be read, so it was not changed: ${remote.error ?: local.error ?: "unknown error"}"
             },
@@ -212,9 +213,9 @@ object RoutineEnvelope {
         if (description.isNullOrEmpty()) return ParsedArchive(false)
         val any = anyArchiveMarkerRegex.find(description) ?: return ParsedArchive(false)
         val marker = archiveMarkerRegex.matchEntire(any.value)
-            ?: return ParsedArchive(true, error = "Malformed routine archive metadata")
+            ?: return ParsedArchive(true, error = t("Malformed routine archive metadata"))
         val version = marker.groupValues[1].toIntOrNull()
-            ?: return ParsedArchive(true, error = "Invalid routine archive version")
+            ?: return ParsedArchive(true, error = t("Invalid routine archive version"))
         if (version != CURRENT_VERSION) {
             return ParsedArchive(true, error = "Routine archive version $version is not supported")
         }
@@ -222,25 +223,25 @@ object RoutineEnvelope {
             val encoded = marker.groupValues[2]
             val padded = encoded + "=".repeat((4 - encoded.length % 4) % 4)
             val bytes = Base64.UrlSafe.decode(padded)
-            require(bytes.size <= MAX_DECODED_BYTES) { "Routine archive is too large" }
+            require(bytes.size <= MAX_DECODED_BYTES) { t("Routine archive is too large") }
             val part = json.decodeFromString(RoutineArchivePartSerializer, bytes.decodeToString())
-            require(part.version == CURRENT_VERSION) { "Routine archive version mismatch" }
-            require(part.routineId.isNotBlank()) { "Routine archive has no routine id" }
-            require(part.part >= 1) { "Routine archive part number is invalid" }
+            require(part.version == CURRENT_VERSION) { t("Routine archive version mismatch") }
+            require(part.routineId.isNotBlank()) { t("Routine archive has no routine id") }
+            require(part.part >= 1) { t("Routine archive part number is invalid") }
             // The key is also the map key; a record that lost its own copy gets it back.
             val occurrences = part.occurrences.mapValues { (key, record) ->
                 if (record.key.isBlank()) record.copy(key = key) else record
             }
             ParsedArchive(true, part.copy(occurrences = occurrences))
         }.getOrElse { error ->
-            ParsedArchive(true, error = error.message ?: "Cannot decode routine archive metadata")
+            ParsedArchive(true, error = error.message ?: t("Cannot decode routine archive metadata"))
         }
     }
 
     /** The description of an archive part task: only the marker (section 6.4). */
     fun encodeArchive(part: RoutineArchivePart, json: Json): String {
         val bytes = json.encodeToString(RoutineArchivePartSerializer, part).encodeToByteArray()
-        require(bytes.size <= MAX_DECODED_BYTES) { "Routine archive part is too large" }
+        require(bytes.size <= MAX_DECODED_BYTES) { t("Routine archive part is too large") }
         val encoded = Base64.UrlSafe.encode(bytes).trimEnd('=')
         return "<!-- vicu-routine:archive:v$CURRENT_VERSION:$encoded -->"
     }

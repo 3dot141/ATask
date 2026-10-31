@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.CurrentUser
 import com.yes365.atask.data.local.dao.TaskDao
 import com.yes365.atask.data.remote.api.CreateTaskDto
@@ -185,7 +186,7 @@ class RoutineArchiveStore(
                         return@writeArchivePart null
                     }
                     if (RoutineArchive.partBytes(merged, json) > RoutineArchive.BUDGET_BYTES) {
-                        throw IllegalStateException("The routine archive part is full")
+                        throw IllegalStateException(t("The routine archive part is full"))
                     }
                     RoutineEnvelope.encodeArchive(merged, json)
                 }
@@ -207,9 +208,9 @@ class RoutineArchiveStore(
         }
         // Verify what the server kept before the main carrier is allowed to drop this history.
         val storedPart = RoutineEnvelope.parseArchive(stored.description, json).part
-            ?: throw IllegalStateException("The routine archive was not stored completely")
+            ?: throw IllegalStateException(t("The routine archive was not stored completely"))
         if (wanted.occurrences.keys.any { it !in storedPart.occurrences }) {
-            throw IllegalStateException("The routine archive was not stored completely")
+            throw IllegalStateException(t("The routine archive was not stored completely"))
         }
         known = known + (stored.id to storedPart)
     }

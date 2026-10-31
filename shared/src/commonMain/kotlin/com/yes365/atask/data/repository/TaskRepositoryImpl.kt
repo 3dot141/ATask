@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.local.BehaviorPrefsStore
 import com.yes365.atask.data.local.LogbookPrefsStore
 import com.yes365.atask.data.local.TempIdGenerator
@@ -88,7 +89,7 @@ class TaskRepositoryImpl(
         private const val MAX_REMEMBERED_ADVANCES = 32
 
         /** Shown when a change is refused because the task was deleted on the server. */
-        private const val TASK_DELETED_ELSEWHERE = "This task was deleted on another device"
+        private val TASK_DELETED_ELSEWHERE = t("This task was deleted on another device")
     }
 
     private val missing = MissingResourceCheck(api)
@@ -222,7 +223,7 @@ class TaskRepositoryImpl(
             throw e
         } catch (e: Exception) {
             Logger.w(TAG, "refreshListPositions($projectId) failed: ${e.message}")
-            refreshFailure(e, "Failed to read the order of the list")
+            refreshFailure(e, t("Failed to read the order of the list"))
         }
     }
 
@@ -412,7 +413,7 @@ class TaskRepositoryImpl(
                 // before creating it again.
                 NetworkResult.Success(createLocally(task, maybeSent = mayHaveReachedServer(e)))
             } else {
-                NetworkResult.Error(e.message ?: "Failed to create task")
+                NetworkResult.Error(e.message ?: t("Failed to create task"))
             }
         }
     }
@@ -477,7 +478,7 @@ class TaskRepositoryImpl(
                     NetworkResult.Error(TASK_DELETED_ELSEWHERE)
                 } else {
                     previous?.let { taskDao.upsert(it) }
-                    NetworkResult.Error(e.message ?: "Failed to update task")
+                    NetworkResult.Error(e.message ?: t("Failed to update task"))
                 }
             },
         )
@@ -488,7 +489,7 @@ class TaskRepositoryImpl(
         // Gone without having been created (deleted here, or its create was discarded): writing
         // it would bring back a task nobody can sync.
         val previous = taskDao.getByIdSync(task.id)
-            ?: return NetworkResult.Error("This task is no longer on this device")
+            ?: return NetworkResult.Error(t("This task is no longer on this device"))
         taskDao.upsert(optimisticEntity(previous, task))
         if (previous.projectId != task.projectId) {
             positioner.invalidate(previous.projectId)
@@ -633,7 +634,7 @@ class TaskRepositoryImpl(
                 platformHooks.updateWidgets()
                 NetworkResult.Success(Unit)
             },
-            refused = { e -> NetworkResult.Error(e.message ?: "Failed to delete task") },
+            refused = { e -> NetworkResult.Error(e.message ?: t("Failed to delete task")) },
         )
     }
 
@@ -681,7 +682,7 @@ class TaskRepositoryImpl(
                 // creating a second one, and links it.
                 queueSubtaskCreate(parentTaskId, subtask, createdOnServer, maybeSent = mayHaveReachedServer(e))
             } else {
-                NetworkResult.Error(e.message ?: "Failed to create subtask")
+                NetworkResult.Error(e.message ?: t("Failed to create subtask"))
             }
         }
     }
@@ -898,7 +899,7 @@ class TaskRepositoryImpl(
                 } else {
                     cached?.let { taskDao.upsert(it) }
                     updateParentDoneReferences(current, current.done, parentTaskId)
-                    NetworkResult.Error(e.message ?: "Failed to update subtask")
+                    NetworkResult.Error(e.message ?: t("Failed to update subtask"))
                 }
             },
         )
@@ -962,7 +963,7 @@ class TaskRepositoryImpl(
             }
             NetworkResult.Success(Unit)
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to create relation")
+            NetworkResult.Error(e.message ?: t("Failed to create relation"))
         }
     }
 
@@ -988,7 +989,7 @@ class TaskRepositoryImpl(
             }
             NetworkResult.Success(Unit)
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to delete relation")
+            NetworkResult.Error(e.message ?: t("Failed to delete relation"))
         }
     }
 
@@ -1048,7 +1049,7 @@ class TaskRepositoryImpl(
             val outcome = changeLocalTask(task.id) {
                 // Read again under the lock: a row the sync has just replaced must not come back.
                 val local = taskDao.getByIdSync(task.id)
-                    ?: return@changeLocalTask NetworkResult.Error("This task is no longer on this device")
+                    ?: return@changeLocalTask NetworkResult.Error(t("This task is no longer on this device"))
                 taskDao.upsert(optimisticDoneEntity(local, toggled))
                 queueTaskAction(
                     task.id,
@@ -1106,7 +1107,7 @@ class TaskRepositoryImpl(
                 if (dropIfDeleted(task.id, e)) {
                     NetworkResult.Error(TASK_DELETED_ELSEWHERE)
                 } else {
-                    NetworkResult.Error(e.message ?: "Failed to toggle task")
+                    NetworkResult.Error(e.message ?: t("Failed to toggle task"))
                 }
             },
         )
@@ -1129,7 +1130,7 @@ class TaskRepositoryImpl(
             throw e
         } catch (e: Exception) {
             Logger.e(TAG, "refreshAll() FAILED: ${e.message}", e)
-            refreshFailure(e, "Failed to refresh tasks")
+            refreshFailure(e, t("Failed to refresh tasks"))
         }
     }
 
@@ -1149,14 +1150,14 @@ class TaskRepositoryImpl(
             throw e
         } catch (e: Exception) {
             Logger.e(TAG, "loadLogbookPage($page) FAILED: ${e.message}", e)
-            refreshFailure(e, "Failed to load completed tasks")
+            refreshFailure(e, t("Failed to load completed tasks"))
         }
     }
 
     private fun refreshFailure(e: Exception, fallback: String): NetworkResult.Error {
         val offline = isNetworkFailure(e)
         return NetworkResult.Error(
-            message = if (offline) "Can't reach the server" else e.message?.takeIf { it.isNotBlank() } ?: fallback,
+            message = if (offline) t("Can't reach the server") else e.message?.takeIf { it.isNotBlank() } ?: fallback,
             code = (e as? VikunjaApiException)?.httpStatus,
             offline = offline,
         )

@@ -2,6 +2,7 @@
 
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.CustomListRevision
 import com.yes365.atask.domain.model.CustomListSyncDocumentSerializer
 import com.yes365.atask.domain.model.CustomListSyncDocumentV1
@@ -72,15 +73,15 @@ object CustomListEnvelope {
     }
 
     fun normalize(document: CustomListSyncDocumentV1): CustomListSyncDocumentV1 {
-        require(document.version == CURRENT_VERSION) { "Custom-list payload version mismatch" }
+        require(document.version == CURRENT_VERSION) { t("Custom-list payload version mismatch") }
         document.lists.forEach { (id, record) ->
-            require(record.revision.deviceId.isNotBlank()) { "Custom-list revision is invalid" }
+            require(record.revision.deviceId.isNotBlank()) { t("Custom-list revision is invalid") }
             record.value?.let {
                 require(it.id == id && it.name.isNotBlank()) { "Custom-list value $id is invalid" }
                 it.toDomain()
             }
         }
-        require(document.order.revision.deviceId.isNotBlank()) { "Custom-list order revision is invalid" }
+        require(document.order.revision.deviceId.isNotBlank()) { t("Custom-list order revision is invalid") }
         val normalizedOrder = activeLists(document).map { it.id }
         return document.copy(order = document.order.copy(ids = normalizedOrder))
     }
@@ -118,26 +119,26 @@ object CustomListEnvelope {
         val any = anyMarkerRegex.find(description) ?: return Parsed(false, description)
         val body = description.removeRange(any.range).trimEnd()
         val marker = markerRegex.matchEntire(any.value)
-            ?: return Parsed(true, body, error = "Malformed custom-list metadata")
+            ?: return Parsed(true, body, error = t("Malformed custom-list metadata"))
         val version = marker.groupValues[1].toIntOrNull()
-            ?: return Parsed(true, body, error = "Invalid custom-list version")
+            ?: return Parsed(true, body, error = t("Invalid custom-list version"))
         if (version != CURRENT_VERSION) return Parsed(true, body, error = "Custom-list metadata version $version is not supported", version = version)
         return runCatching {
             val encoded = marker.groupValues[2]
             val padded = encoded + "=".repeat((4 - encoded.length % 4) % 4)
             val bytes = Base64.UrlSafe.decode(padded)
-            require(bytes.size <= MAX_DECODED_BYTES) { "Custom-list metadata is too large" }
+            require(bytes.size <= MAX_DECODED_BYTES) { t("Custom-list metadata is too large") }
             val decoded = json.decodeFromString(CustomListSyncDocumentSerializer, bytes.decodeToString())
             if (decoded.version > CURRENT_VERSION) {
                 return Parsed(true, body, error = "Custom-list metadata version ${decoded.version} is not supported", version = decoded.version)
             }
             Parsed(true, body, document = normalize(decoded), version = version)
-        }.getOrElse { Parsed(true, body, error = it.message ?: "Cannot decode custom-list metadata", version = version) }
+        }.getOrElse { Parsed(true, body, error = it.message ?: t("Cannot decode custom-list metadata"), version = version) }
     }
 
     fun encode(document: CustomListSyncDocumentV1, json: Json): String {
         val bytes = json.encodeToString(CustomListSyncDocumentSerializer, normalize(document)).encodeToByteArray()
-        require(bytes.size <= MAX_DECODED_BYTES) { "Custom-list metadata is too large" }
+        require(bytes.size <= MAX_DECODED_BYTES) { t("Custom-list metadata is too large") }
         return "<!-- vicu-custom-lists:v1:${Base64.UrlSafe.encode(bytes).trimEnd('=')} -->"
     }
 }

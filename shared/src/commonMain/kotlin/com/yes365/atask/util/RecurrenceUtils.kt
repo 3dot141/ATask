@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 const val RECURRENCE_MODE_FROM_DUE_DATE = 0
 const val RECURRENCE_MODE_MONTHLY = 1
 const val RECURRENCE_MODE_FROM_COMPLETION = 2
@@ -64,7 +65,7 @@ fun recurrenceForPreset(
     RecurrencePreset.WEEKLY -> fixedRecurrence(RECURRENCE_WEEK_SECONDS, fromCompletion)
     RecurrencePreset.MONTHLY -> RecurrenceValue(0, RECURRENCE_MODE_MONTHLY)
     RecurrencePreset.YEARLY -> fixedRecurrence(RECURRENCE_YEAR_SECONDS, fromCompletion)
-    RecurrencePreset.CUSTOM -> error("A custom recurrence requires an interval and unit")
+    RecurrencePreset.CUSTOM -> error(t("A custom recurrence requires an interval and unit"))
 }
 
 fun customRecurrence(
@@ -72,19 +73,19 @@ fun customRecurrence(
     unit: RecurrenceCustomUnit,
     fromCompletion: Boolean = false,
 ): RecurrenceValue {
-    require(interval in 1..365) { "Recurrence interval must be between 1 and 365" }
+    require(interval in 1..365) { t("Recurrence interval must be between 1 and 365") }
     return fixedRecurrence(interval.toLong() * unit.seconds, fromCompletion)
 }
 
 fun formatRecurrence(value: RecurrenceValue): String {
     if (!value.isRecurring) return ""
-    if (value.repeatMode == RECURRENCE_MODE_MONTHLY) return "Every month"
+    if (value.repeatMode == RECURRENCE_MODE_MONTHLY) return t("Every month")
 
     val seconds = value.repeatAfter
     val interval = when {
         seconds % RECURRENCE_YEAR_SECONDS == 0L -> {
             val years = seconds / RECURRENCE_YEAR_SECONDS
-            if (years == 1L) "Every year" else "Every $years years"
+            if (years == 1L) t("Every year") else "Every $years years"
         }
         seconds % RECURRENCE_WEEK_SECONDS == 0L -> {
             val weeks = seconds / RECURRENCE_WEEK_SECONDS
@@ -96,7 +97,7 @@ fun formatRecurrence(value: RecurrenceValue): String {
         }
         seconds >= 3_600L && seconds % 3_600L == 0L -> {
             val hours = seconds / 3_600L
-            if (hours == 1L) "Every hour" else "Every $hours hours"
+            if (hours == 1L) t("Every hour") else "Every $hours hours"
         }
         else -> "Every $seconds seconds"
     }

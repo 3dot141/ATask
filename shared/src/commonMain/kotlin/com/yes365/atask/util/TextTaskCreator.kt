@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.AuthManager
 import com.yes365.atask.auth.AuthState
 import com.yes365.atask.data.local.NlpPrefsStore
@@ -65,15 +66,15 @@ class TextTaskCreator(
         defaultDueDate: String? = null,
     ): Result {
         val input = text.withoutLineBreaks().trim()
-        if (input.isBlank()) return Result.Failed("Say what the task is.")
+        if (input.isBlank()) return Result.Failed(t("Say what the task is."))
 
         // A cold start (a voice command can launch the app) restores the session first.
         val auth = withTimeoutOrNull(AUTH_WAIT_MS) {
             authManager.authState.first { it != AuthState.Loading }
         }
-        if (auth == null || auth == AuthState.Unauthenticated) return Result.Failed("Sign in to Vicu first.")
+        if (auth == null || auth == AuthState.Unauthenticated) return Result.Failed(t("Sign in to Vicu first."))
         val inboxId = authManager.getInboxProjectId()?.takeIf { it > 0 }
-            ?: return Result.Failed("Choose an Inbox in Vicu first.")
+            ?: return Result.Failed(t("Choose an Inbox in Vicu first."))
         val placePhrase = locations?.let { PlacePhrases.find(input, it.allPlaces()) }
         val sentence = placePhrase?.title ?: input
 
@@ -109,7 +110,7 @@ class TextTaskCreator(
             }
         }
         title = title.trim()
-        if (title.isBlank()) return Result.Failed("Say what the task is.")
+        if (title.isBlank()) return Result.Failed(t("Say what the task is."))
 
         val labelIds = if (parsed != null) resolveParsedLabels(parsed.labels, labels, labelRepository) else emptySet()
         val prefs = notificationPrefsStore.getPrefs().first()
@@ -147,7 +148,7 @@ class TextTaskCreator(
                 Result.Created(created, reply)
             }
             is NetworkResult.Error -> Result.Failed(result.message)
-            NetworkResult.Loading -> Result.Failed("Could not add the task.")
+            NetworkResult.Loading -> Result.Failed(t("Could not add the task."))
         }
     }
 
@@ -159,7 +160,7 @@ class TextTaskCreator(
 
     companion object {
         private const val AUTH_WAIT_MS = 5_000L
-        internal const val NEEDS_ALWAYS = "Set Vicu's location access to Always so it can remind you there"
+        internal val NEEDS_ALWAYS = t("Set Vicu's location access to Always so it can remind you there")
 
         /** The place was saved on another device: this phone reminds there once it knows where it is. */
         internal fun notLocated(name: String) = "Set where $name is in Vicu's settings so this phone can remind you there"

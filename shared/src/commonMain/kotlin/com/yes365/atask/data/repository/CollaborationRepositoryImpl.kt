@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.TokenStorage
 import com.yes365.atask.data.local.TempIdGenerator
 import com.yes365.atask.data.local.dao.AssigneePayload
@@ -116,7 +117,7 @@ class CollaborationRepositoryImpl(
             .flowOn(mappingDispatcher)
 
     private fun failure(e: Exception, doing: String): NetworkResult.Error = NetworkResult.Error(
-        message = if (isNetworkFailure(e)) "Can't reach the server" else e.message ?: "Could not $doing",
+        message = if (isNetworkFailure(e)) t("Can't reach the server") else e.message ?: "Could not $doing",
         code = (e as? VikunjaApiException)?.httpStatus,
         offline = isNetworkFailure(e),
     )
@@ -491,7 +492,7 @@ class CollaborationRepositoryImpl(
 
     override suspend fun setSubscribed(taskId: Long, subscribed: Boolean): NetworkResult<Unit> {
         val id = currentTaskId(taskId)
-        if (id <= 0L) return NetworkResult.Error("The task is not on the server yet")
+        if (id <= 0L) return NetworkResult.Error(t("The task is not on the server yet"))
         return attempt("change notifications for the task") { api.setSubscribed(id, subscribed) }
     }
 

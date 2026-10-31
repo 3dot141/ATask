@@ -1,5 +1,6 @@
 package com.yes365.atask.voice
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.AppMessages
 import com.yes365.atask.util.DateDisplayFormat
 import kotlinx.coroutines.CoroutineScope
@@ -269,9 +270,9 @@ class HoldToTalk(
         _state.value = null
         messages.post(
             when (error) {
-                SpeechError.NETWORK -> "Speech recognition needs a connection right now. Try again online."
+                SpeechError.NETWORK -> t("Speech recognition needs a connection right now. Try again online.")
                 SpeechError.PERMISSION -> DENIED_MESSAGE
-                else -> "Could not listen. Try again."
+                else -> t("Could not listen. Try again.")
             },
         )
     }
@@ -310,8 +311,8 @@ class HoldToTalk(
     companion object {
         /** How long a release waits for the recognizer's last words. */
         const val FINAL_WAIT_MS = 1_500L
-        internal const val NOTHING_HEARD = "Didn't catch that. Hold + and say the task."
-        internal const val DENIED_MESSAGE = "Vicu needs the microphone to hear a task. Allow it in Settings."
+        internal val NOTHING_HEARD = t("Didn't catch that. Hold + and say the task.")
+        internal val DENIED_MESSAGE = t("Vicu needs the microphone to hear a task. Allow it in Settings.")
 
         internal fun joinWords(first: String, second: String): String = when {
             first.isBlank() -> second.trim()

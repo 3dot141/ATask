@@ -1,5 +1,6 @@
 package com.yes365.atask.ai
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.provider.ChatMessage
 import com.yes365.atask.ai.provider.ChatRequest
 import com.yes365.atask.ai.provider.LlmClient
@@ -49,7 +50,7 @@ class AiProviders(
 
     /** The model list, one structured answer (json_schema, then prompt) and one tool call. */
     suspend fun test(settings: AiSettings, model: String): ConnectionTest {
-        val connection = connection(settings) ?: return ConnectionTest(null, null, false, listOf("Choose a provider and its address first."))
+        val connection = connection(settings) ?: return ConnectionTest(null, null, false, listOf(t("Choose a provider and its address first.")))
         val problems = mutableListOf<String>()
         val models = try {
             client.listModels(connection)
@@ -110,7 +111,7 @@ class AiProviders(
             val call = answer.toolCalls.firstOrNull { it.name == toolSpec.str("name") }
             val arguments = call?.let { runCatching { Json.parseToJsonElement(it.arguments).jsonObject }.getOrNull() }
             val ok = arguments != null && sameJson(arguments, toolProbe.obj("expectArguments"))
-            if (!ok) problems += "The model did not call the test tool."
+            if (!ok) problems += t("The model did not call the test tool.")
             ok
         } catch (e: CancellationException) {
             throw e

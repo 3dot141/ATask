@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.organize
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import com.yes365.atask.ai.AiProviders
 import com.yes365.atask.ai.AiSettingsStore
@@ -82,7 +83,7 @@ class OrganizeService(
     /** Throws [LlmException] when the request fails. */
     override suspend fun suggest(session: OrganizeSession, taskIds: List<Long>, list: String, defaultProjectId: Long?): OrganizeResult {
         val s = settings.current()
-        val connection = providers.connection(s) ?: throw LlmException(LlmException.Kind.BAD_REQUEST, "Set up the assistant first.")
+        val connection = providers.connection(s) ?: throw LlmException(LlmException.Kind.BAD_REQUEST, t("Set up the assistant first."))
         val snapshot = backend.snapshot()
         val context = dictation.context(TaskDefaults(projectId = defaultProjectId, listName = list))
         val tasks = taskIds.mapNotNull { snapshot.byId[it] }

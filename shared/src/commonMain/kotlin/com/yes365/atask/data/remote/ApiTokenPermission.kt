@@ -1,5 +1,6 @@
 package com.yes365.atask.data.remote
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.SystemTimeSource
 import com.yes365.atask.util.TimeSource
 import io.ktor.util.AttributeKey
@@ -19,7 +20,7 @@ object ApiTokenPermission {
     const val TOKEN_LACKS_PERMISSION =
         "Your API token does not have this permission. In Vikunja, give the token the permissions for task comments, " +
             "task assignees and project sharing, or sign in with your password instead."
-    const val TOKEN_CANNOT_FOLLOW = "Vikunja does not let API tokens follow tasks. Sign in with your password to use Notify me."
+    val TOKEN_CANNOT_FOLLOW = t("Vikunja does not let API tokens follow tasks. Sign in with your password to use Notify me.")
 
     /** How long a token that read the project list counts as working without asking again. */
     const val CHECK_FRESH_MS = 60_000L

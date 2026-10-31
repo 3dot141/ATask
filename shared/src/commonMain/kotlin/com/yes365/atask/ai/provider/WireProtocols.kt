@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.provider
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -163,7 +164,7 @@ internal class OpenAiChatProtocol(private val json: Json) : WireProtocol {
 
         override fun onWhole(body: String): ChatEvent? {
             val o = runCatching { json.parseToJsonElement(body).jsonObject }.getOrNull()
-                ?: throw LlmException(LlmException.Kind.BAD_ANSWER, "The answer could not be read.")
+                ?: throw LlmException(LlmException.Kind.BAD_ANSWER, t("The answer could not be read."))
             o["error"]?.let { throw LlmException(LlmException.Kind.SERVER, errorText(it)) }
             val choice = (o["choices"] as? JsonArray)?.firstOrNull() as? JsonObject ?: return null
             stopReason = choice["finish_reason"]?.jsonPrimitive?.contentOrNull
@@ -192,7 +193,7 @@ internal class OpenAiChatProtocol(private val json: Json) : WireProtocol {
         }
 
         override fun finish(): ChatEvent.Finished {
-            if (stopReason == "content_filter") throw LlmException(LlmException.Kind.REFUSED, "The model declined to answer.")
+            if (stopReason == "content_filter") throw LlmException(LlmException.Kind.REFUSED, t("The model declined to answer."))
             val toolCalls = calls.entries.mapNotNull { (index, call) ->
                 if (call.name.isEmpty()) null else ToolCall(call.id ?: "call_$index", call.name, call.arguments.toString())
             }
@@ -351,7 +352,7 @@ internal class AnthropicMessagesProtocol(private val json: Json) : WireProtocol 
 
         override fun onWhole(body: String): ChatEvent? {
             val o = runCatching { json.parseToJsonElement(body).jsonObject }.getOrNull()
-                ?: throw LlmException(LlmException.Kind.BAD_ANSWER, "The answer could not be read.")
+                ?: throw LlmException(LlmException.Kind.BAD_ANSWER, t("The answer could not be read."))
             if (o["type"]?.jsonPrimitive?.contentOrNull == "error") throw LlmException(LlmException.Kind.SERVER, errorText(o["error"] ?: o))
             stopReason = o["stop_reason"]?.jsonPrimitive?.contentOrNull
             (o["content"] as? JsonArray)?.forEachIndexed { index, element ->
@@ -373,7 +374,7 @@ internal class AnthropicMessagesProtocol(private val json: Json) : WireProtocol 
         }
 
         override fun finish(): ChatEvent.Finished {
-            if (stopReason == "refusal") throw LlmException(LlmException.Kind.REFUSED, "The model declined to answer.")
+            if (stopReason == "refusal") throw LlmException(LlmException.Kind.REFUSED, t("The model declined to answer."))
             val text = StringBuilder()
             val calls = mutableListOf<ToolCall>()
             val raw = buildJsonArray {
@@ -415,7 +416,7 @@ internal class AnthropicMessagesProtocol(private val json: Json) : WireProtocol 
 }
 
 private fun errorText(error: JsonElement): String = when (error) {
-    is JsonObject -> error["message"]?.jsonPrimitive?.contentOrNull ?: "The provider reported an error."
-    is JsonPrimitive -> error.contentOrNull ?: "The provider reported an error."
-    else -> "The provider reported an error."
+    is JsonObject -> error["message"]?.jsonPrimitive?.contentOrNull ?: t("The provider reported an error.")
+    is JsonPrimitive -> error.contentOrNull ?: t("The provider reported an error.")
+    else -> t("The provider reported an error.")
 }

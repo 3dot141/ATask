@@ -1,5 +1,6 @@
 package com.yes365.atask.location
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.local.NotificationPrefsStore
 import com.yes365.atask.data.local.TempIdGenerator
 import com.yes365.atask.domain.model.Task
@@ -128,7 +129,7 @@ class LocationReminderCoordinator(
         for (reminder in fired) {
             val task = tasks[reminder.taskId] ?: continue
             if (task.done || !prefs.taskRemindersEnabled) continue
-            notifier.show(task.id, task.title.ifBlank { "Task Reminder" }, body(reminder), prefs.soundEnabled)
+            notifier.show(task.id, task.title.ifBlank { t("Task Reminder") }, body(reminder), prefs.soundEnabled)
         }
         replan()
     }

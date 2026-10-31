@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.AuthManager
 import com.yes365.atask.data.local.CustomListStore
 import com.yes365.atask.data.remote.api.VikunjaApiService
@@ -34,11 +35,11 @@ class CustomListCodec(private val json: Json) : SyncedDocumentCodec<CustomListSy
     override val spec = CarrierSpec.CUSTOM_LISTS
     override val carrierTitle = CustomListEnvelope.CARRIER_TITLE
     override val messages = SyncedDocumentMessages(
-        updateRequired = "Update Vicu to sync custom lists",
-        malformed = "A malformed custom-list carrier was ignored; valid data was preserved",
-        noInbox = "Choose an Inbox project before syncing custom lists",
-        offline = "Custom-list sync is offline",
-        failed = "Custom-list sync failed",
+        updateRequired = t("Update Vicu to sync custom lists"),
+        malformed = t("A malformed custom-list carrier was ignored; valid data was preserved"),
+        noInbox = t("Choose an Inbox project before syncing custom lists"),
+        offline = t("Custom-list sync is offline"),
+        failed = t("Custom-list sync failed"),
     )
 
     override fun parse(description: String?): CarrierRead<CustomListSyncDocumentV1> {

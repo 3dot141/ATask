@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.Project
 import com.yes365.atask.domain.model.Task
 import com.yes365.atask.domain.model.TaskOrderSettings
@@ -240,10 +241,10 @@ object Guided {
 
     fun weeklySteps(world: GuidedWorld): List<WeeklyStep> = buildList {
         add(WeeklyStep(STEP_INBOX, "Sort the Inbox", inboxQueue(world).size))
-        add(WeeklyStep(STEP_MIND, "Anything on your mind?", null))
-        recentlyDone(world).let { done -> add(WeeklyStep(STEP_DONE, "Look back", done.size, done.map { it.id })) }
+        add(WeeklyStep(STEP_MIND, t("Anything on your mind?"), null))
+        recentlyDone(world).let { done -> add(WeeklyStep(STEP_DONE, t("Look back"), done.size, done.map { it.id })) }
         add(WeeklyStep(STEP_OVERDUE, "Overdue", overdueQueue(world).size))
-        lookAhead(world).let { ahead -> add(WeeklyStep(STEP_UPCOMING, "Look ahead", ahead.size, ahead.map { it.id })) }
+        lookAhead(world).let { ahead -> add(WeeklyStep(STEP_UPCOMING, t("Look ahead"), ahead.size, ahead.map { it.id })) }
         if (world.reviewEnabled) add(WeeklyStep(STEP_REVIEW, "Review projects", reviewQueue(world).size))
         add(WeeklyStep(STEP_WAITING, "Waiting a long time", waitingQueue(world).size))
     }

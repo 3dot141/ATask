@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.local.dao.PendingActionDao
 import com.yes365.atask.data.local.dao.ProjectDao
 import com.yes365.atask.data.local.entity.PendingActionEntity
@@ -68,7 +69,7 @@ class ProjectRepositoryImpl(
             projectDao.upsert(entity)
             NetworkResult.Success(with(projectMapper) { entity.toDomain() })
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to create project")
+            NetworkResult.Error(e.message ?: t("Failed to create project"))
         }
     }
 
@@ -110,7 +111,7 @@ class ProjectRepositoryImpl(
                 NetworkResult.Success(project)
             } else {
                 previous?.let { projectDao.upsert(it) }
-                NetworkResult.Error(e.message ?: "Failed to update project")
+                NetworkResult.Error(e.message ?: t("Failed to update project"))
             }
         }
     }
@@ -136,7 +137,7 @@ class ProjectRepositoryImpl(
             projectDao.deleteById(projectId)
             NetworkResult.Success(Unit)
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Failed to delete project")
+            NetworkResult.Error(e.message ?: t("Failed to delete project"))
         }
     }
 
@@ -148,7 +149,7 @@ class ProjectRepositoryImpl(
             throw e
         } catch (e: Exception) {
             NetworkResult.Error(
-                message = if (isNetworkFailure(e)) "Can't reach the server" else e.message ?: "Failed to refresh projects",
+                message = if (isNetworkFailure(e)) t("Can't reach the server") else e.message ?: t("Failed to refresh projects"),
                 code = (e as? VikunjaApiException)?.httpStatus,
                 offline = isNetworkFailure(e),
             )

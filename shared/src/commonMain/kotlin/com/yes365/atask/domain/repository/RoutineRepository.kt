@@ -1,5 +1,6 @@
 package com.yes365.atask.domain.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.OccurrenceStatus
 import com.yes365.atask.domain.model.Routine
 import com.yes365.atask.domain.model.RoutineDay
@@ -92,11 +93,11 @@ interface RoutineRepository {
      * only.
      */
     suspend fun share(routineId: String, projectId: Long): NetworkResult<Routine> =
-        NetworkResult.Error("Sharing routines is not available")
+        NetworkResult.Error(t("Sharing routines is not available"))
 
     /** Makes the routine private again and moves it back to the Inbox. Owner only, online only. */
     suspend fun stopSharing(routineId: String): NetworkResult<Routine> =
-        NetworkResult.Error("Sharing routines is not available")
+        NetworkResult.Error(t("Sharing routines is not available"))
 
     /** Turns this account's reminders of a shared routine on or off, on every device of the account. */
     suspend fun setRemindersEnabled(routineId: String, enabled: Boolean) {}

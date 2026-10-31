@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.dictation
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import com.yes365.atask.ai.provider.LlmException
 import com.yes365.atask.util.AppMessages
@@ -104,7 +105,7 @@ class DictationController(
                 transcript = k.transcript,
                 defaults = TaskDefaults(k.projectId, k.dueDate, k.listName),
                 parentTaskId = k.parentTaskId,
-                error = if (k.brainDump) "This brain dump was not organized yet." else "This dictation was not turned into tasks yet.",
+                error = if (k.brainDump) t("This brain dump was not organized yet.") else t("This dictation was not turned into tasks yet."),
                 brainDump = k.brainDump,
             )
         }
@@ -204,7 +205,7 @@ class DictationController(
             } catch (e: Exception) {
                 // The words wait again, before anything said since.
                 _state.update { it?.copy(editing = false, pending = HoldToTalk.joinWords(words, it.pending)) }
-                messages.post((e as? LlmException)?.message ?: "Could not change the plan.")
+                messages.post((e as? LlmException)?.message ?: t("Could not change the plan."))
             }
         }.also { job = it }
     }
@@ -301,7 +302,7 @@ class DictationController(
                 throw e
             } catch (e: Exception) {
                 _state.update { it?.copy(editing = false) }
-                messages.post((e as? LlmException)?.message ?: "Could not change the drafts.")
+                messages.post((e as? LlmException)?.message ?: t("Could not change the drafts."))
             }
         }.also { job = it }
     }
@@ -347,7 +348,7 @@ class DictationController(
             kept.clear()
             val n = added.taskIds.size
             when {
-                n == 0 -> messages.post(added.firstError ?: "Could not add the tasks.")
+                n == 0 -> messages.post(added.firstError ?: t("Could not add the tasks."))
                 else -> {
                     val text = (if (n == 1) "Added 1 task" else "Added $n tasks") +
                         if (added.failed > 0) ", ${added.failed} failed" else ""
@@ -424,7 +425,7 @@ class DictationController(
 
         /** "Added 2 projects and 14 tasks" (section 4.8.5). */
         fun addedText(projects: Int, tasks: Int): String {
-            val p = if (projects == 1) "1 project" else "$projects projects"
+            val p = if (projects == 1) t("1 project") else "$projects projects"
             val t = if (tasks == 1) "1 task" else "$tasks tasks"
             return when {
                 projects == 0 -> "Added $t"

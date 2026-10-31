@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 /**
  * Extracts embedded links from task description HTML comments.
  * Mirrors the desktop app's `note-link.ts`.
@@ -34,7 +35,7 @@ object TaskLinkParser {
         if (noteMatch != null) {
             val url = unescapeHtml(noteMatch.groupValues[1])
             val nameMatch = noteLinkNameRegex.find(description)
-            val name = nameMatch?.groupValues?.get(1)?.trim() ?: "Obsidian note"
+            val name = nameMatch?.groupValues?.get(1)?.trim() ?: t("Obsidian note")
             links += TaskLink.ObsidianNote(url, name)
         }
 

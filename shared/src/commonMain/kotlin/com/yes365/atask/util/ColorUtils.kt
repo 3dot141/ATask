@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.ui.graphics.Color
 
 /** The colours the project and label dialogs offer, as "#rrggbb". */
@@ -17,7 +18,7 @@ val PRESET_COLOR_NAMES: Map<String, String> = mapOf(
     "#eec300" to "Yellow",
     "#a4cf30" to "Lime",
     "#37c5ab" to "Teal",
-    "#20aaea" to "Sky blue",
+    "#20aaea" to t("Sky blue"),
     "#4186e0" to "Blue",
     "#7a6ff0" to "Indigo",
     "#aa62e3" to "Purple",

@@ -1,5 +1,6 @@
 package com.yes365.atask.data.local
 
+import com.yes365.atask.ui.i18n.t
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -42,7 +43,7 @@ class BottomBarPrefsStore(
     val slots: Flow<List<BottomBarSlot>> = config.map { it.slots }
 
     suspend fun saveSlots(slots: List<BottomBarSlot>) {
-        require(slots.size == 3) { "Bottom bar must have exactly 3 configurable slots" }
+        require(slots.size == 3) { t("Bottom bar must have exactly 3 configurable slots") }
         dataStore.edit { prefs ->
             prefs[KEY_SLOTS] = json.encodeToString(ListSerializer(BottomBarSlot.serializer()), slots)
         }
@@ -65,7 +66,7 @@ class BottomBarPrefsStore(
     }
 
     suspend fun updateSlot(index: Int, slot: BottomBarSlot) {
-        require(index in 0..2) { "Slot index must be 0, 1, or 2" }
+        require(index in 0..2) { t("Slot index must be 0, 1, or 2") }
         dataStore.edit { prefs ->
             val current = prefs[KEY_SLOTS]?.let {
                 try {

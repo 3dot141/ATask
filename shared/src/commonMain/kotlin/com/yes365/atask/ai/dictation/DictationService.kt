@@ -1,5 +1,6 @@
 package com.yes365.atask.ai.dictation
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import com.yes365.atask.ai.AiProviders
 import com.yes365.atask.ai.AiSettingsStore
@@ -112,7 +113,7 @@ class DictationService(
      */
     suspend fun run(transcript: String, context: DictationContext, current: List<CheckedDraft>? = null): CheckResult {
         val s = settings.current()
-        val connection = providers.connection(s) ?: throw LlmException(LlmException.Kind.BAD_REQUEST, "Set up the assistant first.")
+        val connection = providers.connection(s) ?: throw LlmException(LlmException.Kind.BAD_REQUEST, t("Set up the assistant first."))
         val answer = providers.structured.request(
             connection,
             ChatRequest(
@@ -135,7 +136,7 @@ class DictationService(
      */
     suspend fun runBrainDump(transcript: String, context: DictationContext, plan: CheckResult? = null): CheckResult {
         val s = settings.current()
-        val connection = providers.connection(s) ?: throw LlmException(LlmException.Kind.BAD_REQUEST, "Set up the assistant first.")
+        val connection = providers.connection(s) ?: throw LlmException(LlmException.Kind.BAD_REQUEST, t("Set up the assistant first."))
         val answer = providers.structured.request(
             connection,
             ChatRequest(

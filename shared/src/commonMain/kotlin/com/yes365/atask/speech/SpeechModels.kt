@@ -1,5 +1,6 @@
 package com.yes365.atask.speech
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.AiContract
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
@@ -153,7 +154,7 @@ class SpeechModelManager(
                 set(spec, if (isInstalled(spec)) ModelFileState.Installed else ModelFileState.Absent)
                 throw e
             } catch (e: Exception) {
-                set(spec, ModelFileState.Failed(e.message ?: "The download failed."))
+                set(spec, ModelFileState.Failed(e.message ?: t("The download failed.")))
             }
         }
     }

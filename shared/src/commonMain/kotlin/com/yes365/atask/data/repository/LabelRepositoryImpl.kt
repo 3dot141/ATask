@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.local.TempIdGenerator
 import com.yes365.atask.data.local.dao.LabelDao
 import com.yes365.atask.data.local.dao.TaskDao
@@ -101,7 +102,7 @@ class LabelRepositoryImpl(
                 queueLabelAction(tempId, "create", json.encodeToString(Label.serializer(), localLabel))
                 NetworkResult.Success(localLabel)
             } else {
-                NetworkResult.Error(e.message ?: "Failed to create label")
+                NetworkResult.Error(e.message ?: t("Failed to create label"))
             }
         }
     }
@@ -136,7 +137,7 @@ class LabelRepositoryImpl(
                 queueLabelAction(label.id, "update", patchPayload)
                 NetworkResult.Success(label)
             } else {
-                NetworkResult.Error(e.message ?: "Failed to update label")
+                NetworkResult.Error(e.message ?: t("Failed to update label"))
             }
         }
     }
@@ -156,7 +157,7 @@ class LabelRepositoryImpl(
                 queueLabelAction(labelId, "delete", "")
                 NetworkResult.Success(Unit)
             } else {
-                NetworkResult.Error(e.message ?: "Failed to delete label")
+                NetworkResult.Error(e.message ?: t("Failed to delete label"))
             }
         }
     }
@@ -227,7 +228,7 @@ class LabelRepositoryImpl(
             queue = queue,
             refused = { e ->
                 NetworkResult.Error(
-                    e.message ?: if (add) "Failed to add label to task" else "Failed to remove label from task",
+                    e.message ?: if (add) t("Failed to add label to task") else t("Failed to remove label from task"),
                 )
             },
         )
@@ -241,7 +242,7 @@ class LabelRepositoryImpl(
             throw e
         } catch (e: Exception) {
             NetworkResult.Error(
-                message = if (isNetworkFailure(e)) "Can't reach the server" else e.message ?: "Failed to refresh labels",
+                message = if (isNetworkFailure(e)) t("Can't reach the server") else e.message ?: t("Failed to refresh labels"),
                 code = (e as? VikunjaApiException)?.httpStatus,
                 offline = isNetworkFailure(e),
             )

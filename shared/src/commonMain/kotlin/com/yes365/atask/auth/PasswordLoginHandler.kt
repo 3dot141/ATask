@@ -1,5 +1,6 @@
 package com.yes365.atask.auth
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.remote.api.LoginRequestDto
 import com.yes365.atask.data.remote.api.VikunjaApiService
 
@@ -28,7 +29,7 @@ class PasswordLoginHandler(
                     val body = response.body()
                     val token = body?.token.orEmpty()
                     if (token.isBlank()) {
-                        PasswordLoginResult.Error("Empty token received")
+                        PasswordLoginResult.Error(t("Empty token received"))
                     } else {
                         val refreshToken = RefreshCookieExtractor.extractRefreshToken(response)
                         PasswordLoginResult.Success(token, refreshToken)
@@ -37,7 +38,7 @@ class PasswordLoginHandler(
                 isTotpProblemCode(problemCode) && totpPasscode.isNullOrBlank() ->
                     PasswordLoginResult.NeedsTOTP
                 problemCode == ERROR_INVALID_CREDENTIALS ->
-                    PasswordLoginResult.Error(response.problem.detail.ifBlank { "Invalid username or password" })
+                    PasswordLoginResult.Error(response.problem.detail.ifBlank { t("Invalid username or password") })
                 else ->
                     PasswordLoginResult.Error(
                         response.problem?.detail?.takeIf { it.isNotBlank() } ?: "Login failed: HTTP $status",

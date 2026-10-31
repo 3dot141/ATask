@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.local.DailySummaryContent
 import com.yes365.atask.data.local.NotificationPrefs
 import com.yes365.atask.data.local.SnoozeEntry
@@ -102,8 +103,8 @@ object LocalNotificationPlanner {
     /** How far ahead routine reminders are planned before the budget trims them. */
     const val ROUTINE_HORIZON_DAYS = 14
 
-    const val REMINDER_BODY = "Task reminder"
-    const val GENERAL_SUMMARY_BODY = "Open Vicu to see your tasks for today."
+    val REMINDER_BODY = t("Task reminder")
+    val GENERAL_SUMMARY_BODY = t("Open Vicu to see your tasks for today.")
 
     class Input(
         val now: Instant,
@@ -140,7 +141,7 @@ object LocalNotificationPlanner {
                 LocalNotification(
                     id = reminderId(task.id, alarm.reminderIndex),
                     kind = LocalNotification.Kind.REMINDER,
-                    title = task.title.ifBlank { "Task Reminder" },
+                    title = task.title.ifBlank { t("Task Reminder") },
                     body = REMINDER_BODY,
                     trigger = LocalNotification.Trigger.Absolute(Instant.fromEpochMilliseconds(alarm.triggerAtMillis)),
                     sound = input.prefs.soundEnabled,
@@ -160,7 +161,7 @@ object LocalNotificationPlanner {
                 LocalNotification(
                     id = snoozeId(entry.taskId),
                     kind = LocalNotification.Kind.SNOOZE,
-                    title = entry.title.ifBlank { "Task Reminder" },
+                    title = entry.title.ifBlank { t("Task Reminder") },
                     body = REMINDER_BODY,
                     trigger = LocalNotification.Trigger.Absolute(Instant.fromEpochMilliseconds(entry.triggerAtMillis)),
                     sound = input.prefs.soundEnabled,
@@ -177,7 +178,7 @@ object LocalNotificationPlanner {
                 id = routineId(alarm.occurrenceKey, alarm.followUp),
                 kind = LocalNotification.Kind.ROUTINE,
                 title = if (alarm.followUp) "Still time for ${alarm.title}" else alarm.title,
-                body = if (alarm.followUp) "Tap Complete when you’ve done it" else "Routine reminder",
+                body = if (alarm.followUp) t("Tap Complete when you’ve done it") else t("Routine reminder"),
                 trigger = LocalNotification.Trigger.Local(alarm.localTriggerAt, alarm.triggerAt),
                 // Android's routine channel uses the default sound.
                 sound = true,

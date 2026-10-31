@@ -1,5 +1,6 @@
 package com.yes365.atask.auth
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.remote.api.ApiTokenRequestDto
 import com.yes365.atask.data.remote.api.VikunjaApiException
 import com.yes365.atask.data.remote.api.VikunjaApiService
@@ -605,7 +606,7 @@ class AuthManager(
                     Logger.d("BACKUP_API_TOKEN", "already exists, skipping")
                     return@launch
                 }
-                Logger.w(TAG, "No usable backup API token found — attempting to create one")
+                Logger.w(TAG, t("No usable backup API token found — attempting to create one"))
                 createBackupApiToken()
             } catch (e: CancellationException) {
                 throw e

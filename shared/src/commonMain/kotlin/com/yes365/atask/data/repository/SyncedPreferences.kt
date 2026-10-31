@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.AuthManager
 import com.yes365.atask.data.local.SyncedPrefsStore
 import com.yes365.atask.data.local.dao.ProjectDao
@@ -36,11 +37,11 @@ class SyncedPrefsCodec(private val json: Json) : SyncedDocumentCodec<SyncedPrefs
     override val spec = CarrierSpec.PREFS
     override val carrierTitle = SyncedPrefsEnvelope.CARRIER_TITLE
     override val messages = SyncedDocumentMessages(
-        updateRequired = "Update Vicu to sync your settings",
-        malformed = "A damaged settings carrier was ignored; your settings were kept",
-        noInbox = "Choose an Inbox project before syncing settings",
-        offline = "Settings sync is offline",
-        failed = "Settings sync failed",
+        updateRequired = t("Update Vicu to sync your settings"),
+        malformed = t("A damaged settings carrier was ignored; your settings were kept"),
+        noInbox = t("Choose an Inbox project before syncing settings"),
+        offline = t("Settings sync is offline"),
+        failed = t("Settings sync failed"),
     )
 
     override fun parse(description: String?): CarrierRead<SyncedPrefsDocument> {
@@ -188,6 +189,6 @@ class SyncedPreferences(
         if (current == synced) return
         authManager.onInboxProjectSelected(synced)
         val title = projectDao?.getByIdSync(synced)?.title
-        messages?.post(if (title != null) "Your Inbox is now $title, as on your other devices" else "Your Inbox now follows your other devices")
+        messages?.post(if (title != null) "Your Inbox is now $title, as on your other devices" else t("Your Inbox now follows your other devices"))
     }
 }

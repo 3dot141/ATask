@@ -2,6 +2,7 @@
 
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.CustomListRevision
 import com.yes365.atask.domain.model.SyncedPrefEntry
 import com.yes365.atask.domain.model.SyncedPrefsDocument
@@ -31,30 +32,30 @@ object SyncedPrefsEnvelope {
         !description.isNullOrEmpty() && anyMarkerRegex.containsMatchIn(description)
 
     fun parse(description: String?, json: Json): Parsed {
-        val any = description?.let { anyMarkerRegex.find(it) } ?: return Parsed(error = "No preferences metadata")
-        val marker = markerRegex.matchEntire(any.value) ?: return Parsed(error = "Malformed preferences metadata")
-        val version = marker.groupValues[1].toIntOrNull() ?: return Parsed(error = "Invalid preferences version")
+        val any = description?.let { anyMarkerRegex.find(it) } ?: return Parsed(error = t("No preferences metadata"))
+        val marker = markerRegex.matchEntire(any.value) ?: return Parsed(error = t("Malformed preferences metadata"))
+        val version = marker.groupValues[1].toIntOrNull() ?: return Parsed(error = t("Invalid preferences version"))
         if (version != CURRENT_VERSION) return Parsed(error = "Preferences metadata version $version is not supported", version = version)
         return runCatching {
             val encoded = marker.groupValues[2]
             val bytes = Base64.UrlSafe.decode(encoded + "=".repeat((4 - encoded.length % 4) % 4))
-            require(bytes.size <= MAX_DECODED_BYTES) { "Preferences metadata is too large" }
+            require(bytes.size <= MAX_DECODED_BYTES) { t("Preferences metadata is too large") }
             val document = json.decodeFromString(SyncedPrefsDocumentSerializer, bytes.decodeToString())
             if (document.version > CURRENT_VERSION) {
                 return Parsed(error = "Preferences metadata version ${document.version} is not supported", version = document.version)
             }
             Parsed(normalize(document), version = version)
-        }.getOrElse { Parsed(error = it.message ?: "Cannot decode preferences metadata", version = version) }
+        }.getOrElse { Parsed(error = it.message ?: t("Cannot decode preferences metadata"), version = version) }
     }
 
     fun encode(document: SyncedPrefsDocument, json: Json): String {
         val bytes = json.encodeToString(SyncedPrefsDocumentSerializer, normalize(document)).encodeToByteArray()
-        require(bytes.size <= MAX_DECODED_BYTES) { "Preferences metadata is too large" }
+        require(bytes.size <= MAX_DECODED_BYTES) { t("Preferences metadata is too large") }
         return "<!-- vicu-prefs:v$CURRENT_VERSION:${Base64.UrlSafe.encode(bytes).trimEnd('=')} -->"
     }
 
     fun normalize(document: SyncedPrefsDocument): SyncedPrefsDocument {
-        require(document.version == CURRENT_VERSION) { "Preferences payload version mismatch" }
+        require(document.version == CURRENT_VERSION) { t("Preferences payload version mismatch") }
         document.entries.forEach { (key, entry) ->
             require(key.isNotBlank() && entry.revision.deviceId.isNotBlank()) { "Preference $key is invalid" }
         }

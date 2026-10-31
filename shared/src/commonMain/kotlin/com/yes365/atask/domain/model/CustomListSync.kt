@@ -1,5 +1,6 @@
 package com.yes365.atask.domain.model
 
+import com.yes365.atask.ui.i18n.t
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -146,7 +147,7 @@ sealed interface CustomListSyncStatus {
     data object Pending : CustomListSyncStatus
     data class Offline(val message: String) : CustomListSyncStatus
     data class Error(val message: String) : CustomListSyncStatus
-    data class UpdateRequired(val message: String = "Update Vicu to sync custom lists") : CustomListSyncStatus
+    data class UpdateRequired(val message: String = t("Update Vicu to sync custom lists")) : CustomListSyncStatus
 }
 
 /**

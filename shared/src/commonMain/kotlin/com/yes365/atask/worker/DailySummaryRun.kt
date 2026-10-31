@@ -1,5 +1,6 @@
 package com.yes365.atask.worker
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.Logger
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
@@ -47,7 +48,7 @@ class DailySummaryRun(
                 try {
                     scheduleNext()
                 } catch (e: Exception) {
-                    Logger.e(TAG, "Could not schedule the next daily summary", e)
+                    Logger.e(TAG, t("Could not schedule the next daily summary"), e)
                 }
             }
         }

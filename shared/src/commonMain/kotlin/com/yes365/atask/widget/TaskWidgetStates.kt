@@ -1,5 +1,6 @@
 package com.yes365.atask.widget
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.TokenStorage
 import com.yes365.atask.data.local.BehaviorPrefsStore
 import com.yes365.atask.data.local.CustomListStore
@@ -180,7 +181,7 @@ class TaskWidgetStates(
 
         /** SQLite's LIMIT for no limit. */
         private const val NO_LIMIT = -1
-        const val SIGNED_OUT = "Log in to see your tasks"
-        const val PROJECT_UNAVAILABLE = "Project archived — reconfigure widget"
+        val SIGNED_OUT = t("Log in to see your tasks")
+        val PROJECT_UNAVAILABLE = t("Project archived — reconfigure widget")
     }
 }

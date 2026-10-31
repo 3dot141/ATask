@@ -1,5 +1,6 @@
 package com.yes365.atask.data.repository
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.remote.api.TaskDto
 import com.yes365.atask.data.remote.api.VikunjaApiException
 import com.yes365.atask.data.remote.api.VikunjaApiService
@@ -53,7 +54,7 @@ class RoutineCarrierWriter(
         private const val TAG = "RoutineCarrierWriter"
 
         /** The write kept being undone or refused. */
-        const val KEPT_CHANGING = "This routine kept changing on the server, so the change was not saved. Try again."
+        val KEPT_CHANGING = t("This routine kept changing on the server, so the change was not saved. Try again.")
 
         private fun retryable(e: VikunjaApiException) =
             e.httpStatus == VikunjaApiService.PATCH_NOT_APPLIED || e.httpStatus >= 500

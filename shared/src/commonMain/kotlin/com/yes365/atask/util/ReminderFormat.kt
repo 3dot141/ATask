@@ -1,5 +1,6 @@
 package com.yes365.atask.util
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.TaskReminder
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -13,7 +14,7 @@ object ReminderFormat {
 
     /**
      * Human label for a reminder: an absolute time, or what a relative one counts from, such as
-     * "15 minutes before" (the due date), "At start" or "1 day before end".
+     * "15 minutes before" (the due date), t("At start") or "1 day before end".
      */
     fun format(reminder: TaskReminder, fmt: DateDisplayFormat): String {
         if (reminder.reminder.isNotBlank() && !DateUtils.isNullDate(reminder.reminder)) {
@@ -32,8 +33,8 @@ object ReminderFormat {
         // "At ..." for an offset of zero, and what follows "before"/"after" otherwise.
         val (at, after) = when (name.lowercase()) {
             "", "due_date" -> "At due time" to ""
-            "start_date" -> "At start" to " start"
-            "end_date" -> "At end" to " end"
+            "start_date" -> t("At start") to " start"
+            "end_date" -> t("At end") to " end"
             else -> "At $name" to " $name"
         }
         if (seconds == 0L) return at
