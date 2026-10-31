@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.setup
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,7 +20,7 @@ internal fun DiscardOnSignInDialog(
 ) {
     AlertDialog(
         onDismissRequest = onCancel,
-        title = { Text("Discard unsynced changes?") },
+        title = { Text(t("Discard unsynced changes?")) },
         text = {
             Text(
                 "You are signing in to a different account than the one used on this device. " +
@@ -29,11 +30,11 @@ internal fun DiscardOnSignInDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Discard and sign in", color = MaterialTheme.colorScheme.error)
+                Text(t("Discard and sign in"), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
-            TextButton(onClick = onCancel) { Text("Go back") }
+            TextButton(onClick = onCancel) { Text(t("Go back")) }
         },
     )
 }

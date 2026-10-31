@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -68,7 +69,7 @@ fun AddTaskButton(
         )
         Spacer(Modifier.width(8.dp))
         Text(
-            text = "Add Task",
+            text = t("Add Task"),
             color = color,
             style = MaterialTheme.typography.bodyMedium,
         )

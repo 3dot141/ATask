@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.selection
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,15 +41,15 @@ fun SelectionPickers(
         val count = pendingCompletionCount ?: 0
         AlertDialog(
             onDismissRequest = selectionVm::dismissBulkComplete,
-            title = { Text("Complete tasks and subtasks?") },
+            title = { Text(t("Complete tasks and subtasks?")) },
             text = {
                 Text("This will also complete $count unfinished ${if (count == 1) "subtask" else "subtasks"}.")
             },
             confirmButton = {
-                TextButton(onClick = { confirm(); selectionVm.confirmBulkComplete() }) { Text("Complete all") }
+                TextButton(onClick = { confirm(); selectionVm.confirmBulkComplete() }) { Text(t("Complete all")) }
             },
             dismissButton = {
-                TextButton(onClick = selectionVm::dismissBulkComplete) { Text("Cancel") }
+                TextButton(onClick = selectionVm::dismissBulkComplete) { Text(t("Cancel")) }
             },
         )
         return
@@ -129,7 +130,7 @@ fun SelectionPickers(
                 }
             },
             dismissButton = if (selectedDescendantCount == 0) {
-                { TextButton(onClick = onDismiss) { Text("Cancel") } }
+                { TextButton(onClick = onDismiss) { Text(t("Cancel")) } }
             } else {
                 null
             },

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.ui.components.category.LocalProjectCategories
 import com.rendyhd.vicu.util.Logger
 import androidx.compose.animation.core.animateFloatAsState
@@ -126,6 +127,7 @@ import com.rendyhd.vicu.ui.navigation.TodayRoute
 import com.rendyhd.vicu.ui.navigation.UpcomingRoute
 import com.rendyhd.vicu.ui.i18n.EnglishStrings
 import com.rendyhd.vicu.ui.i18n.LocalStrings
+import com.rendyhd.vicu.ui.i18n.UiText
 import com.rendyhd.vicu.ui.i18n.Strings
 import com.rendyhd.vicu.ui.i18n.deviceStrings
 import com.rendyhd.vicu.ui.navigation.ViewTarget
@@ -663,7 +665,9 @@ fun VicuApp(
         }
     }
 
-    val strings = remember { deviceStrings() }
+    val strings = remember {
+        deviceStrings().also { UiText.setLanguage(it.languageTag) }
+    }
 
     // What every surface of the app is composed under, the sheets and dialogs as much as the
     // screens: the current day and zone, the user's clock and the date phrasing, the row actions.
@@ -933,21 +937,21 @@ fun VicuApp(
         shareChoice?.let { shared ->
             AlertDialog(
                 onDismissRequest = { shareChoice = null },
-                title = { Text("Add what you shared") },
-                text = { Text("Make separate tasks from it with the assistant, or add it as one task.") },
+                title = { Text(t("Add what you shared")) },
+                text = { Text(t("Make separate tasks from it with the assistant, or add it as one task.")) },
                 confirmButton = {
                     TextButton(onClick = {
                         shareChoice = null
                         val text = listOfNotNull(shared.subject, shared.text).joinToString("\n\n")
                         dictationController.start(text, TaskDefaults(listName = "Inbox"))
-                    }) { Text("Make tasks") }
+                    }) { Text(t("Make tasks")) }
                 },
                 dismissButton = {
                     TextButton(onClick = {
                         shareChoice = null
                         pendingSharedContent = shared
                         showTaskEntrySheet = true
-                    }) { Text("One task") }
+                    }) { Text(t("One task")) }
                 },
             )
         }

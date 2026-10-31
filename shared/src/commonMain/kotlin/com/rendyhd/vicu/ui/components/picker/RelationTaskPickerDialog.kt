@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +48,7 @@ fun RelationTaskPickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Relation") },
+        title = { Text(t("Relation")) },
         text = {
             Column {
                 // Kind selector
@@ -68,7 +69,7 @@ fun RelationTaskPickerDialog(
                         query = it
                         onQueryChange(it)
                     },
-                    label = { Text("Search tasks") },
+                    label = { Text(t("Search tasks")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 )
@@ -103,6 +104,6 @@ fun RelationTaskPickerDialog(
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
     )
 }

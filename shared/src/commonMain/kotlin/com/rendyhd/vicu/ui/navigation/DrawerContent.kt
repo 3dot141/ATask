@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.navigation
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -240,7 +241,7 @@ fun DrawerContent(
                             onClick = { onNavigate(LogbookRoute) },
                         )
                         DrawerView.ROUTINES -> SmartListItem(
-                            label = "Routines",
+                            label = t("Routines"),
                             icon = SmartListIdentity.ROUTINES.icon,
                             iconTint = SmartListIdentity.ROUTINES.color(identity),
                             selected = currentRoute == "RoutinesRoute",
@@ -248,7 +249,7 @@ fun DrawerContent(
                         )
                         // With the overdue badge.
                         DrawerView.REVIEW -> NavigationDrawerItem(
-                            label = { Text("Review") },
+                            label = { Text(t("Review")) },
                             icon = {
                                 Icon(
                                     SmartListIdentity.REVIEW.icon,
@@ -272,7 +273,7 @@ fun DrawerContent(
                         )
                         // With the smart lists: with many projects it got lost at the bottom.
                         DrawerView.ASK -> NavigationDrawerItem(
-                            label = { Text("Ask") },
+                            label = { Text(t("Ask")) },
                             icon = {
                                 Icon(
                                     Icons.Outlined.AutoAwesome,
@@ -295,7 +296,7 @@ fun DrawerContent(
                 }
                 item(key = "header_projects", contentType = "header") {
                     SectionHeader(
-                        title = "Projects",
+                        title = t("Projects"),
                         expanded = state.projectsExpanded,
                         onToggle = onToggleProjects,
                         onAdd = onCreateProject,
@@ -373,7 +374,7 @@ fun DrawerContent(
                 }
                 item(key = "header_lists", contentType = "header") {
                     SectionHeader(
-                        title = "Lists",
+                        title = t("Lists"),
                         expanded = state.listsExpanded,
                         onToggle = onToggleLists,
                     )
@@ -445,7 +446,7 @@ fun DrawerContent(
                     }
                     item(key = "header_tags", contentType = "header") {
                         SectionHeader(
-                            title = "Labels",
+                            title = t("Labels"),
                             expanded = state.tagsExpanded,
                             onToggle = onToggleTags,
                         )
@@ -499,7 +500,7 @@ fun DrawerContent(
                 }
                 item(key = "settings", contentType = "smart") {
                     NavigationDrawerItem(
-                        label = { Text("Settings") },
+                        label = { Text(t("Settings")) },
                         icon = {
                             Icon(
                                 Icons.Outlined.Settings,

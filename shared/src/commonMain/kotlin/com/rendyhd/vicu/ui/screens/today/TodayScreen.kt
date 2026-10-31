@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.today
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.voice.TaskDefaults
 import com.rendyhd.vicu.ui.components.fab.FabDropTarget
 import com.rendyhd.vicu.ui.components.fab.fabDropTarget
@@ -190,7 +191,7 @@ fun TodayScreen(
                                 style = MaterialTheme.typography.titleSmall,
                                 modifier = Modifier.weight(1f),
                             )
-                            TextButton(onClick = onOpenRoutines) { Text("Manage") }
+                            TextButton(onClick = onOpenRoutines) { Text(t("Manage")) }
                         }
                     }
                     items(openRoutines, key = { "routine_${it.key}" }, contentType = { "occurrence" }) { occurrence ->

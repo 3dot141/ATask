@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.review
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.ui.navigation.ScreenReady
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -95,7 +96,7 @@ fun ReviewScreen(
     Scaffold(
         topBar = {
             VicuTopAppBar(
-                title = { Text("Review") },
+                title = { Text(t("Review")) },
                 onOpenDrawer = onOpenDrawer,
                 onNavigateToSearch = onNavigateToSearch,
             )
@@ -118,8 +119,8 @@ fun ReviewScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
             ) {
-                FilledTonalButton(onClick = onStartReview, enabled = remaining > 0) { Text("Start review") }
-                OutlinedButton(onClick = onWeeklyReview) { Text("Weekly review") }
+                FilledTonalButton(onClick = onStartReview, enabled = remaining > 0) { Text(t("Start review")) }
+                OutlinedButton(onClick = onWeeklyReview) { Text(t("Weekly review")) }
             }
             PrimaryTabRow(selectedTabIndex = if (state.tab == ReviewTab.DUE) 0 else 1) {
                 Tab(
@@ -208,7 +209,7 @@ private fun ReviewRow(
             if (reviewed) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Reviewed",
+                    contentDescription = t("Reviewed"),
                     modifier = Modifier.size(48.dp).padding(12.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
@@ -218,7 +219,7 @@ private fun ReviewRow(
                 }
             }
             IconButton(onClick = { menuOpen = true }) {
-                Icon(Icons.Default.MoreVert, contentDescription = "More")
+                Icon(Icons.Default.MoreVert, contentDescription = t("More"))
             }
             DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                 listOf(7, 14, 30, 60, 90).forEach { d ->
@@ -238,14 +239,14 @@ private fun ReviewRow(
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text("Use default cadence") },
+                    text = { Text(t("Use default cadence")) },
                     onClick = {
                         onSetCadence(null)
                         menuOpen = false
                     },
                 )
                 DropdownMenuItem(
-                    text = { Text("Exclude from review") },
+                    text = { Text(t("Exclude from review")) },
                     onClick = {
                         onExclude()
                         menuOpen = false
@@ -259,7 +260,7 @@ private fun ReviewRow(
     }
     if (customCadenceOpen) {
         ReviewCadenceInputDialog(
-            title = "Set review cadence",
+            title = t("Set review cadence"),
             initialDays = item.status.metadata.cadenceDaysOverride ?: item.status.effectiveCadenceDays,
             onConfirm = { days ->
                 onSetCadence(days)
@@ -279,7 +280,7 @@ private fun ReviewExpandedContent(
     val mutedColor = MaterialTheme.colorScheme.onSurfaceVariant
     if (content == null || content.isLoading) {
         Text(
-            text = "Loading…",
+            text = t("Loading…"),
             style = mutedStyle,
             color = mutedColor,
             modifier = Modifier.padding(start = 38.dp, end = 16.dp, bottom = 12.dp),
@@ -289,7 +290,7 @@ private fun ReviewExpandedContent(
     val isEmpty = content.tasks.isEmpty() && content.subProjects.all { it.tasks.isEmpty() }
     if (isEmpty) {
         Text(
-            text = "No open tasks",
+            text = t("No open tasks"),
             style = mutedStyle,
             color = mutedColor,
             modifier = Modifier.padding(start = 38.dp, end = 16.dp, bottom = 12.dp),
@@ -311,7 +312,7 @@ private fun ReviewExpandedContent(
             )
             if (sub.tasks.isEmpty()) {
                 Text(
-                    text = "No open tasks",
+                    text = t("No open tasks"),
                     style = mutedStyle,
                     color = mutedColor,
                     modifier = Modifier.padding(start = 52.dp, end = 16.dp, bottom = 4.dp),

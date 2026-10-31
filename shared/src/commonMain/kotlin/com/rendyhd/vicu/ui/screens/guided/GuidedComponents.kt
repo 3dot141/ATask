@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.guided
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -107,7 +108,7 @@ internal fun WhenChoices(
         FilterChip(
             selected = false,
             onClick = { picking = true },
-            label = { Text("Pick a date") },
+            label = { Text(t("Pick a date")) },
             leadingIcon = { Icon(Icons.Outlined.Event, contentDescription = null, modifier = Modifier.size(18.dp)) },
         )
         if (hasDue) {
@@ -115,7 +116,7 @@ internal fun WhenChoices(
             FilterChip(
                 selected = clearing,
                 onClick = { onChoose(if (clearing && toggle) null else DueChoice.Clear) },
-                label = { Text("No date") },
+                label = { Text(t("No date")) },
                 modifier = Modifier.dashedOutline(outline, suggested && clearing),
             )
         }
@@ -190,7 +191,7 @@ internal fun SuggestionLine(suggestion: Suggestion?, waiting: Boolean) {
         if (suggestion == null) {
             CircularProgressIndicator(Modifier.size(14.dp), strokeWidth = 2.dp)
         } else {
-            Icon(Icons.Outlined.AutoAwesome, contentDescription = "Suggestion", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
+            Icon(Icons.Outlined.AutoAwesome, contentDescription = t("Suggestion"), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
         }
         Text(
             text,
@@ -219,8 +220,8 @@ internal fun FinishedPane(title: String, summary: String, canUndo: Boolean, busy
             modifier = Modifier.padding(top = 8.dp).semantics { liveRegion = LiveRegionMode.Polite },
         )
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(top = 24.dp)) {
-            if (canUndo) OutlinedButton(onClick = onUndo, enabled = !busy) { Text("Undo all") }
-            Button(onClick = onDone) { Text("Done") }
+            if (canUndo) OutlinedButton(onClick = onUndo, enabled = !busy) { Text(t("Undo all")) }
+            Button(onClick = onDone) { Text(t("Done")) }
         }
         Spacer(Modifier.fillMaxWidth())
     }

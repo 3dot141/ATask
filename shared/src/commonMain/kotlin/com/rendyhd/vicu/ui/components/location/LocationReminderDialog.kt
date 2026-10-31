@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.location
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -119,7 +120,7 @@ fun LocationReminderDialog(
             viewModel.clearSearch()
             onDismiss()
         },
-        title = { Text("Location reminder") },
+        title = { Text(t("Location reminder")) },
         text = {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -137,23 +138,23 @@ fun LocationReminderDialog(
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                             )
                             TextButton(onClick = viewModel::askForAccess, modifier = Modifier.align(Alignment.End)) {
-                                Text("Allow")
+                                Text(t("Allow"))
                             }
                         }
                     }
                 }
 
-                Text("Remind me", style = MaterialTheme.typography.labelLarge)
+                Text(t("Remind me"), style = MaterialTheme.typography.labelLarge)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterChip(
                         selected = trigger == LocationTrigger.ARRIVE.name,
                         onClick = { trigger = LocationTrigger.ARRIVE.name },
-                        label = { Text("When I arrive") },
+                        label = { Text(t("When I arrive")) },
                     )
                     FilterChip(
                         selected = trigger == LocationTrigger.LEAVE.name,
                         onClick = { trigger = LocationTrigger.LEAVE.name },
-                        label = { Text("When I leave") },
+                        label = { Text(t("When I leave")) },
                     )
                 }
 
@@ -184,11 +185,11 @@ fun LocationReminderDialog(
                     if (chosenPlaceId == null) {
                         TextButton(onClick = {
                             naming = PlaceSuggestion(chosenName, chosenAddress, chosenLat, chosenLon)
-                        }) { Text("Save as place…") }
+                        }) { Text(t("Save as place…")) }
                     }
                 }
 
-                Text("Places", style = MaterialTheme.typography.labelLarge)
+                Text(t("Places"), style = MaterialTheme.typography.labelLarge)
                 if (places.isEmpty()) {
                     Text(
                         "Save places like Home or Work to pick them quickly.",
@@ -231,7 +232,7 @@ fun LocationReminderDialog(
                     Text(if (locating) "Finding your location…" else "Use current location")
                 }
 
-                Text("Distance", style = MaterialTheme.typography.labelLarge)
+                Text(t("Distance"), style = MaterialTheme.typography.labelLarge)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     LocationReminder.RADIUS_OPTIONS.forEach { meters ->
                         FilterChip(
@@ -261,7 +262,7 @@ fun LocationReminderDialog(
                     viewModel.clearSearch()
                     onSaved()
                 },
-            ) { Text("Save") }
+            ) { Text(t("Save")) }
         },
         dismissButton = {
             Row {
@@ -270,19 +271,19 @@ fun LocationReminderDialog(
                         viewModel.removeReminder(taskId)
                         viewModel.clearSearch()
                         onDismiss()
-                    }) { Text("Remove") }
+                    }) { Text(t("Remove")) }
                 }
                 TextButton(onClick = {
                     viewModel.clearSearch()
                     onDismiss()
-                }) { Text("Cancel") }
+                }) { Text(t("Cancel")) }
             }
         },
     )
 
     naming?.let { suggestion ->
         PlaceNameDialog(
-            title = "Save place",
+            title = t("Save place"),
             initial = suggestion.name.takeUnless { it == "Current location" }.orEmpty(),
             onSave = { name ->
                 viewModel.addPlace(name, suggestion) { place -> choose(place) }
@@ -311,10 +312,10 @@ internal fun PlaceSearchField(
             onValueChange = onQueryChange,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
-            placeholder = { Text("Search places", maxLines = 1) },
+            placeholder = { Text(t("Search places"), maxLines = 1) },
             leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
             trailingIcon = if (query.isNotEmpty()) {
-                { IconButton(onClick = onClear) { Icon(Icons.Outlined.Close, contentDescription = "Clear search") } }
+                { IconButton(onClick = onClear) { Icon(Icons.Outlined.Close, contentDescription = t("Clear search")) } }
             } else {
                 null
             },
@@ -395,16 +396,16 @@ internal fun PlaceNameDialog(
                 value = name,
                 onValueChange = { name = it },
                 singleLine = true,
-                label = { Text("Name") },
-                placeholder = { Text("Home, Work, Parents…") },
+                label = { Text(t("Name")) },
+                placeholder = { Text(t("Home, Work, Parents…")) },
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 modifier = Modifier.fillMaxWidth(),
             )
         },
         confirmButton = {
-            TextButton(onClick = { onSave(name.text.trim()) }, enabled = name.text.isNotBlank()) { Text("Save") }
+            TextButton(onClick = { onSave(name.text.trim()) }, enabled = name.text.isNotBlank()) { Text(t("Save")) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
     )
 }
 

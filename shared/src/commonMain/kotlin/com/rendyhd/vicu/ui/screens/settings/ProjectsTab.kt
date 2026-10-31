@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -197,14 +198,14 @@ private fun LazyListScope.projectsSection(
 ) {
     item(key = "projects_header") {
         SectionTitle(
-            title = "Projects",
+            title = t("Projects"),
             onAdd = { openDialog(SettingsDialog.ProjectEditor(null)) },
         )
     }
 
     item(key = "projects_hint") {
         Text(
-            text = "Tap a project to edit it, hold it to drag, or use ⋮ for more.",
+            text = t("Tap a project to edit it, hold it to drag, or use ⋮ for more."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
@@ -214,7 +215,7 @@ private fun LazyListScope.projectsSection(
     if (items.isEmpty()) {
         item(key = "projects_empty") {
             Text(
-                text = "No projects yet",
+                text = t("No projects yet"),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

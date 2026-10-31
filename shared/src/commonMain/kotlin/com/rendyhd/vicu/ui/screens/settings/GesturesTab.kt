@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -82,7 +83,7 @@ internal fun GesturesTab(
         state = listState,
     ) {
         item(key = "swipes_header") {
-            SectionHeader(icon = Icons.Outlined.Swipe, title = "Swipes")
+            SectionHeader(icon = Icons.Outlined.Swipe, title = t("Swipes"))
         }
 
         item(key = "swipes_intro") {
@@ -117,14 +118,14 @@ internal fun GesturesTab(
         }
 
         item(key = "gestures_header") {
-            SectionHeader(icon = Icons.Outlined.Gesture, title = "Other Gestures")
+            SectionHeader(icon = Icons.Outlined.Gesture, title = t("Other Gestures"))
         }
 
         item(key = "gesture_tap") {
             GestureRow(
                 icon = Icons.Outlined.TouchApp,
                 gesture = "Tap",
-                description = "Open task details",
+                description = t("Open task details"),
                 color = MaterialTheme.colorScheme.tertiary,
             )
         }
@@ -133,7 +134,7 @@ internal fun GesturesTab(
             GestureRow(
                 icon = Icons.Outlined.TouchApp,
                 gesture = "Long Press",
-                description = "Select multiple tasks",
+                description = t("Select multiple tasks"),
                 color = MaterialTheme.colorScheme.tertiary,
             )
         }
@@ -151,7 +152,7 @@ internal fun GesturesTab(
             GestureRow(
                 icon = Icons.Outlined.CheckCircle,
                 gesture = "Tap Checkbox",
-                description = "Toggle task completion",
+                description = t("Toggle task completion"),
                 color = MaterialTheme.colorScheme.primary,
             )
         }

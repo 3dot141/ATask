@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.routines
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -148,7 +149,7 @@ fun RoutinesScreen(
     Scaffold(
         topBar = {
             VicuTopAppBar(
-                title = { Text("Routines") },
+                title = { Text(t("Routines")) },
                 onOpenDrawer = onOpenDrawer,
                 onNavigateToSearch = onNavigateToSearch,
                 extraActions = {
@@ -171,12 +172,12 @@ fun RoutinesScreen(
                                 },
                             )
                             DropdownMenuItem(
-                                text = { Text("Copy history as CSV") },
+                                text = { Text(t("Copy history as CSV")) },
                                 onClick = {
                                     pageMenuOpen = false
                                     viewModel.exportCsv { export ->
                                         scope.launch {
-                                            clipboard.copyPlainText("Routine history", export.csv)
+                                            clipboard.copyPlainText(t("Routine history"), export.csv)
                                             snackbar.showSnackbar(
                                                 if (export.complete) {
                                                     "Routine history copied"
@@ -199,7 +200,7 @@ fun RoutinesScreen(
                     editorRoutine = null
                     showEditor = true
                 },
-                label = "New routine",
+                label = t("New routine"),
                 // It adds a routine, not a task: holding it does not listen.
                 taskDefaults = null,
             )
@@ -333,14 +334,14 @@ fun RoutinesScreen(
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
             title = { Text("Delete ${routine.definition.name}?") },
-            text = { Text("Its synced and local history will be permanently removed.") },
+            text = { Text(t("Its synced and local history will be permanently removed.")) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deletePermanently(routine)
                     pendingDelete = null
-                }) { Text("Delete") }
+                }) { Text(t("Delete")) }
             },
-            dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { pendingDelete = null }) { Text(t("Cancel")) } },
         )
     }
 
@@ -378,7 +379,7 @@ fun RoutineDaySummary(day: RoutineDay, modifier: Modifier = Modifier) {
         }
         Spacer(Modifier.width(14.dp))
         Column {
-            Text("Today’s rhythm", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(t("Today’s rhythm"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(progress, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -437,7 +438,7 @@ fun RoutineOccurrenceRow(
                 Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             if (!complete && !skipped && canLog) {
-                TextButton(onClick = onSkip) { Text("Skip") }
+                TextButton(onClick = onSkip) { Text(t("Skip")) }
             }
         }
     }
@@ -529,7 +530,7 @@ private fun RoutineDefinitionCard(
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     if (!archived && access.canWrite) {
                         DropdownMenuItem(
-                            text = { Text("Edit") },
+                            text = { Text(t("Edit")) },
                             leadingIcon = { Icon(Icons.Outlined.Edit, null) },
                             onClick = { menuOpen = false; onEdit() },
                         )
@@ -545,7 +546,7 @@ private fun RoutineDefinitionCard(
                     }
                     if (access.sharedWithMe) {
                         DropdownMenuItem(
-                            text = { Text("Hide for me") },
+                            text = { Text(t("Hide for me")) },
                             leadingIcon = { Icon(Icons.Outlined.VisibilityOff, null) },
                             onClick = { menuOpen = false; onHideForMe() },
                         )
@@ -557,7 +558,7 @@ private fun RoutineDefinitionCard(
                             onClick = { menuOpen = false; onArchive() },
                         )
                         DropdownMenuItem(
-                            text = { Text("Delete") },
+                            text = { Text(t("Delete")) },
                             leadingIcon = { Icon(Icons.Outlined.DeleteOutline, null) },
                             onClick = { menuOpen = false; onDelete() },
                         )
@@ -602,7 +603,7 @@ private fun RoutineHistoryDialog(
                 )
                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
                 if (logged.isEmpty()) {
-                    Text("Daily activity will appear here as you complete or skip it.")
+                    Text(t("Daily activity will appear here as you complete or skip it."))
                 } else {
                     LazyColumn(modifier = Modifier.weight(1f, fill = false)) {
                         items(logged.take(30), key = { it.key }, contentType = { "record" }) { record ->
@@ -634,7 +635,7 @@ private fun RoutineHistoryDialog(
                         }
                     }
                 }
-                TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text("Done") }
+                TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text(t("Done")) }
             }
         }
     }
@@ -712,8 +713,8 @@ private fun RoutineEditorDialog(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Name") },
-                        placeholder = { Text("e.g. Take vitamins") },
+                        label = { Text(t("Name")) },
+                        placeholder = { Text(t("e.g. Take vitamins")) },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         modifier = Modifier.fillMaxWidth(),
@@ -774,15 +775,15 @@ private fun RoutineEditorDialog(
                         }) {
                             Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(6.dp))
-                            Text("Add time")
+                            Text(t("Add time"))
                         }
                     }
 
                     Spacer(Modifier.height(14.dp))
                     EditorLabel("REPEAT")
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FilterChip(selected = !afterCompletion, onClick = { afterCompletion = false }, label = { Text("On a schedule") })
-                        FilterChip(selected = afterCompletion, onClick = { afterCompletion = true }, label = { Text("After completion") })
+                        FilterChip(selected = !afterCompletion, onClick = { afterCompletion = false }, label = { Text(t("On a schedule")) })
+                        FilterChip(selected = afterCompletion, onClick = { afterCompletion = true }, label = { Text(t("After completion")) })
                     }
                     Text(
                         if (afterCompletion) {
@@ -796,7 +797,7 @@ private fun RoutineEditorDialog(
                     Spacer(Modifier.height(8.dp))
                     if (afterCompletion) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Show again", style = MaterialTheme.typography.bodyMedium)
+                            Text(t("Show again"), style = MaterialTheme.typography.bodyMedium)
                             Spacer(Modifier.width(8.dp))
                             OutlinedTextField(
                                 value = interval,
@@ -818,7 +819,7 @@ private fun RoutineEditorDialog(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
-                            FilterChip(selected = daily, onClick = { weekdays = emptySet() }, label = { Text("Daily") })
+                            FilterChip(selected = daily, onClick = { weekdays = emptySet() }, label = { Text(t("Daily")) })
                             WeekdayLetters.forEachIndexed { index, letter ->
                                 val day = index + 1
                                 val selected = daily || day in weekdays
@@ -863,7 +864,7 @@ private fun RoutineEditorDialog(
                 }
                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    TextButton(onClick = onDismiss, enabled = !saving) { Text("Cancel") }
+                    TextButton(onClick = onDismiss, enabled = !saving) { Text(t("Cancel")) }
                     Spacer(Modifier.width(8.dp))
                     Button(
                         enabled = valid && !saving,
@@ -923,16 +924,16 @@ private fun RoutineEditorDialog(
             )
             AlertDialog(
                 onDismissRequest = { pickingTime = null },
-                title = { Text("Time") },
+                title = { Text(t("Time")) },
                 text = { TimePicker(state = pickerState) },
                 confirmButton = {
                     TextButton(onClick = {
                         val minutes = pickerState.hour * 60 + pickerState.minute
                         times = times.map { if (it.key == key) it.copy(minutes = minutes) else it }.sortedBy { it.minutes }
                         pickingTime = null
-                    }) { Text("Set") }
+                    }) { Text(t("Set")) }
                 },
-                dismissButton = { TextButton(onClick = { pickingTime = null }) { Text("Cancel") } },
+                dismissButton = { TextButton(onClick = { pickingTime = null }) { Text(t("Cancel")) } },
             )
         }
     }
@@ -956,15 +957,15 @@ private fun ShareWithField(
     Row(verticalAlignment = Alignment.CenterVertically) {
         EditorLabel("SHARE WITH")
         IconButton(onClick = { explaining = true }) {
-            Icon(Icons.Outlined.Info, contentDescription = "About sharing a routine", modifier = Modifier.size(18.dp))
+            Icon(Icons.Outlined.Info, contentDescription = t("About sharing a routine"), modifier = Modifier.size(18.dp))
         }
     }
     if (explaining) {
         AlertDialog(
             onDismissRequest = { explaining = false },
-            title = { Text("Sharing a routine") },
+            title = { Text(t("Sharing a routine")) },
             text = { Text(RoutineSharing.EXPLANATION) },
-            confirmButton = { TextButton(onClick = { explaining = false }) { Text("OK") } },
+            confirmButton = { TextButton(onClick = { explaining = false }) { Text(t("OK")) } },
         )
     }
 
@@ -1023,7 +1024,7 @@ private fun ShareWithField(
         }
         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
             DropdownMenuItem(
-                text = { Text("Only you") },
+                text = { Text(t("Only you")) },
                 onClick = {
                     menuOpen = false
                     touched = true
@@ -1038,7 +1039,7 @@ private fun ShareWithField(
                         Column {
                             Text(Collaboration.displayName(option.person.toCollabUser()))
                             if (!option.canPick) {
-                                Text("Can view only", style = MaterialTheme.typography.bodySmall)
+                                Text(t("Can view only"), style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     },
@@ -1176,7 +1177,7 @@ private fun RoutinesTurnedOff(onOpenDrawer: () -> Unit, onNavigateToSearch: () -
     Scaffold(
         topBar = {
             VicuTopAppBar(
-                title = { Text("Routines") },
+                title = { Text(t("Routines")) },
                 onOpenDrawer = onOpenDrawer,
                 onNavigateToSearch = onNavigateToSearch,
             )
@@ -1184,8 +1185,8 @@ private fun RoutinesTurnedOff(onOpenDrawer: () -> Unit, onNavigateToSearch: () -
     ) { padding ->
         EmptyState(
             icon = SmartListIdentity.ROUTINES.icon,
-            title = "Routines are turned off",
-            subtitle = "Turn them on in Settings to keep track of what you do regularly",
+            title = t("Routines are turned off"),
+            subtitle = t("Turn them on in Settings to keep track of what you do regularly"),
             modifier = Modifier.padding(padding),
         )
     }

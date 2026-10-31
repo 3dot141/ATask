@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -557,7 +558,7 @@ fun TaskEntrySheet(
                                         textFieldValue = newValue
                                         viewModel.setTitle(newValue.text)
                                     },
-                                    placeholder = { Text("New task", style = titleStyle) },
+                                    placeholder = { Text(t("New task"), style = titleStyle) },
                                     maxLines = if (expanded) 6 else 3,
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -613,10 +614,10 @@ fun TaskEntrySheet(
                             }
                             if (!expanded) {
                                 FilledTonalIconButton(onClick = ::expand) {
-                                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Show all details")
+                                    Icon(Icons.Default.KeyboardArrowUp, contentDescription = t("Show all details"))
                                 }
                                 FilledIconButton(onClick = save, enabled = canSave) {
-                                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Save task")
+                                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = t("Save task"))
                                 }
                             }
                         }
@@ -648,7 +649,7 @@ fun TaskEntrySheet(
                             ) {
                                 Icon(Icons.AutoMirrored.Filled.Notes, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Notes", style = MaterialTheme.typography.bodyLarge)
+                                Text(t("Notes"), style = MaterialTheme.typography.bodyLarge)
                             }
                         }
 
@@ -761,7 +762,7 @@ fun TaskEntrySheet(
                         if (state.pendingAttachmentUris.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = "Attachments",
+                                text = t("Attachments"),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -898,14 +899,14 @@ private fun ExpandedHeader(canSave: Boolean, onCollapse: () -> Unit, onAdd: () -
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onCollapse) {
-            Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = "Show fewer details")
+            Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = t("Show fewer details"))
         }
         Text(
             "New task",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(1f).padding(start = 4.dp).semantics { heading() },
         )
-        Button(onClick = onAdd, enabled = canSave) { Text("Add") }
+        Button(onClick = onAdd, enabled = canSave) { Text(t("Add")) }
     }
 }
 
@@ -1112,7 +1113,7 @@ private fun AttachmentPreviewRow(
         IconButton(onClick = onRemove) {
             Icon(
                 Icons.Default.Close,
-                contentDescription = "Remove attachment",
+                contentDescription = t("Remove attachment"),
                 modifier = Modifier.size(16.dp),
             )
         }

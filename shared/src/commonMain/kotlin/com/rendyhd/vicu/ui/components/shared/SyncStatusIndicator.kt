@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.util.countOf
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -50,7 +51,7 @@ fun OfflineBanner(
         ) {
             Icon(
                 imageVector = Icons.Outlined.CloudOff,
-                contentDescription = "Offline",
+                contentDescription = t("Offline"),
                 tint = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier.size(18.dp),
             )
@@ -102,15 +103,15 @@ fun FailedActionsBanner(
             )
             Spacer(modifier = Modifier.width(8.dp))
             FailedActionsText(failedCount)
-            TextButton(onClick = onRetry) { Text("Retry") }
-            TextButton(onClick = { confirmingDiscard = true }) { Text("Discard") }
+            TextButton(onClick = onRetry) { Text(t("Retry")) }
+            TextButton(onClick = { confirmingDiscard = true }) { Text(t("Discard")) }
         }
     }
 
     if (confirmingDiscard) {
         AlertDialog(
             onDismissRequest = { confirmingDiscard = false },
-            title = { Text("Discard unsynced changes?") },
+            title = { Text(t("Discard unsynced changes?")) },
             text = {
                 Text(
                     "The server refused ${changesLabel(failedCount)}. If you discard them, the " +
@@ -123,9 +124,9 @@ fun FailedActionsBanner(
                         confirmingDiscard = false
                         onDiscard()
                     },
-                ) { Text("Discard") }
+                ) { Text(t("Discard")) }
             },
-            dismissButton = { TextButton(onClick = { confirmingDiscard = false }) { Text("Keep") } },
+            dismissButton = { TextButton(onClick = { confirmingDiscard = false }) { Text(t("Keep")) } },
         )
     }
 }

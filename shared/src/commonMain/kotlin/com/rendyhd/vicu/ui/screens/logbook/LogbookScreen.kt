@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.logbook
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.ui.navigation.ScreenReady
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -132,7 +133,7 @@ fun LogbookScreen(
                                 if (state.isLoadingMore) {
                                     CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
                                 } else {
-                                    TextButton(onClick = viewModel::loadMore) { Text("Load older tasks") }
+                                    TextButton(onClick = viewModel::loadMore) { Text(t("Load older tasks")) }
                                 }
                             }
                         }

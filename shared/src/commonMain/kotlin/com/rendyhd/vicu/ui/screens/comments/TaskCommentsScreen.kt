@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.comments
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -222,7 +223,7 @@ fun TaskCommentsScreen(
                     title = {
                         Column {
                             Text(
-                                text = "Comments",
+                                text = t("Comments"),
                                 style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.semantics { heading() },
                             )
@@ -237,7 +238,7 @@ fun TaskCommentsScreen(
                     },
                     navigationIcon = {
                         IconButton(onClick = onClose) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = t("Back"))
                         }
                     },
                     actions = {
@@ -267,7 +268,7 @@ fun TaskCommentsScreen(
                     Column(modifier = Modifier.navigationBarsPadding().imePadding()) {
                         if (task != null && !access.canWrite) {
                             Text(
-                                text = "You can read comments in this project",
+                                text = t("You can read comments in this project"),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp),
@@ -347,8 +348,8 @@ fun TaskCommentsScreen(
     if (pendingDelete != 0L) {
         AlertDialog(
             onDismissRequest = { pendingDelete = 0L },
-            title = { Text("Delete comment?") },
-            text = { Text("This cannot be undone.") },
+            title = { Text(t("Delete comment?")) },
+            text = { Text(t("This cannot be undone.")) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -356,10 +357,10 @@ fun TaskCommentsScreen(
                         pendingDelete = 0L
                     },
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(t("Delete"), color = MaterialTheme.colorScheme.error)
                 }
             },
-            dismissButton = { TextButton(onClick = { pendingDelete = 0L }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { pendingDelete = 0L }) { Text(t("Cancel")) } },
         )
     }
 }
@@ -503,15 +504,15 @@ private fun CommentRow(
                     onValueChange = { draft = it },
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                     textStyle = MaterialTheme.typography.bodyMedium,
-                    label = { Text("Edit comment") },
+                    label = { Text(t("Edit comment")) },
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                 ) {
-                    TextButton(onClick = onCancelEdit) { Text("Cancel") }
-                    Button(onClick = { onSaveEdit(draft.text) }, enabled = draft.text.isNotBlank()) { Text("Save") }
+                    TextButton(onClick = onCancelEdit) { Text(t("Cancel")) }
+                    Button(onClick = { onSaveEdit(draft.text) }, enabled = draft.text.isNotBlank()) { Text(t("Save")) }
                 }
             } else {
                 Text(
@@ -532,7 +533,7 @@ private fun CommentRow(
                             modifier = Modifier.heightIn(min = 32.dp),
                             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
                         ) {
-                            Text("Edit", style = MaterialTheme.typography.labelLarge)
+                            Text(t("Edit"), style = MaterialTheme.typography.labelLarge)
                         }
                     }
                     if (canDelete) {
@@ -542,7 +543,7 @@ private fun CommentRow(
                             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
                         ) {
-                            Text("Delete", style = MaterialTheme.typography.labelLarge)
+                            Text(t("Delete"), style = MaterialTheme.typography.labelLarge)
                         }
                     }
                 }
@@ -620,7 +621,7 @@ private fun Composer(
                     ) {
                         if (value.text.isEmpty()) {
                             Text(
-                                text = "Comment. Type @ to mention",
+                                text = t("Comment. Type @ to mention"),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = scheme.onSurfaceVariant,
                             )
@@ -641,7 +642,7 @@ private fun Composer(
                     disabledContentColor = scheme.onSurfaceVariant.copy(alpha = 0.5f),
                 ),
             ) {
-                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send comment")
+                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = t("Send comment"))
             }
         }
     }

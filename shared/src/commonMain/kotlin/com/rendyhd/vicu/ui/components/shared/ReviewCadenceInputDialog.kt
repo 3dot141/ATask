@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,9 +46,9 @@ fun ReviewCadenceInputDialog(
                 onValueChange = { value ->
                     if (value.all(Char::isDigit) && value.length <= 3) input = value
                 },
-                label = { Text("Cadence in days") },
+                label = { Text(t("Cadence in days")) },
                 supportingText = {
-                    if (days == null) Text("Enter a number from 1 to 365")
+                    if (days == null) Text(t("Enter a number from 1 to 365"))
                 },
                 isError = days == null,
                 singleLine = true,
@@ -64,11 +65,11 @@ fun ReviewCadenceInputDialog(
                 enabled = days != null,
                 onClick = { confirm() },
             ) {
-                Text("Save")
+                Text(t("Save"))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }

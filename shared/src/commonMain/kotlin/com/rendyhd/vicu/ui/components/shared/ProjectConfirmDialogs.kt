@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +23,7 @@ fun ArchiveProjectDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Archive Project") },
+        title = { Text(t("Archive Project")) },
         text = {
             Text(
                 "Archive \"${project.title}\"? Its tasks will be kept, " +
@@ -30,8 +31,8 @@ fun ArchiveProjectDialog(
                     if (sharedRoutineNames.isEmpty()) "" else "\n\n${RoutineSharing.ARCHIVE_PROJECT_NOTE}",
             )
         },
-        confirmButton = { TextButton(onClick = onConfirm) { Text("Archive") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(t("Archive")) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
     )
 }
 
@@ -50,7 +51,7 @@ fun DeleteProjectDialog(
     val note = RoutineSharing.deleteProjectNote(sharedRoutineNames)
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete Project") },
+        title = { Text(t("Delete Project")) },
         text = {
             Text(
                 "Delete \"${project.title}\"? All tasks in this project will be deleted." +
@@ -58,8 +59,8 @@ fun DeleteProjectDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+            TextButton(onClick = onConfirm) { Text(t("Delete"), color = MaterialTheme.colorScheme.error) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
     )
 }

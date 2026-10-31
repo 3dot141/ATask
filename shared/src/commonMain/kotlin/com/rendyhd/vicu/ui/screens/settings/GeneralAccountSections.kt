@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +34,7 @@ internal fun LazyListScope.accountSection(
     openDialog: (SettingsDialog) -> Unit,
 ) {
     item(key = "account_header") {
-        SectionHeader(icon = Icons.Outlined.Person, title = "Account")
+        SectionHeader(icon = Icons.Outlined.Person, title = t("Account"))
     }
 
     item(key = "account_info") {
@@ -43,22 +44,22 @@ internal fun LazyListScope.accountSection(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             if (state.username.isNotBlank()) {
-                InfoRow(label = "Username", value = state.username)
+                InfoRow(label = t("Username"), value = state.username)
             }
             if (state.email.isNotBlank()) {
-                InfoRow(label = "Email", value = state.email)
+                InfoRow(label = t("Email"), value = state.email)
             }
             InfoRow(
-                label = "Auth method",
+                label = t("Auth method"),
                 value = when (state.authMethod) {
                     "oidc" -> "Signed in via SSO"
                     "password" -> "Password"
                     "api_token" -> "API Token"
-                    else -> state.authMethod.ifBlank { "Unknown" }
+                    else -> state.authMethod.ifBlank { t("Unknown") }
                 },
             )
             if (state.vikunjaUrl.isNotBlank()) {
-                InfoRow(label = "Server", value = state.vikunjaUrl)
+                InfoRow(label = t("Server"), value = state.vikunjaUrl)
             }
         }
     }
@@ -76,7 +77,7 @@ internal fun LazyListScope.appearanceSection(
 ) {
     item(key = "theme_header") {
         Text(
-            text = "Appearance",
+            text = t("Appearance"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -91,7 +92,7 @@ internal fun LazyListScope.appearanceSection(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             Text(
-                text = "Theme",
+                text = t("Theme"),
                 style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -100,9 +101,9 @@ internal fun LazyListScope.appearanceSection(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 val options = listOf(
-                    ThemeMode.System to "System",
-                    ThemeMode.Light to "Light",
-                    ThemeMode.Dark to "Dark",
+                    ThemeMode.System to t("System"),
+                    ThemeMode.Light to t("Light"),
+                    ThemeMode.Dark to t("Dark"),
                 )
                 options.forEachIndexed { index, (mode, label) ->
                     SegmentedButton(
@@ -120,8 +121,8 @@ internal fun LazyListScope.appearanceSection(
     // Pure black only changes the dark theme, so it is offered wherever that can be in use.
     if (state.themeMode != ThemeMode.Light) item(key = "pure_black") {
         SwitchRow(
-            label = "Pure black",
-            description = "A black background in the dark theme, for OLED screens",
+            label = t("Pure black"),
+            description = t("A black background in the dark theme, for OLED screens"),
             checked = pureBlack,
             onCheckedChange = viewModel::setPureBlack,
         )
@@ -129,8 +130,8 @@ internal fun LazyListScope.appearanceSection(
 
     if (supportsDeviceColors) item(key = "use_device_colors") {
         SwitchRow(
-            label = "Use device colours",
-            description = "Follow your wallpaper's Material You palette instead of the Vicu colours (Android 12 and later)",
+            label = t("Use device colours"),
+            description = t("Follow your wallpaper's Material You palette instead of the Vicu colours (Android 12 and later)"),
             checked = useDeviceColors,
             onCheckedChange = viewModel::setUseDeviceColors,
         )
@@ -154,13 +155,13 @@ internal fun LazyListScope.signOutSection(
         ) {
             Icon(
                 Icons.AutoMirrored.Outlined.ExitToApp,
-                contentDescription = "Sign Out",
+                contentDescription = t("Sign Out"),
                 tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(20.dp),
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = "Sign Out",
+                text = t("Sign Out"),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.Medium,

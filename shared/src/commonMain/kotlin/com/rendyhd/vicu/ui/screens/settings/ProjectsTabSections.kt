@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,7 +59,7 @@ internal fun LazyListScope.inboxSection(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Inbox Project",
+                    text = t("Inbox Project"),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
@@ -73,7 +74,7 @@ internal fun LazyListScope.inboxSection(
             }
             Icon(
                 Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                contentDescription = "Choose inbox project",
+                contentDescription = t("Choose inbox project"),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp),
             )
@@ -82,8 +83,8 @@ internal fun LazyListScope.inboxSection(
 
     item(key = "inbox_exclude_dated") {
         SwitchRow(
-            label = "Move dated tasks out of Inbox",
-            description = "Tasks with a due date no longer appear in Inbox.",
+            label = t("Move dated tasks out of Inbox"),
+            description = t("Tasks with a due date no longer appear in Inbox."),
             checked = state.behaviorPrefs.inboxExcludeDated,
             onCheckedChange = viewModel::setInboxExcludeDated,
         )
@@ -109,7 +110,7 @@ internal fun LazyListScope.displaySection(
 
     item(key = "task_order") {
         SettingsValueRow(
-            label = "Task order",
+            label = t("Task order"),
             value = state.taskOrders.global.label,
             onClick = { openDialog(SettingsDialog.TaskOrderPicker) },
         )
@@ -135,7 +136,7 @@ internal fun LazyListScope.displaySection(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f),
                 )
-                TextButton(onClick = viewModel::clearProjectTaskOrders) { Text("Reset") }
+                TextButton(onClick = viewModel::clearProjectTaskOrders) { Text(t("Reset")) }
             }
         }
     }
@@ -146,9 +147,9 @@ internal fun LazyListScope.displaySection(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            Text(text = "Subprojects in project views", style = MaterialTheme.typography.bodyLarge)
+            Text(text = t("Subprojects in project views"), style = MaterialTheme.typography.bodyLarge)
             Text(
-                text = "Combine child tasks into sections or open each child as its own project",
+                text = t("Combine child tasks into sections or open each child as its own project"),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -174,8 +175,8 @@ internal fun LazyListScope.displaySection(
 
     item(key = "show_project_progress") {
         SwitchRow(
-            label = "Show project progress",
-            description = "Progress rings next to the projects in the drawer",
+            label = t("Show project progress"),
+            description = t("Progress rings next to the projects in the drawer"),
             checked = state.behaviorPrefs.showProjectProgress,
             onCheckedChange = viewModel::setShowProjectProgress,
         )
@@ -183,8 +184,8 @@ internal fun LazyListScope.displaySection(
 
     item(key = "show_project_task_count") {
         SwitchRow(
-            label = "Show task count",
-            description = "How many open tasks each project has, next to it in the drawer",
+            label = t("Show task count"),
+            description = t("How many open tasks each project has, next to it in the drawer"),
             checked = state.behaviorPrefs.showProjectTaskCount,
             onCheckedChange = viewModel::setShowProjectTaskCount,
         )
@@ -216,8 +217,8 @@ internal fun LazyListScope.reviewSection(
     }
     item(key = "review_enabled") {
         SwitchRow(
-            label = "Enable project review tracking",
-            description = "Periodically review your projects",
+            label = t("Enable project review tracking"),
+            description = t("Periodically review your projects"),
             checked = state.reviewPrefs.enabled,
             onCheckedChange = viewModel::setReviewEnabled,
         )
@@ -225,15 +226,15 @@ internal fun LazyListScope.reviewSection(
     if (state.reviewPrefs.enabled) {
         item(key = "review_cadence") {
             SettingsValueRow(
-                label = "Default review cadence",
+                label = t("Default review cadence"),
                 value = "${state.reviewPrefs.defaultCadenceDays} days",
                 onClick = { openDialog(SettingsDialog.ReviewCadence) },
             )
         }
         item(key = "review_exclude_inbox") {
             SwitchRow(
-                label = "Exclude Inbox from review",
-                description = "Don't track the inbox project",
+                label = t("Exclude Inbox from review"),
+                description = t("Don't track the inbox project"),
                 checked = state.reviewPrefs.excludeInbox,
                 onCheckedChange = viewModel::setReviewExcludeInbox,
             )
@@ -249,7 +250,7 @@ internal fun LazyListScope.reviewSection(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Excluded from review",
+                            text = t("Excluded from review"),
                             style = MaterialTheme.typography.bodyLarge,
                         )
                         Text(
@@ -288,7 +289,7 @@ internal fun LazyListScope.labelsSection(
 
     item(key = "labels_header") {
         SectionTitle(
-            title = "Labels",
+            title = t("Labels"),
             onAdd = { openDialog(SettingsDialog.LabelEditor(null)) },
         )
     }
@@ -296,7 +297,7 @@ internal fun LazyListScope.labelsSection(
     if (state.labels.isEmpty()) {
         item(key = "labels_empty") {
             Text(
-                text = "No labels yet",
+                text = t("No labels yet"),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -332,7 +333,7 @@ internal fun LazyListScope.customListsSection(
 
     item(key = "lists_header") {
         SectionTitle(
-            title = "Custom Lists",
+            title = t("Custom Lists"),
             onAdd = { openDialog(SettingsDialog.CustomListEditor(null)) },
         )
     }
@@ -370,7 +371,7 @@ internal fun LazyListScope.customListsSection(
                     modifier = Modifier.weight(1f),
                 )
                 if (canRetry) {
-                    TextButton(onClick = viewModel::retryCustomListSync) { Text("Retry") }
+                    TextButton(onClick = viewModel::retryCustomListSync) { Text(t("Retry")) }
                 }
             }
         }
@@ -379,7 +380,7 @@ internal fun LazyListScope.customListsSection(
     if (state.customLists.isEmpty()) {
         item(key = "lists_empty") {
             Text(
-                text = "No custom lists yet",
+                text = t("No custom lists yet"),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

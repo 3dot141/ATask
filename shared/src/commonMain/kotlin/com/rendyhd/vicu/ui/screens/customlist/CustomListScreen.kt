@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.customlist
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.voice.TaskDefaults
 import com.rendyhd.vicu.ui.navigation.ScreenReady
 import androidx.navigationevent.NavigationEventInfo
@@ -111,7 +112,7 @@ fun CustomListScreen(
                     onNavigateToSearch = onNavigateToSearch,
                     extraActions = {
                         IconButton(onClick = { showEditDialog = true }) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit list")
+                            Icon(Icons.Default.Edit, contentDescription = t("Edit list"))
                         }
                         IconButton(
                             onClick = { showDeleteConfirmation = true },
@@ -119,7 +120,7 @@ fun CustomListScreen(
                         ) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = "Delete list",
+                                contentDescription = t("Delete list"),
                                 tint = MaterialTheme.colorScheme.error,
                             )
                         }
@@ -154,8 +155,8 @@ fun CustomListScreen(
                     item {
                         EmptyState(
                             icon = Icons.Outlined.FilterList,
-                            title = "No matching tasks",
-                            subtitle = "Try adjusting the list filters",
+                            title = t("No matching tasks"),
+                            subtitle = t("Try adjusting the list filters"),
                         )
                     }
                 } else {
@@ -230,7 +231,7 @@ fun CustomListScreen(
     if (showDeleteConfirmation && state.customList != null) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text("Delete List") },
+            title = { Text(t("Delete List")) },
             text = { Text("Delete \"${state.customList!!.name}\"?") },
             confirmButton = {
                 TextButton(
@@ -239,12 +240,12 @@ fun CustomListScreen(
                         viewModel.deleteCustomList()
                     },
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(t("Delete"), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirmation = false }) {
-                    Text("Cancel")
+                    Text(t("Cancel"))
                 }
             },
         )

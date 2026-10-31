@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.upcoming
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.ui.components.fab.FabDropTarget
 import com.rendyhd.vicu.ui.components.fab.fabDropTarget
 import com.rendyhd.vicu.ui.components.shared.LocalClockDay
@@ -112,7 +113,7 @@ fun UpcomingScreen(
                 )
             } else {
                 VicuTopAppBar(
-                    title = { Text("Upcoming") },
+                    title = { Text(t("Upcoming")) },
                     onOpenDrawer = onOpenDrawer,
                     scroll = topBarScroll,
                     onNavigateToSearch = onNavigateToSearch,
@@ -145,8 +146,8 @@ fun UpcomingScreen(
                     item {
                         EmptyState(
                             icon = Icons.Outlined.CalendarMonth,
-                            title = "Nothing upcoming",
-                            subtitle = "Tasks with future due dates appear here",
+                            title = t("Nothing upcoming"),
+                            subtitle = t("Tasks with future due dates appear here"),
                         )
                     }
                 } else {

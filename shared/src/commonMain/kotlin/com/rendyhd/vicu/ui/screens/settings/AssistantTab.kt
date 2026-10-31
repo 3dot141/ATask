@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -127,14 +128,14 @@ internal fun AssistantTab(
                     OutlinedTextField(
                         value = address,
                         onValueChange = { address = it },
-                        label = { Text("Address") },
+                        label = { Text(t("Address")) },
                         singleLine = true,
                         enabled = preset.addressEditable,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                         modifier = Modifier.fillMaxWidth(),
                     )
                     if (preset.addressEditable && address.trim() != settings.address) {
-                        TextButton(onClick = { viewModel.setAddress(address) }) { Text("Save address") }
+                        TextButton(onClick = { viewModel.setAddress(address) }) { Text(t("Save address")) }
                     }
                     if (AiSettings.isInsecureRemote(address)) {
                         Text(
@@ -160,8 +161,8 @@ internal fun AssistantTab(
             }
             item(key = "model_separate") {
                 SwitchRow(
-                    label = "Use a different model for Ask",
-                    description = "For example a fast one for dictation and a larger one for questions.",
+                    label = t("Use a different model for Ask"),
+                    description = t("For example a fast one for dictation and a larger one for questions."),
                     checked = separateAsk,
                     onCheckedChange = { on ->
                         ownAskModel = on
@@ -180,8 +181,8 @@ internal fun AssistantTab(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    OutlinedButton(onClick = viewModel::loadModels, enabled = !state.loadingModels) { Text("Load models") }
-                    OutlinedButton(onClick = viewModel::test, enabled = !state.testing) { Text("Test connection") }
+                    OutlinedButton(onClick = viewModel::loadModels, enabled = !state.loadingModels) { Text(t("Load models")) }
+                    OutlinedButton(onClick = viewModel::test, enabled = !state.testing) { Text(t("Test connection")) }
                     if (state.testing || state.loadingModels) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
                 }
                 state.modelsError?.let {
@@ -194,7 +195,7 @@ internal fun AssistantTab(
             item(key = "features_header") { SubsectionHeading("Features") }
             item(key = "dictation") {
                 SwitchRow(
-                    label = "Smart dictation",
+                    label = t("Smart dictation"),
                     description = "Hold +, slide up to the sparkle and keep talking: your tasks appear as cards while you talk, " +
                         "with dates, projects and labels, for you to check before adding. Holding + and letting go still " +
                         "adds one task at once. Also Break into steps in a task's menu, and Make tasks when you share text to Vicu.",
@@ -206,7 +207,7 @@ internal fun AssistantTab(
             if (settings.dictationOn) {
                 item(key = "brain_dump") {
                     SwitchRow(
-                        label = "Brain dump",
+                        label = t("Brain dump"),
                         description = "Smart dictation starts as a brain dump: talk as long as you like and nothing is sent " +
                             "until you tap Organize. Then everything you said is sorted into projects, subprojects, tasks, " +
                             "subtasks and notes, for you to check before adding. The same switch is at the top of the dictation sheet.",
@@ -218,7 +219,7 @@ internal fun AssistantTab(
             }
             item(key = "ask") {
                 SwitchRow(
-                    label = "Ask",
+                    label = t("Ask"),
                     description = "Tap the sparkle next to Search on any list, or Ask in the menu, and ask about your tasks. " +
                         "Changes come as cards; nothing changes until you apply one.",
                     checked = settings.askOn,
@@ -228,7 +229,7 @@ internal fun AssistantTab(
             }
             item(key = "talk") {
                 SwitchRow(
-                    label = "Talk",
+                    label = t("Talk"),
                     description = "Ask by voice: tap the microphone in Ask and just talk. A pause sends it, the answer is " +
                         "read aloud, and it keeps listening; talk again to interrupt.",
                     checked = settings.talkOn,
@@ -239,8 +240,8 @@ internal fun AssistantTab(
             if (settings.talkOn) {
                 item(key = "speak") {
                     SwitchRow(
-                        label = "Read answers aloud",
-                        description = "In Talk, the device voice reads each answer.",
+                        label = t("Read answers aloud"),
+                        description = t("In Talk, the device voice reads each answer."),
                         checked = settings.speakAnswers,
                         onCheckedChange = viewModel::setSpeakAnswers,
                     )
@@ -267,8 +268,8 @@ internal fun AssistantTab(
         if (state.localSpeechAvailable) {
             item(key = "speech_device") {
                 SpeechChoiceRow(
-                    title = "System speech recognition",
-                    subtitle = "No download",
+                    title = t("System speech recognition"),
+                    subtitle = t("No download"),
                     selected = settings.speechModelId == null,
                     onSelect = { viewModel.chooseSpeechModel(null) },
                 )
@@ -296,8 +297,8 @@ internal fun AssistantTab(
             }
             item(key = "speech_mobile_data") {
                 SwitchRow(
-                    label = "Download on mobile data",
-                    description = "Speech models are large; without this they download on Wi-Fi only.",
+                    label = t("Download on mobile data"),
+                    description = t("Speech models are large; without this they download on Wi-Fi only."),
                     checked = settings.allowMobileData,
                     onCheckedChange = viewModel::setAllowMobileData,
                 )
@@ -326,7 +327,7 @@ internal fun AssistantTab(
         }
         item(key = "clear") {
             TextButton(onClick = { confirmClear = true }, modifier = Modifier.padding(horizontal = 8.dp)) {
-                Text("Delete assistant data", color = MaterialTheme.colorScheme.error)
+                Text(t("Delete assistant data"), color = MaterialTheme.colorScheme.error)
             }
             Spacer(Modifier.height(96.dp))
         }
@@ -344,7 +345,7 @@ internal fun AssistantTab(
     }
     if (languagePicker) {
         ChoiceDialog(
-            title = "Speech language",
+            title = t("Speech language"),
             options = SPEECH_LANGUAGES,
             selected = settings.speechLanguage,
             onPick = {
@@ -363,26 +364,26 @@ internal fun AssistantTab(
                     Text("To use the assistant, Vicu sends this to ${settings.address}:")
                     Text("Dictation: the text of what you said (never audio), and the names of your projects, labels and places, the list you are in, the date, time and time zone.")
                     Text("Ask and Talk: your messages, counts and names of your projects, labels and lists, and the tasks the model looks up, including names of the people they are shared with.")
-                    Text("Never: your Vikunja password or token, your server's address, comments, attachments, or where your places are.")
-                    Text("Your provider's terms decide what happens to it there, and you pay them for what you use.")
+                    Text(t("Never: your Vikunja password or token, your server's address, comments, attachments, or where your places are."))
+                    Text(t("Your provider's terms decide what happens to it there, and you pay them for what you use."))
                 }
             },
-            confirmButton = { TextButton(onClick = { viewModel.answerConsent(true) }) { Text("Agree") } },
-            dismissButton = { TextButton(onClick = { viewModel.answerConsent(false) }) { Text("Cancel") } },
+            confirmButton = { TextButton(onClick = { viewModel.answerConsent(true) }) { Text(t("Agree")) } },
+            dismissButton = { TextButton(onClick = { viewModel.answerConsent(false) }) { Text(t("Cancel")) } },
         )
     }
     if (confirmClear) {
         AlertDialog(
             onDismissRequest = { confirmClear = false },
-            title = { Text("Delete assistant data?") },
+            title = { Text(t("Delete assistant data?")) },
             text = { Text("Removes the key, the assistant settings, your Ask conversations and a kept dictation from this device. Downloaded speech models stay until you delete them.") },
             confirmButton = {
                 TextButton(onClick = {
                     confirmClear = false
                     viewModel.clearAll()
-                }) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                }) { Text(t("Delete"), color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { confirmClear = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { confirmClear = false }) { Text(t("Cancel")) } },
         )
     }
 }
@@ -402,7 +403,7 @@ private fun KeyField(hasKey: Boolean, required: Boolean, onSave: (String) -> Uni
             value = key,
             onValueChange = { key = it },
             label = { Text(if (required) "API key" else "API key (optional)") },
-            placeholder = { if (hasKey) Text("Saved. Type a new key to replace it.") },
+            placeholder = { if (hasKey) Text(t("Saved. Type a new key to replace it.")) },
             singleLine = true,
             visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -414,8 +415,8 @@ private fun KeyField(hasKey: Boolean, required: Boolean, onSave: (String) -> Uni
             modifier = Modifier.fillMaxWidth(),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextButton(onClick = { onSave(key); key = "" }, enabled = key.isNotBlank()) { Text("Save key") }
-            if (hasKey) TextButton(onClick = { onSave("") }) { Text("Remove key") }
+            TextButton(onClick = { onSave(key); key = "" }, enabled = key.isNotBlank()) { Text(t("Save key")) }
+            if (hasKey) TextButton(onClick = { onSave("") }) { Text(t("Remove key")) }
         }
     }
 }
@@ -432,10 +433,10 @@ private fun ModelField(label: String, value: String, models: List<String>, onCha
             singleLine = true,
             trailingIcon = {
                 if (models.isNotEmpty()) {
-                    IconButton(onClick = { open = true }) { Icon(Icons.Outlined.ArrowDropDown, contentDescription = "Choose a model") }
+                    IconButton(onClick = { open = true }) { Icon(Icons.Outlined.ArrowDropDown, contentDescription = t("Choose a model")) }
                 }
             },
-            supportingText = if (text.trim() != value) ({ TextButton(onClick = { onChange(text) }) { Text("Save") } }) else null,
+            supportingText = if (text.trim() != value) ({ TextButton(onClick = { onChange(text) }) { Text(t("Save")) } }) else null,
             modifier = Modifier.fillMaxWidth(),
         )
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
@@ -540,15 +541,15 @@ private fun SpeechModelRow(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    ModelFileState.Checking -> Text("Checking the download", style = MaterialTheme.typography.bodySmall)
+                    ModelFileState.Checking -> Text(t("Checking the download"), style = MaterialTheme.typography.bodySmall)
                     is ModelFileState.Failed -> Text(fileState.message, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
                     else -> Unit
                 }
             }
             when (fileState) {
-                is ModelFileState.Downloading, ModelFileState.Checking -> TextButton(onClick = onCancel) { Text("Cancel") }
-                ModelFileState.Installed -> TextButton(onClick = onDelete) { Text("Delete") }
-                else -> TextButton(onClick = onDownload) { Text("Download") }
+                is ModelFileState.Downloading, ModelFileState.Checking -> TextButton(onClick = onCancel) { Text(t("Cancel")) }
+                ModelFileState.Installed -> TextButton(onClick = onDelete) { Text(t("Delete")) }
+                else -> TextButton(onClick = onDownload) { Text(t("Download")) }
             }
         }
         HorizontalDivider(Modifier.padding(start = 56.dp))
@@ -558,7 +559,7 @@ private fun SpeechModelRow(
 @Composable
 private fun ProviderDialog(selected: String?, onPick: (String) -> Unit, onDismiss: () -> Unit) {
     ChoiceDialog(
-        title = "Model provider",
+        title = t("Model provider"),
         options = AiContract.providers.map { it.id to it.name },
         selected = selected,
         onPick = onPick,
@@ -592,7 +593,7 @@ internal fun ChoiceDialog(
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Close") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(t("Close")) } },
     )
 }
 
@@ -613,5 +614,5 @@ private fun Modifier.clickableRow(onClick: () -> Unit) = clickable(onClick = onC
 @Composable
 private fun TryIt(enabled: Boolean, onClick: () -> Unit) {
     if (!enabled) return
-    TextButton(onClick = onClick, modifier = Modifier.padding(start = 8.dp)) { Text("Try it") }
+    TextButton(onClick = onClick, modifier = Modifier.padding(start = 8.dp)) { Text(t("Try it")) }
 }

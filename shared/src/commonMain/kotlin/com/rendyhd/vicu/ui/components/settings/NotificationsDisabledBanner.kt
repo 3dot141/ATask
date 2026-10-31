@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -56,17 +57,17 @@ fun NotificationsDisabledBanner() {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Notifications are turned off",
+                text = t("Notifications are turned off"),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onErrorContainer,
             )
             Text(
-                text = "Reminders and daily summaries cannot be shown until notifications are allowed for Vicu.",
+                text = t("Reminders and daily summaries cannot be shown until notifications are allowed for Vicu."),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onErrorContainer,
             )
             TextButton(onClick = permission::requestFromSettings) {
-                Text("Turn on")
+                Text(t("Turn on"))
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -166,13 +167,13 @@ internal fun DescriptionEditorToolbar(
 
                 ToolbarButton(
                     icon = Icons.AutoMirrored.Filled.FormatIndentDecrease,
-                    label = "Decrease indent",
+                    label = t("Decrease indent"),
                     enabled = indentation.canIndentBackward,
                     onClick = controller.indentationActions::indentBackward,
                 )
                 ToolbarButton(
                     icon = Icons.AutoMirrored.Filled.FormatIndentIncrease,
-                    label = "Increase indent",
+                    label = t("Increase indent"),
                     enabled = indentation.canIndentForward,
                     onClick = controller.indentationActions::indentForward,
                 )
@@ -181,7 +182,7 @@ internal fun DescriptionEditorToolbar(
 
                 ToolbarButton(
                     icon = Icons.Default.Link,
-                    label = "Link",
+                    label = t("Link"),
                     status = when {
                         link.existingUrl != null -> StyleStatus.FullyActive
                         link.intersectsLink -> StyleStatus.Partial
@@ -192,13 +193,13 @@ internal fun DescriptionEditorToolbar(
                 )
                 ToolbarButton(
                     icon = Icons.AutoMirrored.Filled.Undo,
-                    label = "Undo",
+                    label = t("Undo"),
                     enabled = editorState.canUndo,
                     onClick = editorState::undo,
                 )
                 ToolbarButton(
                     icon = Icons.AutoMirrored.Filled.Redo,
-                    label = "Redo",
+                    label = t("Redo"),
                     enabled = editorState.canRedo,
                     onClick = editorState::redo,
                 )
@@ -206,7 +207,7 @@ internal fun DescriptionEditorToolbar(
             ToolbarDivider()
             ToolbarButton(
                 icon = Icons.Default.KeyboardHide,
-                label = "Hide keyboard",
+                label = t("Hide keyboard"),
                 enabled = editorState.state.focusedBlockId != null,
                 onClick = onHideKeyboard,
             )
@@ -421,7 +422,7 @@ private fun DescriptionLinkDialog(
                 OutlinedTextField(
                     value = state.title,
                     onValueChange = { state.title = it },
-                    label = { Text("Text") },
+                    label = { Text(t("Text")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -429,18 +430,18 @@ private fun DescriptionLinkDialog(
         },
         confirmButton = {
             TextButton(onClick = { state.apply(linkActions) }) {
-                Text("Apply")
+                Text(t("Apply"))
             }
         },
         dismissButton = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (state.canRemove) {
                     TextButton(onClick = { state.remove(linkActions) }) {
-                        Text("Remove")
+                        Text(t("Remove"))
                     }
                 }
                 TextButton(onClick = state::dismiss) {
-                    Text("Cancel")
+                    Text(t("Cancel"))
                 }
             }
         },

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +33,7 @@ import kotlinx.coroutines.withContext
 internal fun AuthDebugLogDialog(onDismiss: () -> Unit) {
     val dispatchers: AppDispatchers = koinInject()
     LogTextDialog(
-        title = "Auth Debug Log",
+        title = t("Auth Debug Log"),
         copyLabel = "Auth debug log",
         // The log is a file: read it off the main thread.
         read = { withContext(dispatchers.io) { AuthDebugLog.readLog() } },
@@ -47,7 +48,7 @@ internal fun AuthDebugLogDialog(onDismiss: () -> Unit) {
 internal fun BackgroundActivityDialog(onDismiss: () -> Unit) {
     val hooks: PlatformSettingsHooks = koinInject()
     LogTextDialog(
-        title = "Background activity",
+        title = t("Background activity"),
         copyLabel = "Background activity",
         read = { hooks.readBackgroundActivityLog() },
         newestLast = false,
@@ -104,7 +105,7 @@ private fun LogTextDialog(
                     scope.launch { clipboard.copyPlainText(copyLabel, logText.orEmpty()) }
                 },
             ) {
-                Text("Copy")
+                Text(t("Copy"))
             }
         },
         dismissButton = {
@@ -114,11 +115,11 @@ private fun LogTextDialog(
                         onClear()
                         onDismiss()
                     }) {
-                        Text("Clear")
+                        Text(t("Clear"))
                     }
                 }
                 TextButton(onClick = onDismiss) {
-                    Text("Close")
+                    Text(t("Close"))
                 }
             }
         },

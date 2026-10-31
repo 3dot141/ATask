@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -101,7 +102,7 @@ fun ImageViewerDialog(
             ) {
                 Icon(
                     Icons.Default.Close,
-                    contentDescription = "Close",
+                    contentDescription = t("Close"),
                     tint = Color.White,
                 )
             }

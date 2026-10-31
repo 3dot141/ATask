@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.tag
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.ui.navigation.ScreenReady
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
@@ -126,7 +127,7 @@ fun TagScreen(
                     item {
                         EmptyState(
                             icon = Icons.AutoMirrored.Outlined.Label,
-                            title = "No tasks with this tag",
+                            title = t("No tasks with this tag"),
                         )
                     }
                 } else {

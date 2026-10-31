@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +29,7 @@ fun VicuDragHandle(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             // A target of at least 48 dp, named for a screen reader (the sheet makes it an action).
             .heightIn(min = 48.dp)
-            .semantics { contentDescription = "Sheet handle" },
+            .semantics { contentDescription = t("Sheet handle") },
         contentAlignment = Alignment.Center,
     ) {
         VicuDragHandleBar()

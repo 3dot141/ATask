@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,7 @@ internal fun LazyListScope.bottomBarSection(
 ) {
     item(key = "bottombar_header") {
         Text(
-            text = "Bottom Bar",
+            text = t("Bottom Bar"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -60,7 +61,7 @@ internal fun LazyListScope.bottomBarSection(
 
     item(key = "bottombar_desc") {
         Text(
-            text = "Customize the last 3 slots. Inbox always stays first.",
+            text = t("Customize the last 3 slots. Inbox always stays first."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -82,8 +83,8 @@ internal fun LazyListScope.bottomBarSection(
 
     item(key = "bottombar_smart_list_colors") {
         SwitchRow(
-            label = "Smart list colours",
-            description = "Draw the Inbox, Today, Upcoming and Anytime icons in their own colours",
+            label = t("Smart list colours"),
+            description = t("Draw the Inbox, Today, Upcoming and Anytime icons in their own colours"),
             checked = state.bottomBarSmartListColors,
             onCheckedChange = viewModel::setBottomBarSmartListColors,
         )
@@ -96,7 +97,7 @@ internal fun LazyListScope.bottomBarSection(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             TextButton(onClick = viewModel::resetBottomBar) {
-                Text("Reset to Defaults")
+                Text(t("Reset to Defaults"))
             }
         }
     }
@@ -118,7 +119,7 @@ internal fun LazyListScope.drawerSection(
 ) {
     item(key = "drawer_header") {
         Text(
-            text = "Drawer",
+            text = t("Drawer"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -209,7 +210,7 @@ internal fun LazyListScope.widgetSection(
 ) {
     item(key = "widget_header") {
         Text(
-            text = "Widget",
+            text = t("Widget"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -226,7 +227,7 @@ internal fun LazyListScope.widgetSection(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Smart add button", style = MaterialTheme.typography.bodyMedium)
+                Text(t("Smart add button"), style = MaterialTheme.typography.bodyMedium)
                 Text(
                     "Add tasks to the widget's project or list target",
                     style = MaterialTheme.typography.bodySmall,
@@ -249,7 +250,7 @@ internal fun LazyListScope.widgetSection(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Context navigation", style = MaterialTheme.typography.bodyMedium)
+                Text(t("Context navigation"), style = MaterialTheme.typography.bodyMedium)
                 Text(
                     "Tapping the widget title opens the matching screen",
                     style = MaterialTheme.typography.bodySmall,
@@ -274,7 +275,7 @@ internal fun LazyListScope.routinesSection(
 ) {
     item(key = "routines_header") {
         Text(
-            text = "Routines",
+            text = t("Routines"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -283,8 +284,8 @@ internal fun LazyListScope.routinesSection(
     }
     item(key = "routines_enabled") {
         SwitchRow(
-            label = "Enable routines",
-            description = "Off hides routines and stops their reminders; nothing is deleted",
+            label = t("Enable routines"),
+            description = t("Off hides routines and stops their reminders; nothing is deleted"),
             checked = state.routineVisibility.enabled,
             onCheckedChange = viewModel::setRoutinesEnabled,
         )
@@ -292,8 +293,8 @@ internal fun LazyListScope.routinesSection(
     if (state.routineVisibility.enabled) {
         item(key = "routines_in_today") {
             SwitchRow(
-                label = "Show routines in Today",
-                description = "Lists the routines still open today; finished ones are left out",
+                label = t("Show routines in Today"),
+                description = t("Lists the routines still open today; finished ones are left out"),
                 checked = state.routineVisibility.showInToday,
                 onCheckedChange = viewModel::setRoutinesShowInToday,
             )
@@ -312,7 +313,7 @@ internal fun LazyListScope.logbookSection(
 ) {
     item(key = "logbook_header") {
         Text(
-            text = "Logbook",
+            text = t("Logbook"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -321,8 +322,8 @@ internal fun LazyListScope.logbookSection(
     }
     item(key = "logbook_retention_enabled") {
         SwitchRow(
-            label = "Hide old completed tasks",
-            description = "Older completed tasks are hidden from Logbook. Nothing is deleted.",
+            label = t("Hide old completed tasks"),
+            description = t("Older completed tasks are hidden from Logbook. Nothing is deleted."),
             checked = state.logbookPrefs.enabled,
             onCheckedChange = viewModel::setLogbookRetentionEnabled,
         )
@@ -330,7 +331,7 @@ internal fun LazyListScope.logbookSection(
     if (state.logbookPrefs.enabled) {
         item(key = "logbook_retention_days") {
             SettingsValueRow(
-                label = "Keep completed tasks for",
+                label = t("Keep completed tasks for"),
                 value = "${state.logbookPrefs.retentionDays} days",
                 onClick = { openDialog(SettingsDialog.LogbookRetention) },
             )
@@ -347,7 +348,7 @@ internal fun LazyListScope.inputParsingSection(
 ) {
     item(key = "nlp_header") {
         Text(
-            text = "Input Parsing",
+            text = t("Input Parsing"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -357,8 +358,8 @@ internal fun LazyListScope.inputParsingSection(
 
     item(key = "nlp_enabled") {
         SwitchRow(
-            label = "Natural Language Parsing",
-            description = "Extract dates, labels, projects, and priority from task titles",
+            label = t("Natural Language Parsing"),
+            description = t("Extract dates, labels, projects, and priority from task titles"),
             checked = state.nlpConfig.enabled,
             onCheckedChange = viewModel::setNlpEnabled,
         )
@@ -372,7 +373,7 @@ internal fun LazyListScope.inputParsingSection(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 Text(
-                    text = "Syntax Mode",
+                    text = t("Syntax Mode"),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -411,8 +412,8 @@ internal fun LazyListScope.inputParsingSection(
 
     item(key = "nlp_bang_today") {
         SwitchRow(
-            label = "! sets due date to today",
-            description = "Add ! to set the due date to today.",
+            label = t("! sets due date to today"),
+            description = t("Add ! to set the due date to today."),
             checked = state.nlpConfig.bangToday,
             onCheckedChange = viewModel::setBangToday,
         )
@@ -429,13 +430,13 @@ internal fun LazyListScope.behaviorSection(
     onPickCompletionSound: () -> Unit,
 ) {
     item(key = "behavior_header") {
-        SectionHeader(icon = Icons.Outlined.Tune, title = "Preferences")
+        SectionHeader(icon = Icons.Outlined.Tune, title = t("Preferences"))
     }
 
     item(key = "confirm_before_delete") {
         SwitchRow(
-            label = "Confirm before deleting",
-            description = "Show a confirmation dialog before deleting tasks, projects, labels and lists",
+            label = t("Confirm before deleting"),
+            description = t("Show a confirmation dialog before deleting tasks, projects, labels and lists"),
             checked = state.behaviorPrefs.confirmBeforeDelete,
             onCheckedChange = viewModel::setConfirmBeforeDelete,
         )
@@ -447,9 +448,9 @@ internal fun LazyListScope.behaviorSection(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            Text(text = "Subtasks in task lists", style = MaterialTheme.typography.bodyLarge)
+            Text(text = t("Subtasks in task lists"), style = MaterialTheme.typography.bodyLarge)
             Text(
-                text = "Keep lists minimal or expand subtasks beneath their parent",
+                text = t("Keep lists minimal or expand subtasks beneath their parent"),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -475,8 +476,8 @@ internal fun LazyListScope.behaviorSection(
 
     item(key = "keep_entry_open") {
         SwitchRow(
-            label = "Keep add-task open",
-            description = "Stay in the new-task sheet after saving, to add several quickly",
+            label = t("Keep add-task open"),
+            description = t("Stay in the new-task sheet after saving, to add several quickly"),
             checked = state.behaviorPrefs.keepEntryOpen,
             onCheckedChange = viewModel::setKeepEntryOpen,
         )
@@ -484,8 +485,8 @@ internal fun LazyListScope.behaviorSection(
 
     item(key = "fab_align_start") {
         SwitchRow(
-            label = "Left-handed add button",
-            description = "Move the + button to the bottom-left corner",
+            label = t("Left-handed add button"),
+            description = t("Move the + button to the bottom-left corner"),
             checked = state.behaviorPrefs.fabAlignStart,
             onCheckedChange = viewModel::setFabAlignStart,
         )
@@ -493,8 +494,8 @@ internal fun LazyListScope.behaviorSection(
 
     item(key = "completion_sound_enabled") {
         SwitchRow(
-            label = "Play sound when completing a task",
-            description = "Plays the system notification sound. Tap below for a custom sound.",
+            label = t("Play sound when completing a task"),
+            description = t("Plays the system notification sound. Tap below for a custom sound."),
             checked = state.behaviorPrefs.completionSoundEnabled,
             onCheckedChange = viewModel::setCompletionSoundEnabled,
         )
@@ -523,7 +524,7 @@ internal fun LazyListScope.behaviorSection(
                 }
                 if (hasCustom) {
                     TextButton(onClick = { viewModel.setCompletionSoundUri(null) }) {
-                        Text("Reset")
+                        Text(t("Reset"))
                     }
                 }
             }
@@ -541,7 +542,7 @@ private fun HiddenSharedRoutines(viewModel: HiddenRoutinesViewModel = koinViewMo
     val hidden by viewModel.hidden.collectAsStateWithLifecycle()
     if (hidden.isEmpty()) return
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        Text("Hidden shared routines", style = MaterialTheme.typography.bodyLarge)
+        Text(t("Hidden shared routines"), style = MaterialTheme.typography.bodyLarge)
         Text(
             "Routines someone shared with you that you hid. They stay shared; only you do not see them.",
             style = MaterialTheme.typography.bodySmall,
@@ -556,7 +557,7 @@ private fun HiddenSharedRoutines(viewModel: HiddenRoutinesViewModel = koinViewMo
                 TextButton(
                     onClick = { viewModel.show(routine) },
                     modifier = Modifier.semantics { contentDescription = "Show ${routine.definition.name}" },
-                ) { Text("Show") }
+                ) { Text(t("Show")) }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -156,7 +157,7 @@ fun BottomBarSlotEditor(
                                 if (isSelected) {
                                     Icon(
                                         Icons.Outlined.Check,
-                                        contentDescription = "Selected",
+                                        contentDescription = t("Selected"),
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(20.dp),
                                     )
@@ -201,7 +202,7 @@ fun BottomBarSlotEditor(
                                 if (isSelected) {
                                     Icon(
                                         Icons.Outlined.Check,
-                                        contentDescription = "Selected",
+                                        contentDescription = t("Selected"),
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(20.dp),
                                     )
@@ -266,12 +267,12 @@ fun BottomBarSlotEditor(
                 },
                 enabled = isValid,
             ) {
-                Text("Save")
+                Text(t("Save"))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )

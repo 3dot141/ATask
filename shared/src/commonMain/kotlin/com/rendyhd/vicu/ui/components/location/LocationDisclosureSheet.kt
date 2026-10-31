@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.location
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -73,13 +74,13 @@ fun LocationDisclosureSheet(viewModel: PlacesViewModel) {
                     .fillMaxWidth()
                     .padding(top = 8.dp),
             ) {
-                Text("Continue")
+                Text(t("Continue"))
             }
             TextButton(
                 onClick = viewModel::dismissDisclosure,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Not now")
+                Text(t("Not now"))
             }
         }
     }

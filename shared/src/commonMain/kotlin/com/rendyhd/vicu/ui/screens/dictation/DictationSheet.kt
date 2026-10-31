@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.dictation
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -113,10 +114,10 @@ fun DictationSheet(
     if (confirmDiscard) {
         AlertDialog(
             onDismissRequest = { confirmDiscard = false },
-            title = { Text("Discard this brain dump?") },
-            text = { Text("What you said and the plan made from it are gone.") },
-            confirmButton = { TextButton(onClick = { confirmDiscard = false; controller.discard() }) { Text("Discard") } },
-            dismissButton = { TextButton(onClick = { confirmDiscard = false }) { Text("Keep") } },
+            title = { Text(t("Discard this brain dump?")) },
+            text = { Text(t("What you said and the plan made from it are gone.")) },
+            confirmButton = { TextButton(onClick = { confirmDiscard = false; controller.discard() }) { Text(t("Discard")) } },
+            dismissButton = { TextButton(onClick = { confirmDiscard = false }) { Text(t("Keep")) } },
         )
     }
     val reduceMotion = rememberReduceMotion()
@@ -177,7 +178,7 @@ private fun Header(ui: DictationUi, onClose: () -> Unit, onBrainDump: (Boolean) 
                 modifier = Modifier.padding(start = 12.dp).weight(1f),
             )
             IconButton(onClick = onClose, enabled = ui.phase != DictationPhase.THINKING) {
-                Icon(Icons.Outlined.Close, contentDescription = "Discard")
+                Icon(Icons.Outlined.Close, contentDescription = t("Discard"))
             }
         }
         if (ui.phase == DictationPhase.LISTENING) BrainDumpSwitch(ui.brainDump, onBrainDump)
@@ -200,10 +201,10 @@ private fun Body(ui: DictationUi, micUi: DictationMicUi, controller: DictationCo
         ui.brainDump && ui.phase == DictationPhase.LISTENING -> OutlinedTextField(
             value = ui.transcript,
             onValueChange = controller::setDump,
-            placeholder = { Text("Talk, or type here. Everything you say is added to your brain dump.") },
+            placeholder = { Text(t("Talk, or type here. Everything you say is added to your brain dump.")) },
             minLines = 3,
             modifier = Modifier.fillMaxWidth().heightIn(max = 280.dp).padding(horizontal = 16.dp, vertical = 8.dp)
-                .semantics { contentDescription = "Your brain dump" },
+                .semantics { contentDescription = t("Your brain dump") },
         )
         ui.brainDump && ui.phase == DictationPhase.REVIEW -> PlanList(ui, controller)
         else -> PhaseBody(ui, micUi, controller)
@@ -280,7 +281,7 @@ private fun PhaseBody(ui: DictationUi, micUi: DictationMicUi, controller: Dictat
                     Column(Modifier.padding(horizontal = 4.dp, vertical = 8.dp)) {
                         for (d in loose) Text(droppedText(d), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
                         if (ui.unclear.isNotEmpty()) {
-                            Text("Not placed:", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 4.dp))
+                            Text(t("Not placed:"), style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 4.dp))
                             for (note in ui.unclear) Text("• $note", style = MaterialTheme.typography.bodySmall)
                         }
                     }
@@ -309,24 +310,24 @@ private fun Footer(ui: DictationUi, micUi: DictationMicUi, controller: Dictation
             when (ui.phase) {
                 DictationPhase.LISTENING -> {
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = controller::discard) { Text("Discard") }
+                    TextButton(onClick = controller::discard) { Text(t("Discard")) }
                 }
                 DictationPhase.REVIEW -> {
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = controller::discard, enabled = !ui.adding) { Text("Discard") }
+                    TextButton(onClick = controller::discard, enabled = !ui.adding) { Text(t("Discard")) }
                     Button(onClick = controller::add, enabled = ui.drafts.isNotEmpty() && !ui.adding && !ui.editing) {
                         Text(if (ui.drafts.size == 1) "Add task" else "Add ${ui.drafts.size} tasks")
                     }
                 }
                 DictationPhase.FAILED, DictationPhase.EMPTY -> {
-                    TextButton(onClick = controller::discard) { Text("Discard") }
+                    TextButton(onClick = controller::discard) { Text(t("Discard")) }
                     Spacer(Modifier.weight(1f))
-                    FilledTonalButton(onClick = { controller.addAsOneTask(format) }) { Text("Add as one task") }
-                    Button(onClick = controller::retry) { Text("Retry") }
+                    FilledTonalButton(onClick = { controller.addAsOneTask(format) }) { Text(t("Add as one task")) }
+                    Button(onClick = controller::retry) { Text(t("Retry")) }
                 }
                 DictationPhase.THINKING -> {
                     Spacer(Modifier.weight(1f))
-                    TextButton(onClick = controller::discard) { Text("Cancel") }
+                    TextButton(onClick = controller::discard) { Text(t("Cancel")) }
                 }
             }
         }
@@ -357,7 +358,7 @@ private fun BrainDumpSwitch(on: Boolean, onChange: (Boolean) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(value = on, role = Role.Switch, onValueChange = onChange),
         ) {
-            Text("Brain dump", style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
+            Text(t("Brain dump"), style = MaterialTheme.typography.labelLarge, modifier = Modifier.weight(1f))
             Switch(checked = on, onCheckedChange = null)
         }
         Text(
@@ -383,7 +384,7 @@ private fun BrainDumpFooter(ui: DictationUi, micUi: DictationMicUi, controller: 
                 OutlinedTextField(
                     value = ui.pending,
                     onValueChange = controller::setPending,
-                    placeholder = { Text("Say or type a change") },
+                    placeholder = { Text(t("Say or type a change")) },
                     maxLines = 4,
                     enabled = !ui.adding,
                     modifier = Modifier.weight(1f),
@@ -392,7 +393,7 @@ private fun BrainDumpFooter(ui: DictationUi, micUi: DictationMicUi, controller: 
                     onClick = { controller.update() },
                     enabled = ui.pending.isNotBlank() && !ui.editing && !ui.adding,
                     modifier = Modifier.padding(start = 8.dp),
-                ) { Text("Update") }
+                ) { Text(t("Update")) }
             }
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -400,18 +401,18 @@ private fun BrainDumpFooter(ui: DictationUi, micUi: DictationMicUi, controller: 
             Spacer(Modifier.weight(1f))
             when (ui.phase) {
                 DictationPhase.LISTENING -> {
-                    TextButton(onClick = onDiscard) { Text("Discard") }
-                    Button(onClick = { controller.organize() }, enabled = ui.transcript.isNotBlank()) { Text("Organize") }
+                    TextButton(onClick = onDiscard) { Text(t("Discard")) }
+                    Button(onClick = { controller.organize() }, enabled = ui.transcript.isNotBlank()) { Text(t("Organize")) }
                 }
-                DictationPhase.THINKING -> TextButton(onClick = controller::backToDump) { Text("Cancel") }
+                DictationPhase.THINKING -> TextButton(onClick = controller::backToDump) { Text(t("Cancel")) }
                 DictationPhase.REVIEW -> {
-                    TextButton(onClick = onDiscard, enabled = !ui.adding) { Text("Discard") }
-                    Button(onClick = controller::add, enabled = ui.hasPlan && !ui.adding && !ui.editing) { Text("Add all") }
+                    TextButton(onClick = onDiscard, enabled = !ui.adding) { Text(t("Discard")) }
+                    Button(onClick = controller::add, enabled = ui.hasPlan && !ui.adding && !ui.editing) { Text(t("Add all")) }
                 }
                 DictationPhase.FAILED, DictationPhase.EMPTY -> {
-                    TextButton(onClick = onDiscard) { Text("Discard") }
-                    FilledTonalButton(onClick = controller::backToDump) { Text("Edit") }
-                    Button(onClick = controller::retry, enabled = ui.transcript.isNotBlank()) { Text("Retry") }
+                    TextButton(onClick = onDiscard) { Text(t("Discard")) }
+                    FilledTonalButton(onClick = controller::backToDump) { Text(t("Edit")) }
+                    Button(onClick = controller::retry, enabled = ui.transcript.isNotBlank()) { Text(t("Retry")) }
                 }
             }
         }
@@ -455,7 +456,7 @@ private fun PlanList(ui: DictationUi, controller: DictationController) {
                 Column(Modifier.padding(horizontal = 4.dp, vertical = 8.dp)) {
                     for (d in loose) Text(droppedText(d, brainDump = true), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
                     if (ui.unclear.isNotEmpty()) {
-                        Text("Not placed:", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 4.dp))
+                        Text(t("Not placed:"), style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(top = 4.dp))
                         for (note in ui.unclear) Text("• $note", style = MaterialTheme.typography.bodySmall)
                     }
                 }
@@ -503,7 +504,7 @@ private fun PlanGroupHeader(group: PlanGroup, ui: DictationUi, editable: Boolean
                             disabledContainerColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                         ),
-                        modifier = Modifier.fillMaxWidth().semantics { contentDescription = "New project name" },
+                        modifier = Modifier.fillMaxWidth().semantics { contentDescription = t("New project name") },
                     )
                     Text(
                         "New project " + newProjectPlace(project, ui.projects, ui.context),

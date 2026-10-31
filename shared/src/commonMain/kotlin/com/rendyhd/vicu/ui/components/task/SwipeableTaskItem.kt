@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
@@ -301,7 +302,7 @@ private fun CompletionConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Complete task and subtasks?") },
+        title = { Text(t("Complete task and subtasks?")) },
         text = {
             Text(
                 "${if (unfinishedSubtaskCount == 1) "One subtask is" else "$unfinishedSubtaskCount subtasks are"} " +
@@ -310,10 +311,10 @@ private fun CompletionConfirmationDialog(
             )
         },
         confirmButton = {
-            TextButton(onClick = onConfirm) { Text("Complete all") }
+            TextButton(onClick = onConfirm) { Text(t("Complete all")) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }

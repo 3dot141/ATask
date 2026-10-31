@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.ask
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -156,7 +157,7 @@ private fun Header(state: AskUiState, viewModel: AskViewModel, onClose: () -> Un
         if (state.history.isNotEmpty()) {
             Box {
                 IconButton(onClick = { historyOpen = true }) {
-                    Icon(Icons.Outlined.History, contentDescription = "Earlier conversations")
+                    Icon(Icons.Outlined.History, contentDescription = t("Earlier conversations"))
                 }
                 DropdownMenu(expanded = historyOpen, onDismissRequest = { historyOpen = false }) {
                     for (c in state.history) {
@@ -171,8 +172,8 @@ private fun Header(state: AskUiState, viewModel: AskViewModel, onClose: () -> Un
                 }
             }
         }
-        IconButton(onClick = viewModel::newChat) { Icon(Icons.Outlined.AddComment, contentDescription = "New chat") }
-        IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = "Close Ask") }
+        IconButton(onClick = viewModel::newChat) { Icon(Icons.Outlined.AddComment, contentDescription = t("New chat")) }
+        IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = t("Close Ask")) }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.guided
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -87,7 +88,7 @@ fun GuidedReviewScreen(
                 TopAppBar(
                     title = {
                         Column {
-                            Text("Review projects")
+                            Text(t("Review projects"))
                             if (!state.finished && state.total > 0) {
                                 Text(
                                     "${state.index + 1} of ${state.total}",
@@ -97,7 +98,7 @@ fun GuidedReviewScreen(
                             }
                         }
                     },
-                    navigationIcon = { IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = "Close") } },
+                    navigationIcon = { IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = t("Close")) } },
                 )
                 if (!state.finished && state.total > 0) {
                     LinearProgressIndicator(
@@ -145,14 +146,14 @@ fun GuidedReviewScreen(
         AlertDialog(
             onDismissRequest = { confirmDelete = null },
             title = { Text("Delete \"${task.title}\"?") },
-            text = { Text("Deleting cannot be undone.") },
+            text = { Text(t("Deleting cannot be undone.")) },
             confirmButton = {
                 TextButton(onClick = {
                     confirmDelete = null
                     viewModel.delete(task)
-                }) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                }) { Text(t("Delete"), color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { confirmDelete = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { confirmDelete = null }) { Text(t("Cancel")) } },
         )
     }
 }
@@ -178,13 +179,13 @@ private fun ReviewPage(
 
             ChoiceHeading("Still working on it?")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(selected = true, onClick = {}, label = { Text("Keep") })
+                FilterChip(selected = true, onClick = {}, label = { Text(t("Keep")) })
                 if (state.canArchive) {
                     FilterChip(
                         selected = false,
                         onClick = viewModel::archive,
                         enabled = !state.busy,
-                        label = { Text("Archive") },
+                        label = { Text(t("Archive")) },
                         leadingIcon = { Icon(Icons.Outlined.Archive, contentDescription = null, modifier = Modifier.size(18.dp)) },
                     )
                 }
@@ -207,7 +208,7 @@ private fun ReviewPage(
                     Column(Modifier.padding(12.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable { onTaskClick(next.id) }) {
                             if (state.nextSuggested) {
-                                Icon(Icons.Outlined.AutoAwesome, contentDescription = "Suggested", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp).padding(end = 4.dp))
+                                Icon(Icons.Outlined.AutoAwesome, contentDescription = t("Suggested"), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp).padding(end = 4.dp))
                             }
                             Text(next.title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
                             DueText(next)
@@ -224,7 +225,7 @@ private fun ReviewPage(
                     }
                 }
             } else {
-                Text("No open task yet.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(t("No open task yet."), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             NewStepField(suggestedTitle = state.newStepTitle, projectTitle = project.title, busy = state.busy, onAdd = viewModel::addStep)
         }
@@ -323,7 +324,7 @@ private fun NewStepField(suggestedTitle: String?, projectTitle: String, busy: Bo
         OutlinedTextField(
             value = shown,
             onValueChange = { typed = it },
-            placeholder = { Text("Or name a new task") },
+            placeholder = { Text(t("Or name a new task")) },
             singleLine = true,
             modifier = Modifier.weight(1f).dashedOutline(MaterialTheme.colorScheme.primary, typed == null && suggestedTitle != null),
         )
@@ -333,6 +334,6 @@ private fun NewStepField(suggestedTitle: String?, projectTitle: String, busy: Bo
                 typed = ""
             },
             enabled = shown.isNotBlank() && !busy,
-        ) { Text("Add") }
+        ) { Text(t("Add")) }
     }
 }

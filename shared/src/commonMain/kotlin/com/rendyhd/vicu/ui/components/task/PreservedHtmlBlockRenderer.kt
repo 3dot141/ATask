@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -56,7 +57,7 @@ internal object PreservedHtmlBlockRenderer : ScopedBlockRenderer<BlockType> {
             // content for good, so it takes a second step.
             AlertDialog(
                 onDismissRequest = { confirmingRemoval = false },
-                title = { Text("Remove this content?") },
+                title = { Text(t("Remove this content?")) },
                 text = {
                     Text(
                         "The description has ${tagName?.let { "a <$it> block" } ?: "a block"} that this " +
@@ -70,10 +71,10 @@ internal object PreservedHtmlBlockRenderer : ScopedBlockRenderer<BlockType> {
                             confirmingRemoval = false
                             scope.deleteBlock(block.id)
                         },
-                    ) { Text("Remove", color = MaterialTheme.colorScheme.error) }
+                    ) { Text(t("Remove"), color = MaterialTheme.colorScheme.error) }
                 },
                 dismissButton = {
-                    TextButton(onClick = { confirmingRemoval = false }) { Text("Keep") }
+                    TextButton(onClick = { confirmingRemoval = false }) { Text(t("Keep")) }
                 },
             )
         }
@@ -105,7 +106,7 @@ internal object PreservedHtmlBlockRenderer : ScopedBlockRenderer<BlockType> {
                 ) {
                     Icon(
                         imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "Remove preserved HTML block",
+                        contentDescription = t("Remove preserved HTML block"),
                     )
                 }
             }

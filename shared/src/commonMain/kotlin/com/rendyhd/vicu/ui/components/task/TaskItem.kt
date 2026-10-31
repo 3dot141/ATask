@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -318,7 +319,7 @@ fun TaskItem(
                         if (hasNotes) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.Notes,
-                                contentDescription = "Has notes",
+                                contentDescription = t("Has notes"),
                                 modifier = Modifier.size(14.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -326,7 +327,7 @@ fun TaskItem(
                         if (isRepeating) {
                             Icon(
                                 imageVector = Icons.Outlined.Repeat,
-                                contentDescription = "Repeating",
+                                contentDescription = t("Repeating"),
                                 modifier = Modifier.size(14.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -334,7 +335,7 @@ fun TaskItem(
                         if (task.attachments.isNotEmpty()) {
                             Icon(
                                 imageVector = Icons.Outlined.AttachFile,
-                                contentDescription = "Attachments",
+                                contentDescription = t("Attachments"),
                                 modifier = Modifier.size(14.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -385,7 +386,7 @@ fun TaskItem(
                 if (task.reminders.isNotEmpty()) {
                     Icon(
                         imageVector = Icons.Outlined.Notifications,
-                        contentDescription = "Reminders",
+                        contentDescription = t("Reminders"),
                         modifier = Modifier.size(14.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -414,7 +415,7 @@ fun TaskItem(
         val count = candidate.unfinishedDescendants().size
         AlertDialog(
             onDismissRequest = { pendingCompletion = null },
-            title = { Text("Complete task and subtasks?") },
+            title = { Text(t("Complete task and subtasks?")) },
             text = {
                 Text(
                     "${if (count == 1) "One subtask is" else "$count subtasks are"} still open. " +
@@ -428,12 +429,12 @@ fun TaskItem(
                         if (candidate.id == task.id) onToggleDone() else onSubtaskToggleDone(candidate)
                     },
                 ) {
-                    Text("Complete all")
+                    Text(t("Complete all"))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { pendingCompletion = null }) {
-                    Text("Cancel")
+                    Text(t("Cancel"))
                 }
             },
         )
@@ -483,7 +484,7 @@ private fun InlineSubtaskTree(
                     )
                     if (child.projectId != 0L && child.projectId != rootProjectId) {
                         Text(
-                            text = "Different project",
+                            text = t("Different project"),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )

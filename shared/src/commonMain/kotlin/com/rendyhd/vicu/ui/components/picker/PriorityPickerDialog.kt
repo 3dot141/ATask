@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -43,7 +44,7 @@ fun PriorityPickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Priority") },
+        title = { Text(t("Priority")) },
         text = {
             LazyColumn {
                 items(options, key = { it.value }, contentType = { "priority" }) { option ->
@@ -74,7 +75,7 @@ fun PriorityPickerDialog(
                         if (isSelected) {
                             Icon(
                                 Icons.Default.Check,
-                                contentDescription = "Selected",
+                                contentDescription = t("Selected"),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp),
                             )
@@ -85,7 +86,7 @@ fun PriorityPickerDialog(
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }

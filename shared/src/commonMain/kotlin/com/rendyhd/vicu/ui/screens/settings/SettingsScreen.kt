@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -77,12 +78,12 @@ fun SettingsScreen(
 
     AssistantMessages(assistantState, assistantViewModel) { snackbarHostState.showSnackbar(it) }
 
-    val tabTitles = listOf("General", "Projects", "Notifications", "Gestures", "Assistant")
+    val tabTitles = listOf(t("General"), t("Projects"), t("Notifications"), t("Gestures"), t("Assistant"))
 
     Scaffold(
         topBar = {
             VicuTopAppBar(
-                title = { Text("Settings") },
+                title = { Text(t("Settings")) },
                 onOpenDrawer = onOpenDrawer,
             )
         },

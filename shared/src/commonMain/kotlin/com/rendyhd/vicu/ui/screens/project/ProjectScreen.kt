@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.project
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.ui.components.category.CategoryLabels
 import com.rendyhd.vicu.ui.components.category.CategoryNameDialog
 import com.rendyhd.vicu.ui.components.category.MoveToCategoryDialog
@@ -223,8 +224,8 @@ fun ProjectScreen(
                     item {
                         EmptyState(
                             icon = Icons.Outlined.Folder,
-                            title = "No tasks",
-                            subtitle = "Add a task to get started",
+                            title = t("No tasks"),
+                            subtitle = t("Add a task to get started"),
                         )
                     }
                 } else {
@@ -359,7 +360,7 @@ fun ProjectScreen(
     if (menuProject != null) {
         when (openDialog?.let { name -> ProjectDialog.entries.firstOrNull { it.name == name } }) {
             ProjectDialog.SORT -> TaskOrderDialog(
-                title = "Sort tasks",
+                title = t("Sort tasks"),
                 selected = menu.taskOrder,
                 inheritedOrder = menu.inheritedTaskOrder,
                 onSelect = { order ->
@@ -449,7 +450,7 @@ private fun ProjectOptionsMenu(
     var open by remember { mutableStateOf(false) }
     Box {
         IconButton(onClick = { open = true }) {
-            Icon(Icons.Outlined.MoreVert, contentDescription = "Project options")
+            Icon(Icons.Outlined.MoreVert, contentDescription = t("Project options"))
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             entries.forEach { entry ->

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -182,7 +183,7 @@ fun CustomListDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
+                    label = { Text(t("Name")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -190,7 +191,7 @@ fun CustomListDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Icon",
+                    text = t("Icon"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -201,7 +202,7 @@ fun CustomListDialog(
 
                 // Project filter
                 Text(
-                    text = "Projects",
+                    text = t("Projects"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -212,14 +213,14 @@ fun CustomListDialog(
                         onClick = { projectFilterMode = "include" },
                         shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
                     ) {
-                        Text("Include")
+                        Text(t("Include"))
                     }
                     SegmentedButton(
                         selected = projectFilterMode == "exclude",
                         onClick = { projectFilterMode = "exclude" },
                         shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
                     ) {
-                        Text("Exclude")
+                        Text(t("Exclude"))
                     }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
@@ -284,7 +285,7 @@ fun CustomListDialog(
 
                 // Due date filter
                 DropdownSelector(
-                    label = "Due date filter",
+                    label = t("Due date filter"),
                     options = DUE_DATE_OPTIONS,
                     selected = dueDateFilter,
                     onSelect = { dueDateFilter = it },
@@ -298,7 +299,7 @@ fun CustomListDialog(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text("Include overdue tasks", style = MaterialTheme.typography.bodyMedium)
+                        Text(t("Include overdue tasks"), style = MaterialTheme.typography.bodyMedium)
                         Switch(checked = includeOverdue, onCheckedChange = { includeOverdue = it })
                     }
                 }
@@ -306,7 +307,7 @@ fun CustomListDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 DropdownSelector(
-                    label = "Changed",
+                    label = t("Changed"),
                     options = changedOptions(changedWithinDays),
                     selected = changedWithinDays.toString(),
                     onSelect = { changedWithinDays = it.toIntOrNull() ?: 0 },
@@ -318,19 +319,19 @@ fun CustomListDialog(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Shared projects",
+                        text = t("Shared projects"),
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     DropdownSelector(
-                        label = "Assigned",
+                        label = t("Assigned"),
                         options = withKeptValue(ASSIGNED_OPTIONS, assigned),
                         selected = assigned,
                         onSelect = { assigned = it },
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     DropdownSelector(
-                        label = "Comments",
+                        label = t("Comments"),
                         options = withKeptValue(COMMENTS_OPTIONS, comments),
                         selected = comments,
                         onSelect = { comments = it },
@@ -341,11 +342,11 @@ fun CustomListDialog(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text("Only tasks in shared projects", style = MaterialTheme.typography.bodyMedium)
+                        Text(t("Only tasks in shared projects"), style = MaterialTheme.typography.bodyMedium)
                         Switch(checked = sharedOnly, onCheckedChange = { sharedOnly = it })
                     }
                     Text(
-                        text = "Assigned and Comments only match tasks in projects someone else can see.",
+                        text = t("Assigned and Comments only match tasks in projects someone else can see."),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -357,7 +358,7 @@ fun CustomListDialog(
 
                 // Sort by
                 DropdownSelector(
-                    label = "Sort by",
+                    label = t("Sort by"),
                     options = SORT_BY_OPTIONS,
                     selected = sortBy,
                     onSelect = { sortBy = it },
@@ -367,7 +368,7 @@ fun CustomListDialog(
 
                 // Order
                 DropdownSelector(
-                    label = "Order",
+                    label = t("Order"),
                     options = ORDER_OPTIONS,
                     selected = orderBy,
                     onSelect = { orderBy = it },
@@ -379,7 +380,7 @@ fun CustomListDialog(
 
                 // Label filter
                 Text(
-                    text = "Labels",
+                    text = t("Labels"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -447,7 +448,7 @@ fun CustomListDialog(
 
                 // Add tasks to project
                 Text(
-                    text = "Add tasks to",
+                    text = t("Add tasks to"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -468,7 +469,7 @@ fun CustomListDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Include completed", style = MaterialTheme.typography.bodyMedium)
+                    Text(t("Include completed"), style = MaterialTheme.typography.bodyMedium)
                     Switch(checked = includeDone, onCheckedChange = { includeDone = it })
                 }
 
@@ -479,7 +480,7 @@ fun CustomListDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Include today from all projects", style = MaterialTheme.typography.bodySmall)
+                    Text(t("Include today from all projects"), style = MaterialTheme.typography.bodySmall)
                     Switch(
                         checked = includeTodayAllProjects,
                         onCheckedChange = { includeTodayAllProjects = it },
@@ -525,7 +526,7 @@ fun CustomListDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )
@@ -608,7 +609,7 @@ private fun AddToProjectSelector(
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text("Inbox (default)") },
+                text = { Text(t("Inbox (default)")) },
                 onClick = {
                     onSelect(0L)
                     expanded = false

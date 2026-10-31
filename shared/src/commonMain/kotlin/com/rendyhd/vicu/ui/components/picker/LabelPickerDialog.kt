@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -68,13 +69,13 @@ fun LabelPickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Labels") },
+        title = { Text(t("Labels")) },
         text = {
             Column {
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search labels...") },
+                    placeholder = { Text(t("Search labels...")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -136,16 +137,16 @@ fun LabelPickerDialog(
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Create new label")
+                        Text(t("Create new label"))
                     }
                 } else {
-                    Text("New label", style = MaterialTheme.typography.labelMedium)
+                    Text(t("New label"), style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.height(4.dp))
 
                     OutlinedTextField(
                         value = newLabelName,
                         onValueChange = { newLabelName = it },
-                        placeholder = { Text("Label name") },
+                        placeholder = { Text(t("Label name")) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -200,14 +201,14 @@ fun LabelPickerDialog(
                         },
                         enabled = newLabelName.isNotBlank(),
                     ) {
-                        Text("Create")
+                        Text(t("Create"))
                     }
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Done")
+                Text(t("Done"))
             }
         },
         dismissButton = {},

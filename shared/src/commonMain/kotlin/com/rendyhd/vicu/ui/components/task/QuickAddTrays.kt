@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -130,7 +131,7 @@ internal fun WhenTrayContent(
         TrayHeading("Time")
         val timeIsPreset = current.time == null || current.time in WhenLogic.TIME_CHOICES
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            PresetChip(label = "No time", selected = current.date != null && current.time == null, onClick = {
+            PresetChip(label = t("No time"), selected = current.date != null && current.time == null, onClick = {
                 onPick(WhenLogic.withTime(current, null, today).takeIf { it.date != null })
             })
             for (time in WhenLogic.TIME_CHOICES) {
@@ -249,7 +250,7 @@ internal fun RemindTrayContent(
                     onClick = { if (index >= 0) onRemove(index) else onAdd(preset.reminder) },
                 )
             }
-            PresetChip(label = "Pick a time…", icon = Icons.Outlined.Add, onClick = onPickTime)
+            PresetChip(label = t("Pick a time…"), icon = Icons.Outlined.Add, onClick = onPickTime)
         }
         TrayHeading("Place")
         if (places.isEmpty()) {
@@ -286,7 +287,7 @@ internal fun RemindTrayContent(
 @Composable
 internal fun PriorityTrayContent(current: Int, onPick: (Int) -> Unit) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        PresetChip(label = "None", selected = current == 0, onClick = { onPick(0) })
+        PresetChip(label = t("None"), selected = current == 0, onClick = { onPick(0) })
         for (level in 1..4) {
             ToggleChip(
                 label = entryPriorityName(level).orEmpty(),
@@ -335,7 +336,7 @@ internal fun TagsTrayContent(
                 },
             )
         }
-        PresetChip(label = "New tag", icon = Icons.Outlined.Add, onClick = { naming = true })
+        PresetChip(label = t("New tag"), icon = Icons.Outlined.Add, onClick = { naming = true })
     }
     if (naming) {
         NewTagDialog(
@@ -353,14 +354,14 @@ private fun NewTagDialog(onCreate: (String) -> Unit, onDismiss: () -> Unit) {
     var name by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New tag") },
+        title = { Text(t("New tag")) },
         text = {
-            OutlinedTextField(value = name, onValueChange = { name = it }, singleLine = true, label = { Text("Name") })
+            OutlinedTextField(value = name, onValueChange = { name = it }, singleLine = true, label = { Text(t("Name")) })
         },
         confirmButton = {
-            TextButton(onClick = { onCreate(name.trim()) }, enabled = name.isNotBlank()) { Text("Add") }
+            TextButton(onClick = { onCreate(name.trim()) }, enabled = name.isNotBlank()) { Text(t("Add")) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
     )
 }
 
@@ -408,7 +409,7 @@ internal fun RepeatTrayContent(current: RecurrenceValue, onPick: (RecurrenceValu
         ).forEach { (option, label) ->
             PresetChip(label = label, selected = preset == option, onClick = { onPick(recurrenceForPreset(option)) })
         }
-        PresetChip(label = "Other…", selected = preset == RecurrencePreset.CUSTOM, onClick = onOther)
+        PresetChip(label = t("Other…"), selected = preset == RecurrencePreset.CUSTOM, onClick = onOther)
     }
 }
 

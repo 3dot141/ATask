@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -110,7 +111,7 @@ fun ProjectEditDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
+                    label = { Text(t("Name")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -125,7 +126,7 @@ fun ProjectEditDialog(
                         value = parentLabel,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Parent Project") },
+                        label = { Text(t("Parent Project")) },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = parentDropdownExpanded)
                         },
@@ -139,7 +140,7 @@ fun ProjectEditDialog(
                         onDismissRequest = { parentDropdownExpanded = false },
                     ) {
                         DropdownMenuItem(
-                            text = { Text("None (top-level)") },
+                            text = { Text(t("None (top-level)")) },
                             onClick = {
                                 parentId = 0L
                                 parentDropdownExpanded = false
@@ -160,7 +161,7 @@ fun ProjectEditDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Color",
+                    text = t("Color"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -233,7 +234,7 @@ fun ProjectEditDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )

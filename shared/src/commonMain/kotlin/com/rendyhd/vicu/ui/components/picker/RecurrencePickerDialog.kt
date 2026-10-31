@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -85,7 +86,7 @@ fun RecurrencePickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Repeat") },
+        title = { Text(t("Repeat")) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 if (current.isRecurring) {
@@ -120,9 +121,9 @@ fun RecurrencePickerDialog(
                         onValueChange = { value ->
                             if (value.all(Char::isDigit) && value.length <= 3) customInterval = value
                         },
-                        label = { Text("Every") },
+                        label = { Text(t("Every")) },
                         supportingText = {
-                            if (!customIsValid) Text("Enter a number from 1 to 365")
+                            if (!customIsValid) Text(t("Enter a number from 1 to 365"))
                         },
                         isError = !customIsValid,
                         singleLine = true,
@@ -133,12 +134,12 @@ fun RecurrencePickerDialog(
                         FilterChip(
                             selected = customUnit == RecurrenceCustomUnit.DAYS,
                             onClick = { customUnit = RecurrenceCustomUnit.DAYS },
-                            label = { Text("Days") },
+                            label = { Text(t("Days")) },
                         )
                         FilterChip(
                             selected = customUnit == RecurrenceCustomUnit.WEEKS,
                             onClick = { customUnit = RecurrenceCustomUnit.WEEKS },
-                            label = { Text("Weeks") },
+                            label = { Text(t("Weeks")) },
                         )
                     }
                 }
@@ -155,7 +156,7 @@ fun RecurrencePickerDialog(
                             checked = fromCompletion,
                             onCheckedChange = { fromCompletion = it },
                         )
-                        Text("Repeat from completion date")
+                        Text(t("Repeat from completion date"))
                     }
                 }
             }
@@ -177,11 +178,11 @@ fun RecurrencePickerDialog(
                     onDismiss()
                 },
             ) {
-                Text("Apply")
+                Text(t("Apply"))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }

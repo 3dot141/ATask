@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.collab
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -69,13 +70,13 @@ fun AssignSheet(
     ) {
         Column(modifier = Modifier.fillMaxWidth().navigationBarsPadding()) {
             Text(
-                text = "Assign",
+                text = t("Assign"),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(horizontal = 24.dp).padding(bottom = 8.dp).semantics { heading() },
             )
             if (members.isEmpty()) {
                 Text(
-                    text = "Loading people…",
+                    text = t("Loading people…"),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
@@ -113,7 +114,7 @@ fun AssignSheet(
                             )
                             if (viewOnly) {
                                 Text(
-                                    text = "Can view only",
+                                    text = t("Can view only"),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )

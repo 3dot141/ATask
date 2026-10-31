@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.guided
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -102,14 +103,14 @@ fun WeeklyReviewScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text("Weekly review")
+                        Text(t("Weekly review"))
                         if (state.lastDone.isNotEmpty() && !state.finished) {
                             Text(state.lastDone, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 },
-                navigationIcon = { IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = "Close") } },
-                actions = { if (!state.finished && !state.loading) TextButton(onClick = viewModel::finish) { Text("Finish") } },
+                navigationIcon = { IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = t("Close")) } },
+                actions = { if (!state.finished && !state.loading) TextButton(onClick = viewModel::finish) { Text(t("Finish")) } },
             )
         },
         bottomBar = {
@@ -119,7 +120,7 @@ fun WeeklyReviewScreen(
                         Spacer(Modifier.weight(1f))
                         val next = state.next
                         if (next == null) {
-                            Button(onClick = viewModel::finish) { Text("Finish") }
+                            Button(onClick = viewModel::finish) { Text(t("Finish")) }
                         } else {
                             Button(onClick = { openStep(next.step.id) }) { Text("Next: ${next.step.title}") }
                         }
@@ -132,7 +133,7 @@ fun WeeklyReviewScreen(
             when {
                 state.loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
                 state.finished -> FinishedPane(
-                    title = "Weekly review done",
+                    title = t("Weekly review done"),
                     summary = "${state.steps.count { it.done }} of ${state.steps.size} steps done. Ask will offer the next one in a week.",
                     canUndo = false,
                     busy = false,

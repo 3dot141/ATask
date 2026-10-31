@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -54,7 +55,7 @@ fun LabelEditDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Name") },
+                    label = { Text(t("Name")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -62,7 +63,7 @@ fun LabelEditDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Color",
+                    text = t("Color"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -113,7 +114,7 @@ fun LabelEditDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )

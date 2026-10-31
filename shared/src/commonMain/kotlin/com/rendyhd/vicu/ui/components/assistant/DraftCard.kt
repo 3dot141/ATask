@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.assistant
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -217,7 +218,7 @@ private fun DraftChip(text: String, guessed: Boolean, changed: Boolean, onClick:
         onClick = { onClick?.invoke() },
         enabled = true,
         label = { Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        trailingIcon = if (trailingClose && onClick != null) ({ Icon(Icons.Outlined.Close, contentDescription = "Remove", modifier = Modifier.size(16.dp)) }) else null,
+        trailingIcon = if (trailingClose && onClick != null) ({ Icon(Icons.Outlined.Close, contentDescription = t("Remove"), modifier = Modifier.size(16.dp)) }) else null,
         colors = if (changed) AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer) else AssistChipDefaults.assistChipColors(),
         modifier = Modifier.dashedOutline(MaterialTheme.colorScheme.tertiary, guessed),
     )
@@ -236,10 +237,10 @@ private fun DueChip(draft: CheckedDraft, editable: Boolean, guessed: Boolean, ch
                 open = false
                 onChange(draft.copy(due = date?.atTime(DictationChecks.DATE_ONLY), dueHasTime = false, reminder = if (date == null && draft.reminder?.beforeDueMinutes != null) null else draft.reminder))
             }
-            DropdownMenuItem(text = { Text("Today") }, onClick = { pick(day.date) })
-            DropdownMenuItem(text = { Text("Tomorrow") }, onClick = { pick(day.date.plus(1, DateTimeUnit.DAY)) })
-            DropdownMenuItem(text = { Text("Next week") }, onClick = { pick(com.rendyhd.vicu.util.DueDates.nextWeekStart(day.date)) })
-            DropdownMenuItem(text = { Text("No date") }, onClick = { pick(null) })
+            DropdownMenuItem(text = { Text(t("Today")) }, onClick = { pick(day.date) })
+            DropdownMenuItem(text = { Text(t("Tomorrow")) }, onClick = { pick(day.date.plus(1, DateTimeUnit.DAY)) })
+            DropdownMenuItem(text = { Text(t("Next week")) }, onClick = { pick(com.rendyhd.vicu.util.DueDates.nextWeekStart(day.date)) })
+            DropdownMenuItem(text = { Text(t("No date")) }, onClick = { pick(null) })
         }
     }
 }

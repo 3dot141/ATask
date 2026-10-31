@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
 import androidx.compose.material.icons.outlined.Block
@@ -119,7 +120,7 @@ fun DeleteTaskDialog(
             Row {
                 if (hasDescendants) {
                     TextButton(onClick = { onDelete(false) }) {
-                        Text("Keep subtasks")
+                        Text(t("Keep subtasks"))
                     }
                 }
                 TextButton(onClick = { onDelete(true) }) {
@@ -129,7 +130,7 @@ fun DeleteTaskDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )

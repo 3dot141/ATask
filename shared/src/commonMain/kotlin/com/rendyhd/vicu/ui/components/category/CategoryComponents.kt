@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.category
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -231,11 +232,11 @@ fun CategoryNameDialog(
                     name = it
                     showError = false
                 },
-                label = { Text("Name") },
+                label = { Text(t("Name")) },
                 singleLine = true,
                 isError = showError,
                 supportingText = if (showError) {
-                    { Text("Enter a name") }
+                    { Text(t("Enter a name")) }
                 } else {
                     null
                 },
@@ -251,7 +252,7 @@ fun CategoryNameDialog(
             ) { Text(confirmLabel) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }
@@ -285,7 +286,7 @@ fun MoveToCategoryDialog(
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }

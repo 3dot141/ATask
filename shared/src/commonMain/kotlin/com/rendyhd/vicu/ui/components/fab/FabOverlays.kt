@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.fab
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -251,7 +252,7 @@ private fun VoiceCard(capture: VoiceCapture, controller: FabController, reduceMo
             } else if (capture.phase == VoicePhase.FINISHING) {
                 // The finger is off: a speech model on the phone can take a while with the last words.
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    TextButton(onClick = controller.holdToTalk::cancel) { Text("Cancel") }
+                    TextButton(onClick = controller.holdToTalk::cancel) { Text(t("Cancel")) }
                 }
             } else {
                 Text(
@@ -273,14 +274,14 @@ private fun VoiceCard(capture: VoiceCapture, controller: FabController, reduceMo
 private fun HandsFreeButtons(capture: VoiceCapture, controller: FabController) {
     val voice = controller.holdToTalk
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = voice::cancel) { Text("Cancel") }
+        TextButton(onClick = voice::cancel) { Text(t("Cancel")) }
         if (capture.canLock) {
             // Smart dictation: the microphone stays on and the words become task cards.
-            TextButton(onClick = voice::lock) { Text("Keep talking") }
+            TextButton(onClick = voice::lock) { Text(t("Keep talking")) }
         }
         Spacer(Modifier.size(8.dp))
         if (capture.phase == VoicePhase.HEARD && capture.text.isBlank()) {
-            Button(onClick = voice::listenAgain) { Text("Try again") }
+            Button(onClick = voice::listenAgain) { Text(t("Try again")) }
         } else {
             Button(onClick = voice::release, enabled = capture.phase != VoicePhase.FINISHING) {
                 Text(if (capture.phase == VoicePhase.LISTENING) "Done" else "Add")
@@ -394,7 +395,7 @@ private fun FabHintBubble(onClose: () -> Unit) {
             Spacer(Modifier.size(8.dp))
             Text(HINT_TEXT, style = MaterialTheme.typography.bodyMedium)
             IconButton(onClick = onClose) {
-                Icon(Icons.Default.Close, contentDescription = "Close the hint", modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.Close, contentDescription = t("Close the hint"), modifier = Modifier.size(18.dp))
             }
         }
     }

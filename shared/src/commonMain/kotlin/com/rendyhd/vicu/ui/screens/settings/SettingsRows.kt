@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -219,7 +220,7 @@ internal fun SectionTitle(
         IconButton(onClick = onAdd) {
             Icon(
                 Icons.Default.Add,
-                contentDescription = "Add",
+                contentDescription = t("Add"),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
@@ -286,7 +287,7 @@ internal fun moreOptionsDescription(title: String): String = "More options for $
 @Composable
 private fun InboxChip() {
     Text(
-        text = "Inbox",
+        text = t("Inbox"),
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surfaceVariant, VicuChipShape)
             .padding(horizontal = 8.dp, vertical = 2.dp),
@@ -369,7 +370,7 @@ internal fun ArchivedGroupRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Archived",
+            text = t("Archived"),
             style = MaterialTheme.typography.bodyLarge,
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -536,22 +537,22 @@ internal fun BottomBarSlotRow(
         ?: parseHexColor(slot.colorHex)
         ?: MaterialTheme.colorScheme.onSurfaceVariant
     val label = when (slot.type) {
-        BottomBarSlotType.TODAY -> "Today"
-        BottomBarSlotType.UPCOMING -> "Upcoming"
-        BottomBarSlotType.ANYTIME -> "Anytime"
+        BottomBarSlotType.TODAY -> t("Today")
+        BottomBarSlotType.UPCOMING -> t("Upcoming")
+        BottomBarSlotType.ANYTIME -> t("Anytime")
         BottomBarSlotType.PROJECT -> {
-            projects.find { it.id.toString() == slot.referenceId }?.title ?: "Deleted project"
+            projects.find { it.id.toString() == slot.referenceId }?.title ?: t("Deleted project")
         }
         BottomBarSlotType.CUSTOM_LIST -> {
-            customLists.find { it.id == slot.referenceId }?.name ?: "Deleted list"
+            customLists.find { it.id == slot.referenceId }?.name ?: t("Deleted list")
         }
     }
     val typeLabel = when (slot.type) {
-        BottomBarSlotType.TODAY -> "Smart List"
-        BottomBarSlotType.UPCOMING -> "Smart List"
-        BottomBarSlotType.ANYTIME -> "Smart List"
-        BottomBarSlotType.PROJECT -> "Project"
-        BottomBarSlotType.CUSTOM_LIST -> "Custom List"
+        BottomBarSlotType.TODAY -> t("Smart List")
+        BottomBarSlotType.UPCOMING -> t("Smart List")
+        BottomBarSlotType.ANYTIME -> t("Smart List")
+        BottomBarSlotType.PROJECT -> t("Project")
+        BottomBarSlotType.CUSTOM_LIST -> t("Custom List")
     }
 
     Row(
@@ -589,7 +590,7 @@ internal fun BottomBarSlotRow(
         }
         Icon(
             Icons.Default.Edit,
-            contentDescription = "Edit slot",
+            contentDescription = t("Edit slot"),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(18.dp),
         )

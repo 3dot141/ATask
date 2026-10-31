@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.location
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,14 +57,14 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "Places",
+            text = t("Places"),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 4.dp),
         )
         Text(
-            text = "Places for location reminders. Their names sync with your other devices; where they are stays on this phone.",
+            text = t("Places for location reminders. Their names sync with your other devices; where they are stays on this phone."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -76,7 +77,7 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Location access", style = MaterialTheme.typography.bodyLarge)
+                Text(t("Location access"), style = MaterialTheme.typography.bodyLarge)
                 Text(
                     text = when (access) {
                         LocationAccess.ALWAYS -> "Always: location reminders work while Vicu is closed"
@@ -93,7 +94,7 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
             }
             if (access != LocationAccess.ALWAYS) {
                 Spacer(Modifier.width(12.dp))
-                FilledTonalButton(onClick = viewModel::askForAccess) { Text("Allow") }
+                FilledTonalButton(onClick = viewModel::askForAccess) { Text(t("Allow")) }
             }
         }
 
@@ -127,7 +128,7 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
                     }
                 }
                 if (place.position == null) {
-                    TextButton(onClick = { locating = place }) { Text("Set location") }
+                    TextButton(onClick = { locating = place }) { Text(t("Set location")) }
                 }
                 IconButton(onClick = { deleting = place }) {
                     Icon(Icons.Outlined.Delete, contentDescription = "Delete ${place.name}")
@@ -141,7 +142,7 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
         ) {
             Icon(Icons.Outlined.Add, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
-            Text("Add place")
+            Text(t("Add place"))
         }
     }
 
@@ -153,7 +154,7 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
     }
     renaming?.let { place ->
         PlaceNameDialog(
-            title = "Rename place",
+            title = t("Rename place"),
             initial = place.name,
             onSave = { name ->
                 viewModel.renamePlace(place, name)
@@ -171,9 +172,9 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
                 TextButton(onClick = {
                     viewModel.deletePlace(place)
                     deleting = null
-                }) { Text("Delete") }
+                }) { Text(t("Delete")) }
             },
-            dismissButton = { TextButton(onClick = { deleting = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { deleting = null }) { Text(t("Cancel")) } },
         )
     }
     LocationDisclosureSheet(viewModel)
@@ -204,7 +205,7 @@ private fun AddPlaceDialog(viewModel: PlacesViewModel, onDone: () -> Unit, locat
     }
     if (picked != null) {
         PlaceNameDialog(
-            title = "Name this place",
+            title = t("Name this place"),
             initial = picked.name.takeUnless { it == "Current location" }.orEmpty(),
             onSave = { name ->
                 viewModel.addPlace(name, picked)
@@ -248,6 +249,6 @@ private fun AddPlaceDialog(viewModel: PlacesViewModel, onDone: () -> Unit, locat
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = ::close) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = ::close) { Text(t("Cancel")) } },
     )
 }

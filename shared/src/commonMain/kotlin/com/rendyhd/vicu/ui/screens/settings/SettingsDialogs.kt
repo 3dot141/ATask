@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,7 +70,7 @@ internal fun SettingsDialogHost(
         null -> Unit
 
         SettingsDialog.DailySummaryTime -> SummaryTimeDialog(
-            title = "Daily Summary Time",
+            title = t("Daily Summary Time"),
             initialHour = state.notificationPrefs.dailySummaryHour,
             initialMinute = state.notificationPrefs.dailySummaryMinute,
             onConfirm = { hour, minute ->
@@ -80,7 +81,7 @@ internal fun SettingsDialogHost(
         )
 
         SettingsDialog.AfternoonSummaryTime -> SummaryTimeDialog(
-            title = "Afternoon Summary Time",
+            title = t("Afternoon Summary Time"),
             initialHour = state.notificationPrefs.afternoonSummaryHour,
             initialMinute = state.notificationPrefs.afternoonSummaryMinute,
             onConfirm = { hour, minute ->
@@ -91,7 +92,7 @@ internal fun SettingsDialogHost(
         )
 
         SettingsDialog.ReminderOffset -> ChoiceDialog(
-            title = "Default Reminder",
+            title = t("Default Reminder"),
             options = REMINDER_OFFSET_OPTIONS.map { (label, seconds) ->
                 ChoiceOption(
                     label = label,
@@ -103,7 +104,7 @@ internal fun SettingsDialogHost(
         )
 
         SettingsDialog.ReminderRelativeTo -> ChoiceDialog(
-            title = "Relative To",
+            title = t("Relative To"),
             options = REMINDER_RELATIVE_OPTIONS.map { (label, value) ->
                 ChoiceOption(
                     label = label,
@@ -115,7 +116,7 @@ internal fun SettingsDialogHost(
         )
 
         SettingsDialog.ReviewCadence -> ChoiceDialog(
-            title = "Default review cadence",
+            title = t("Default review cadence"),
             options = REVIEW_CADENCE_PRESETS.map { days ->
                 ChoiceOption(
                     label = "$days days",
@@ -123,7 +124,7 @@ internal fun SettingsDialogHost(
                     onChoose = { viewModel.setReviewDefaultCadence(days) },
                 )
             } + ChoiceOption(
-                label = "Custom…",
+                label = t("Custom…"),
                 selected = state.reviewPrefs.defaultCadenceDays !in REVIEW_CADENCE_PRESETS,
                 onChoose = null,
                 onOther = { open(SettingsDialog.ReviewCadenceCustom) },
@@ -132,7 +133,7 @@ internal fun SettingsDialogHost(
         )
 
         SettingsDialog.ReviewCadenceCustom -> ReviewCadenceInputDialog(
-            title = "Custom review cadence",
+            title = t("Custom review cadence"),
             initialDays = state.reviewPrefs.defaultCadenceDays,
             onConfirm = { days ->
                 viewModel.setReviewDefaultCadence(days)
@@ -142,7 +143,7 @@ internal fun SettingsDialogHost(
         )
 
         SettingsDialog.LogbookRetention -> ChoiceDialog(
-            title = "Keep completed tasks for",
+            title = t("Keep completed tasks for"),
             options = RETENTION_PRESETS.map { days ->
                 ChoiceOption(
                     label = "$days days",
@@ -240,7 +241,7 @@ internal fun SettingsDialogHost(
 
         is SettingsDialog.DeleteLabel -> state.labels.find { it.id == dialog.labelId }?.let { label ->
             ConfirmDialog(
-                title = "Delete Label",
+                title = t("Delete Label"),
                 message = "Delete \"${label.title}\"? It will be removed from all tasks.",
                 confirmLabel = "Delete",
                 destructive = true,
@@ -271,7 +272,7 @@ internal fun SettingsDialogHost(
 
         is SettingsDialog.DeleteCustomList -> state.customLists.find { it.id == dialog.listId }?.let { list ->
             ConfirmDialog(
-                title = "Delete List",
+                title = t("Delete List"),
                 message = "Delete \"${list.name}\"?",
                 confirmLabel = "Delete",
                 destructive = true,
@@ -391,7 +392,7 @@ internal fun SettingsDialogHost(
         }
 
         SettingsDialog.TaskOrderPicker -> TaskOrderDialog(
-            title = "Task order",
+            title = t("Task order"),
             selected = state.taskOrders.global,
             onSelect = { order -> order?.let(viewModel::setGlobalTaskOrder) },
             onDismiss = dismiss,
@@ -438,12 +439,12 @@ private fun SummaryTimeDialog(
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(timePickerState.hour, timePickerState.minute) }) {
-                Text("OK")
+                Text(t("OK"))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )
@@ -499,7 +500,7 @@ private fun ChoiceDialog(
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Close") }
+            TextButton(onClick = onDismiss) { Text(t("Close")) }
         },
     )
 }
@@ -528,7 +529,7 @@ private fun ConfirmDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )
@@ -550,7 +551,7 @@ private fun ExcludedFromReviewDialog(
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Excluded from review") },
+        title = { Text(t("Excluded from review")) },
         text = {
             LazyColumn {
                 items(projects, key = { it.id }, contentType = { "project" }) { project ->
@@ -569,7 +570,7 @@ private fun ExcludedFromReviewDialog(
                             modifier = Modifier.weight(1f),
                         )
                         TextButton(onClick = { onInclude(project) }) {
-                            Text("Include")
+                            Text(t("Include"))
                         }
                     }
                 }
@@ -577,7 +578,7 @@ private fun ExcludedFromReviewDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Close")
+                Text(t("Close"))
             }
         },
     )
@@ -591,7 +592,7 @@ private fun InboxPickerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Inbox Project") },
+        title = { Text(t("Select Inbox Project")) },
         text = {
             LazyColumn {
                 items(state.projects, key = { it.id }, contentType = { "project" }) { project ->
@@ -613,7 +614,7 @@ private fun InboxPickerDialog(
                         if (isSelected) {
                             Icon(
                                 Icons.Outlined.CheckCircle,
-                                contentDescription = "Selected",
+                                contentDescription = t("Selected"),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp),
                             )
@@ -624,7 +625,7 @@ private fun InboxPickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )

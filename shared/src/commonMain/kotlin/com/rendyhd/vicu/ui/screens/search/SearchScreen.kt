@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.search
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -77,19 +78,19 @@ fun SearchScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(focusRequester),
-            placeholder = { Text("Search tasks...") },
+            placeholder = { Text(t("Search tasks...")) },
             leadingIcon = {
                 IconButton(onClick = onNavigateBack) {
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
+                        contentDescription = t("Back"),
                     )
                 }
             },
             trailingIcon = {
                 if (state.query.isNotEmpty()) {
                     IconButton(onClick = { viewModel.onQueryChanged("") }) {
-                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                        Icon(Icons.Default.Close, contentDescription = t("Clear"))
                     }
                 }
             },
@@ -120,8 +121,8 @@ fun SearchScreen(
                 item {
                     EmptyState(
                         icon = Icons.Outlined.Search,
-                        title = "Search tasks",
-                        subtitle = "Type to search titles and notes",
+                        title = t("Search tasks"),
+                        subtitle = t("Type to search titles and notes"),
                     )
                 }
             } else if (state.results.isEmpty() && state.completedResults.isEmpty()) {
@@ -130,8 +131,8 @@ fun SearchScreen(
                 if (state.resultsReady && !state.isRefreshing) item {
                     EmptyState(
                         icon = Icons.Outlined.SearchOff,
-                        title = "No results",
-                        subtitle = "Try a different search term",
+                        title = t("No results"),
+                        subtitle = t("Try a different search term"),
                     )
                 }
             } else {
@@ -154,7 +155,7 @@ fun SearchScreen(
                 }
                 if (state.completedResults.isNotEmpty()) {
                     item(key = "completed_header", contentType = "header") {
-                        SectionHeader(title = "Completed")
+                        SectionHeader(title = t("Completed"))
                     }
                     items(state.completedResults, key = { it.id }, contentType = { "task" }) { task ->
                         TaskItem(

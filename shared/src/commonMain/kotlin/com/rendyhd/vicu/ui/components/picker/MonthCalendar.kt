@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -87,10 +88,10 @@ fun MonthCalendar(
                     .semantics { liveRegion = LiveRegionMode.Polite },
             )
             IconButton(onClick = { month = WhenLogic.addMonths(month, -1) }) {
-                Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, contentDescription = "Previous month")
+                Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, contentDescription = t("Previous month"))
             }
             IconButton(onClick = { month = WhenLogic.addMonths(month, 1) }) {
-                Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = "Next month")
+                Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = t("Next month"))
             }
         }
 

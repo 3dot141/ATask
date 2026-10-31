@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.today
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.animateColorAsState
@@ -98,7 +99,7 @@ private fun NextUpOffer(task: Task, onOpenUpcoming: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            text = "Next up",
+            text = t("Next up"),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

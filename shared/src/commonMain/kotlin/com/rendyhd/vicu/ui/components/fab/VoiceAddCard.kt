@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.fab
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -81,9 +82,9 @@ fun VoiceAddCard(state: VoiceAddState, onDone: () -> Unit, onCancel: () -> Unit)
                 }
                 Spacer(Modifier.height(16.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    TextButton(onClick = onCancel) { Text("Cancel") }
+                    TextButton(onClick = onCancel) { Text(t("Cancel")) }
                     Spacer(Modifier.size(8.dp))
-                    Button(onClick = onDone, enabled = listening) { Text("Done") }
+                    Button(onClick = onDone, enabled = listening) { Text(t("Done")) }
                 }
             }
         }

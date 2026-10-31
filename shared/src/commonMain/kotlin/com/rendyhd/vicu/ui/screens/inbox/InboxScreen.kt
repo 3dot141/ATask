@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.inbox
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.voice.TaskDefaults
 import com.rendyhd.vicu.ui.navigation.ScreenReady
 import androidx.navigationevent.NavigationEventInfo
@@ -124,14 +125,14 @@ fun InboxScreen(
                         // The guided session over the Inbox (docs/cross-app-semantics-v1.md, section 14.3).
                         if (state.tasks.isNotEmpty() && state.notice == null) {
                             IconButton(onClick = onSortInbox) {
-                                Icon(Icons.AutoMirrored.Outlined.FactCheck, contentDescription = "Sort the Inbox, one task at a time")
+                                Icon(Icons.AutoMirrored.Outlined.FactCheck, contentDescription = t("Sort the Inbox, one task at a time"))
                             }
                         }
                     },
                     trailingActions = {
                         if (state.inboxProjectId != null && state.notice == null) {
                             IconButton(onClick = { showSortDialog = true }) {
-                                Icon(Icons.AutoMirrored.Outlined.Sort, contentDescription = "Sort tasks")
+                                Icon(Icons.AutoMirrored.Outlined.Sort, contentDescription = t("Sort tasks"))
                             }
                         }
                     },
@@ -220,7 +221,7 @@ fun InboxScreen(
 
     if (showSortDialog) {
         TaskOrderDialog(
-            title = "Sort tasks",
+            title = t("Sort tasks"),
             selected = state.ownTaskOrder,
             inheritedOrder = state.inheritedTaskOrder,
             onSelect = { order ->

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,20 +51,20 @@ fun ProjectPickerDialog(
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Project") },
+        title = { Text(t("Project")) },
         text = {
             Column {
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
-                    placeholder = { Text("Search projects...") },
+                    placeholder = { Text(t("Search projects...")) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 if (rows.isEmpty()) {
                     Text(
-                        text = "No project matches",
+                        text = t("No project matches"),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(vertical = 12.dp),
@@ -117,7 +118,7 @@ fun ProjectPickerDialog(
                                 if (isSelected) {
                                     Icon(
                                         Icons.Default.Check,
-                                        contentDescription = "Selected",
+                                        contentDescription = t("Selected"),
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(20.dp),
                                     )
@@ -131,7 +132,7 @@ fun ProjectPickerDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(t("Cancel"))
             }
         },
     )

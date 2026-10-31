@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -68,7 +69,7 @@ fun VicuTopAppBar(
 ) {
     val navigationIcon: @Composable () -> Unit = {
         IconButton(onClick = onOpenDrawer) {
-            Icon(Icons.Default.Menu, contentDescription = "Open menu")
+            Icon(Icons.Default.Menu, contentDescription = t("Open menu"))
         }
     }
     val openAsk = LocalOpenAsk.current
@@ -79,12 +80,12 @@ fun VicuTopAppBar(
         // Ask sits next to Search on the lists, about the list on screen (its + button's defaults).
         if (openAsk != null && onNavigateToSearch != null) {
             IconButton(onClick = { openAsk(fabHost?.specOf(screen)?.taskDefaults) }) {
-                Icon(Icons.Outlined.AutoAwesome, contentDescription = "Ask")
+                Icon(Icons.Outlined.AutoAwesome, contentDescription = t("Ask"))
             }
         }
         if (onNavigateToSearch != null) {
             IconButton(onClick = onNavigateToSearch) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
+                Icon(Icons.Default.Search, contentDescription = t("Search"))
             }
         }
         trailingActions?.invoke(this)

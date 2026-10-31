@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -65,7 +66,7 @@ fun NotificationPermissionSheet(coordinator: NotificationPermissionCoordinator) 
                 onClick = coordinator::dismiss,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Not now")
+                Text(t("Not now"))
             }
         }
     }

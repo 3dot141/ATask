@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -122,7 +123,7 @@ fun WhenSheet(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Text("When", style = MaterialTheme.typography.titleMedium)
+                Text(t("When"), style = MaterialTheme.typography.titleMedium)
 
                 OutlinedTextField(
                     value = text,
@@ -132,8 +133,8 @@ fun WhenSheet(
                         typed = WhenLogic.parseText(raw, now, zone)?.value
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Date and time") },
-                    placeholder = { Text("Type a day, a date or a time") },
+                    label = { Text(t("Date and time")) },
+                    placeholder = { Text(t("Type a day, a date or a time")) },
                     singleLine = true,
                     isError = typedReadsNothing,
                     supportingText = {
@@ -141,7 +142,7 @@ fun WhenSheet(
                         when {
                             value != null && text != WhenLogic.text(value, today, fmt) ->
                                 Text(WhenLogic.text(value, today, fmt))
-                            typedReadsNothing -> Text("No date found")
+                            typedReadsNothing -> Text(t("No date found"))
                         }
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -172,7 +173,7 @@ fun WhenSheet(
                     modifier = Modifier.fillMaxWidth(),
                 )
 
-                Text("Time", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(t("Time"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 val timeIsPreset = shown.time != null && shown.time in WhenLogic.TIME_CHOICES
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -181,7 +182,7 @@ fun WhenSheet(
                     FilterChip(
                         selected = shown.time == null,
                         onClick = { apply(WhenLogic.withTime(shown, null, today)) },
-                        label = { Text("None") },
+                        label = { Text(t("None")) },
                     )
                     for (time in WhenLogic.TIME_CHOICES) {
                         FilterChip(
@@ -208,12 +209,12 @@ fun WhenSheet(
             ) {
                 if (initial.date != null) {
                     TextButton(onClick = { close(onClearDate) }) {
-                        Text("Clear date", color = MaterialTheme.colorScheme.error)
+                        Text(t("Clear date"), color = MaterialTheme.colorScheme.error)
                     }
                 }
                 Spacer(Modifier.weight(1f))
                 Button(onClick = { if (shown.date != null) finish(shown) else close() }) {
-                    Text("Done")
+                    Text(t("Done"))
                 }
             }
         }
@@ -267,9 +268,9 @@ internal fun CustomTimeDialog(initial: LocalTime, onPick: (LocalTime) -> Unit, o
     )
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Set time") },
+        title = { Text(t("Set time")) },
         text = { TimePicker(state = state) },
-        confirmButton = { TextButton(onClick = { onPick(LocalTime(state.hour, state.minute)) }) { Text("OK") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = { onPick(LocalTime(state.hour, state.minute)) }) { Text(t("OK")) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
     )
 }

@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.task
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -230,7 +231,7 @@ internal fun DescriptionField(
     ) {
         if (!plain) {
             Text(
-                text = "Description",
+                text = t("Description"),
                 style = MaterialTheme.typography.labelMedium,
                 color = if (editorFocused) {
                     MaterialTheme.colorScheme.primary
@@ -260,11 +261,11 @@ internal fun DescriptionField(
                     Icon(Icons.Default.WarningAmber, contentDescription = null)
                     Column {
                         Text(
-                            text = "Description too large to edit",
+                            text = t("Description too large to edit"),
                             style = MaterialTheme.typography.labelLarge,
                         )
                         Text(
-                            text = "The original description will be kept unchanged.",
+                            text = t("The original description will be kept unchanged."),
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
@@ -400,7 +401,7 @@ internal fun DescriptionField(
                 modifier = Modifier.size(18.dp),
             )
             Spacer(modifier = Modifier.width(4.dp))
-            Text("Add image")
+            Text(t("Add image"))
         }
 
         if (isUploadingImage) {
@@ -416,7 +417,7 @@ internal fun DescriptionField(
                     strokeWidth = 2.dp,
                 )
                 Text(
-                    text = "Uploading image…",
+                    text = t("Uploading image…"),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -537,7 +538,7 @@ private fun BoxScope.RemoveBadge(onClick: () -> Unit) {
     ) {
         Icon(
             Icons.Default.Close,
-            contentDescription = "Remove image",
+            contentDescription = t("Remove image"),
             tint = Color.White,
             modifier = Modifier
                 .size(22.dp)

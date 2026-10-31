@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.shared
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -157,7 +158,7 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Shared with",
+            text = t("Shared with"),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.semantics { heading() },
@@ -177,14 +178,14 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.error,
             )
             current == null -> Text(
-                text = "Loading…",
+                text = t("Loading…"),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             else -> {
                 current.owner?.let { owner ->
                     MemberRow(person = owner, me = me) {
-                        Text("Owner", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(t("Owner"), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 current.users.forEach { share ->
@@ -219,7 +220,7 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(team.name, style = MaterialTheme.typography.bodyLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                            Text("Team", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(t("Team"), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Text(
                             permissionLabel(team.permission),
@@ -250,7 +251,7 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
                         },
                         enabled = !busy,
                     ) {
-                        Text("Undo")
+                        Text(t("Undo"))
                     }
                 }
             }
@@ -264,7 +265,7 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("Username") },
+                label = { Text(t("Username")) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
@@ -277,7 +278,7 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
             PermissionMenu(
                 permission = permission,
                 enabled = true,
-                description = "Permission for the person you add",
+                description = t("Permission for the person you add"),
                 onPick = { permission = it },
             )
         }
@@ -311,7 +312,7 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
                 },
                 enabled = match != null && !busy,
             ) {
-                Text("Share")
+                Text(t("Share"))
             }
         }
     }

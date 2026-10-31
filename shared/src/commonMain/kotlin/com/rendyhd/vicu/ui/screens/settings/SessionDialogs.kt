@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,10 +66,10 @@ internal fun SignOutDialog(
     var discard by rememberSaveable { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Sign Out") },
+        title = { Text(t("Sign Out")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Sign out of your Vikunja account? Tasks and other data cached on this device are deleted.")
+                Text(t("Sign out of your Vikunja account? Tasks and other data cached on this device are deleted."))
                 // Routine history lives on the server. Only entries from before it moved there and
                 // that have not been uploaded yet exist nowhere else.
                 if (routineHistoryCount > 0) {
@@ -96,7 +97,7 @@ internal fun SignOutDialog(
                     DiscardCheckRow(
                         checked = discard,
                         onCheckedChange = { discard = it },
-                        label = "Discard unsynced changes",
+                        label = t("Discard unsynced changes"),
                     )
                 }
             }
@@ -106,11 +107,11 @@ internal fun SignOutDialog(
                 onClick = { onConfirm(anythingUnsynced) },
                 enabled = !anythingUnsynced || discard,
             ) {
-                Text("Sign Out", color = MaterialTheme.colorScheme.error)
+                Text(t("Sign Out"), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }
@@ -130,7 +131,7 @@ internal fun ClearCacheDialog(
     var discard by rememberSaveable { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Clear Cache") },
+        title = { Text(t("Clear Cache")) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
@@ -142,18 +143,18 @@ internal fun ClearCacheDialog(
                     DiscardCheckRow(
                         checked = discard,
                         onCheckedChange = { discard = it },
-                        label = "Also discard unsynced changes",
+                        label = t("Also discard unsynced changes"),
                     )
                 } else {
-                    Text("Routine history is stored on your server and is not affected.")
+                    Text(t("Routine history is stored on your server and is not affected."))
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(discard && unsynced > 0) }) { Text("Clear & Sync") }
+            TextButton(onClick = { onConfirm(discard && unsynced > 0) }) { Text(t("Clear & Sync")) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }
@@ -170,7 +171,7 @@ internal fun ClearFailedActionsDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Discard failed changes") },
+        title = { Text(t("Discard failed changes")) },
         text = {
             Text(
                 if (failedCount == 1) {
@@ -184,11 +185,11 @@ internal fun ClearFailedActionsDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Discard", color = MaterialTheme.colorScheme.error)
+                Text(t("Discard"), color = MaterialTheme.colorScheme.error)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
         },
     )
 }

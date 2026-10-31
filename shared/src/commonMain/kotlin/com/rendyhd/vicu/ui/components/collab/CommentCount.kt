@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.collab
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -85,7 +86,7 @@ fun RowCommentCount(
             .clearAndSetSemantics {
                 contentDescription = label
                 role = Role.Button
-                onClick(label = "Open comments") {
+                onClick(label = t("Open comments")) {
                     onOpen()
                     true
                 }

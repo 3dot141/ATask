@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.setup
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.ui.rememberOidcLauncher
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
@@ -122,7 +123,7 @@ fun SetupScreen(
     ) {
         if (state.canGoBack) {
             IconButton(onClick = { viewModel.goBack() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = t("Back"))
             }
         }
 
@@ -458,7 +459,7 @@ private fun AuthMethodPickerStep(
         }
         oidcProviders.firstOrNull()?.let { provider ->
             TextButton(onClick = { onSelectOidcBrowser(provider) }, modifier = Modifier.fillMaxWidth()) {
-                Text("Uses a passkey? Sign in through your browser")
+                Text(t("Uses a passkey? Sign in through your browser"))
             }
         }
 
@@ -551,7 +552,7 @@ private fun PasswordLoginStep(
         SecretField(
             value = password,
             onValueChange = onPasswordChange,
-            label = "Password",
+            label = t("Password"),
             imeAction = if (showTotpField) ImeAction.Next else ImeAction.Go,
             keyboardActions = if (!showTotpField) KeyboardActions(onGo = { onSubmit() }) else KeyboardActions.Default,
             enabled = !isLoading,
@@ -561,7 +562,7 @@ private fun PasswordLoginStep(
             OutlinedTextField(
                 value = totpPasscode,
                 onValueChange = onTotpChange,
-                label = { Text("TOTP Code") },
+                label = { Text(t("TOTP Code")) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
@@ -611,7 +612,7 @@ private fun OidcBrowserStep(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "Sign in with your browser",
+            text = t("Sign in with your browser"),
             style = MaterialTheme.typography.headlineMedium,
         )
         if (passkeyPrompted) {
@@ -638,7 +639,7 @@ private fun OidcBrowserStep(
             }
             OutlinedButton(onClick = {
                 scope.launch {
-                    clipboard.copyPlainText("Redirect URL", OidcBrowserSignIn.REDIRECT_URI)
+                    clipboard.copyPlainText(t("Redirect URL"), OidcBrowserSignIn.REDIRECT_URI)
                     copied = true
                     delay(1500)
                     copied = false
@@ -658,11 +659,11 @@ private fun OidcBrowserStep(
             }
         } else {
             Button(onClick = { onContinue(provider) }, modifier = Modifier.fillMaxWidth()) {
-                Text("Continue in browser")
+                Text(t("Continue in browser"))
             }
         }
         TextButton(onClick = onUseWebView, modifier = Modifier.fillMaxWidth()) {
-            Text("Use the in-app sign-in instead")
+            Text(t("Use the in-app sign-in instead"))
         }
     }
 }
@@ -680,11 +681,11 @@ private fun TotpStep(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "Two-Factor Authentication",
+            text = t("Two-Factor Authentication"),
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "Enter the 6-digit code from your authenticator app, then complete SSO once more.",
+            text = t("Enter the 6-digit code from your authenticator app, then complete SSO once more."),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -694,7 +695,7 @@ private fun TotpStep(
         OutlinedTextField(
             value = passcode,
             onValueChange = onPasscodeChange,
-            label = { Text("Two-Factor Code") },
+            label = { Text(t("Two-Factor Code")) },
             placeholder = { Text("000000") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
@@ -714,7 +715,7 @@ private fun TotpStep(
                 CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text("Continue with SSO")
+            Text(t("Continue with SSO"))
         }
     }
 }
@@ -733,11 +734,11 @@ private fun ApiTokenEntryStep(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "API Token",
+            text = t("API Token"),
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "Paste an API token from your Vikunja settings.",
+            text = t("Paste an API token from your Vikunja settings."),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -751,7 +752,7 @@ private fun ApiTokenEntryStep(
         SecretField(
             value = apiToken,
             onValueChange = onTokenChange,
-            label = "API Token",
+            label = t("API Token"),
             imeAction = ImeAction.Go,
             keyboardActions = KeyboardActions(onGo = { onSubmit() }),
             enabled = !isLoading,
@@ -765,7 +766,7 @@ private fun ApiTokenEntryStep(
                 CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text("Connect")
+            Text(t("Connect"))
         }
     }
 }
@@ -779,7 +780,7 @@ private fun OidcInProgressStep() {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Completing sign-in...", style = MaterialTheme.typography.bodyLarge)
+            Text(t("Completing sign-in..."), style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
@@ -797,11 +798,11 @@ private fun ProjectSelectionStep(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "Select Inbox Project",
+            text = t("Select Inbox Project"),
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "Choose which project to use as your Inbox.",
+            text = t("Choose which project to use as your Inbox."),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -838,7 +839,7 @@ private fun ProjectSelectionStep(
             modifier = Modifier.fillMaxWidth(),
             enabled = selectedProjectId != null,
         ) {
-            Text("Complete Setup")
+            Text(t("Complete Setup"))
         }
     }
 }

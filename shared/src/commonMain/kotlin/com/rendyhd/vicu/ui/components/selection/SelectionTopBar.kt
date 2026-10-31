@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.selection
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Check
@@ -44,18 +45,18 @@ fun SelectionTopBar(
         title = { Text("$count selected") },
         navigationIcon = {
             IconButton(onClick = onClose) {
-                Icon(Icons.Default.Close, contentDescription = "Cancel selection")
+                Icon(Icons.Default.Close, contentDescription = t("Cancel selection"))
             }
         },
         actions = {
             IconButton(onClick = { haptic.performHapticFeedback(HapticFeedbackType.Confirm); onToday() }) {
-                Icon(Icons.Default.CalendarToday, contentDescription = "Today")
+                Icon(Icons.Default.CalendarToday, contentDescription = t("Today"))
             }
             IconButton(onClick = { haptic.performHapticFeedback(HapticFeedbackType.Confirm); onComplete() }) {
-                Icon(Icons.Default.Check, contentDescription = "Complete")
+                Icon(Icons.Default.Check, contentDescription = t("Complete"))
             }
             IconButton(onClick = { overflowExpanded = true }) {
-                Icon(Icons.Default.MoreVert, contentDescription = "More actions")
+                Icon(Icons.Default.MoreVert, contentDescription = t("More actions"))
             }
             DropdownMenu(
                 expanded = overflowExpanded,

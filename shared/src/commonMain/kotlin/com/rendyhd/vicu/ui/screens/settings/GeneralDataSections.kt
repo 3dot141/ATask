@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.util.countOf
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +37,7 @@ internal fun LazyListScope.dataSyncSection(
     backgroundActivity: Boolean = false,
 ) {
     item(key = "data_header") {
-        SectionHeader(icon = Icons.Outlined.Sync, title = "Data & Sync")
+        SectionHeader(icon = Icons.Outlined.Sync, title = t("Data & Sync"))
     }
 
     item(key = "sync_status") {
@@ -87,14 +88,14 @@ internal fun LazyListScope.dataSyncSection(
                 onClick = viewModel::triggerSync,
                 enabled = state.isOnline,
             ) {
-                Text("Sync Now")
+                Text(t("Sync Now"))
             }
             if (state.failedActionCount > 0) {
                 FilledTonalButton(onClick = viewModel::retryFailedActions) {
-                    Text("Retry All")
+                    Text(t("Retry All"))
                 }
                 TextButton(onClick = { openDialog(SettingsDialog.ClearFailedActions) }) {
-                    Text("Clear Failed")
+                    Text(t("Clear Failed"))
                 }
             }
         }
@@ -117,11 +118,11 @@ internal fun LazyListScope.dataSyncSection(
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "Clear Cache & Re-sync",
+                    text = t("Clear Cache & Re-sync"),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
-                    text = "Delete local data and fetch everything from the server",
+                    text = t("Delete local data and fetch everything from the server"),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -146,11 +147,11 @@ internal fun LazyListScope.dataSyncSection(
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "Background activity",
+                    text = t("Background activity"),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
-                    text = "When the app last synced while it was closed",
+                    text = t("When the app last synced while it was closed"),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -176,11 +177,11 @@ internal fun LazyListScope.dataSyncSection(
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "Auth Debug Log",
+                    text = t("Auth Debug Log"),
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
-                    text = "View token refresh and auth state history",
+                    text = t("View token refresh and auth state history"),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

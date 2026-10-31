@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.settings
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -66,7 +67,7 @@ internal fun NotificationsTab(
         state = listState,
     ) {
         item(key = "notif_header") {
-            SectionHeader(icon = Icons.Outlined.Notifications, title = "Reminders")
+            SectionHeader(icon = Icons.Outlined.Notifications, title = t("Reminders"))
         }
 
         item(key = "notif_disabled_banner") {
@@ -80,7 +81,7 @@ internal fun NotificationsTab(
         if (state.supportsQuickAddTile) {
             item(key = "notif_quick_settings_header") {
                 Text(
-                    text = "Quick Settings",
+                    text = t("Quick Settings"),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
@@ -97,18 +98,18 @@ internal fun NotificationsTab(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Quick Add tile",
+                            text = t("Quick Add tile"),
                             style = MaterialTheme.typography.bodyLarge,
                         )
                         Text(
-                            text = "Add a task from the notification shade",
+                            text = t("Add a task from the notification shade"),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     FilledTonalButton(onClick = viewModel::requestQuickAddTile) {
-                        Text("Add tile")
+                        Text(t("Add tile"))
                     }
                 }
             }
@@ -119,7 +120,7 @@ internal fun NotificationsTab(
         } else if (state.quickAddHint != null) {
             item(key = "notif_quick_settings_header") {
                 Text(
-                    text = "Quick add",
+                    text = t("Quick add"),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
@@ -130,7 +131,7 @@ internal fun NotificationsTab(
             item(key = "notif_quick_add_hint") {
                 Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
                     Text(
-                        text = "Add task control",
+                        text = t("Add task control"),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -148,8 +149,8 @@ internal fun NotificationsTab(
 
         item(key = "notif_task_reminders") {
             SwitchRow(
-                label = "Task Reminders",
-                description = "Show notifications for task reminders",
+                label = t("Task Reminders"),
+                description = t("Show notifications for task reminders"),
                 checked = state.notificationPrefs.taskRemindersEnabled,
                 onCheckedChange = enabling(viewModel::setTaskRemindersEnabled),
             )
@@ -157,8 +158,8 @@ internal fun NotificationsTab(
 
         item(key = "notif_sound") {
             SwitchRow(
-                label = "Sound",
-                description = "Play sound with reminder notifications",
+                label = t("Sound"),
+                description = t("Play sound with reminder notifications"),
                 checked = state.notificationPrefs.soundEnabled,
                 onCheckedChange = viewModel::setSoundEnabled,
             )
@@ -178,7 +179,7 @@ internal fun NotificationsTab(
 
         item(key = "notif_daily_header") {
             Text(
-                text = "Daily Summary",
+                text = t("Daily Summary"),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -188,8 +189,8 @@ internal fun NotificationsTab(
 
         item(key = "notif_daily_summary") {
             SwitchRow(
-                label = "Enable Daily Summary",
-                description = "Get a daily digest of upcoming tasks",
+                label = t("Enable Daily Summary"),
+                description = t("Get a daily digest of upcoming tasks"),
                 checked = state.notificationPrefs.dailySummaryEnabled,
                 onCheckedChange = enabling(viewModel::setDailySummaryEnabled),
             )
@@ -198,7 +199,7 @@ internal fun NotificationsTab(
         if (state.notificationPrefs.dailySummaryEnabled) {
             item(key = "notif_daily_time") {
                 TimePickerRow(
-                    label = "Summary Time",
+                    label = t("Summary Time"),
                     hour = state.notificationPrefs.dailySummaryHour,
                     minute = state.notificationPrefs.dailySummaryMinute,
                     onClick = { openDialog(SettingsDialog.DailySummaryTime) },
@@ -208,8 +209,8 @@ internal fun NotificationsTab(
 
         item(key = "notif_afternoon_enabled") {
             SwitchRow(
-                label = "Afternoon Summary",
-                description = "A second daily digest in the afternoon",
+                label = t("Afternoon Summary"),
+                description = t("A second daily digest in the afternoon"),
                 checked = state.notificationPrefs.afternoonSummaryEnabled,
                 onCheckedChange = enabling(viewModel::setAfternoonSummaryEnabled),
             )
@@ -218,7 +219,7 @@ internal fun NotificationsTab(
         if (state.notificationPrefs.afternoonSummaryEnabled) {
             item(key = "notif_afternoon_time") {
                 TimePickerRow(
-                    label = "Afternoon Time",
+                    label = t("Afternoon Time"),
                     hour = state.notificationPrefs.afternoonSummaryHour,
                     minute = state.notificationPrefs.afternoonSummaryMinute,
                     onClick = { openDialog(SettingsDialog.AfternoonSummaryTime) },
@@ -228,8 +229,8 @@ internal fun NotificationsTab(
 
         item(key = "notif_overdue") {
             SwitchRow(
-                label = "Include Overdue",
-                description = "Count overdue tasks in the summary",
+                label = t("Include Overdue"),
+                description = t("Count overdue tasks in the summary"),
                 checked = state.notificationPrefs.notifyOverdueEnabled,
                 onCheckedChange = viewModel::setNotifyOverdueEnabled,
             )
@@ -237,8 +238,8 @@ internal fun NotificationsTab(
 
         item(key = "notif_due_today") {
             SwitchRow(
-                label = "Include Due Today",
-                description = "Count tasks due today in the summary",
+                label = t("Include Due Today"),
+                description = t("Count tasks due today in the summary"),
                 checked = state.notificationPrefs.notifyDueTodayEnabled,
                 onCheckedChange = viewModel::setNotifyDueTodayEnabled,
             )
@@ -246,8 +247,8 @@ internal fun NotificationsTab(
 
         item(key = "notif_upcoming") {
             SwitchRow(
-                label = "Include Tomorrow",
-                description = "Count tasks due tomorrow in the summary",
+                label = t("Include Tomorrow"),
+                description = t("Count tasks due tomorrow in the summary"),
                 checked = state.notificationPrefs.notifyUpcomingEnabled,
                 onCheckedChange = viewModel::setNotifyUpcomingEnabled,
             )
@@ -259,7 +260,7 @@ internal fun NotificationsTab(
 
         item(key = "notif_reminder_header") {
             Text(
-                text = "Default Reminder",
+                text = t("Default Reminder"),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -272,7 +273,7 @@ internal fun NotificationsTab(
                 it.second == state.notificationPrefs.defaultReminderOffset
             }?.first ?: "None"
             SettingsValueRow(
-                label = "Reminder Offset",
+                label = t("Reminder Offset"),
                 value = offsetLabel,
                 onClick = { openDialog(SettingsDialog.ReminderOffset) },
             )
@@ -284,7 +285,7 @@ internal fun NotificationsTab(
                     it.second == state.notificationPrefs.defaultReminderRelativeTo
                 }?.first ?: "Due date"
                 SettingsValueRow(
-                    label = "Relative To",
+                    label = t("Relative To"),
                     value = relativeLabel,
                     onClick = { openDialog(SettingsDialog.ReminderRelativeTo) },
                 )
@@ -297,7 +298,7 @@ internal fun NotificationsTab(
 
         item(key = "notif_test_header") {
             Text(
-                text = "Testing",
+                text = t("Testing"),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -312,7 +313,7 @@ internal fun NotificationsTab(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 FilledTonalButton(onClick = viewModel::sendTestNotification) {
-                    Text("Send Test Notification")
+                    Text(t("Send Test Notification"))
                 }
             }
         }

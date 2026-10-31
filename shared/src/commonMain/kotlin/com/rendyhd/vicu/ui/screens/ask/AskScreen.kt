@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.ask
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -108,7 +109,7 @@ fun AskScreen(
                 extraActions = {
                     Box {
                         IconButton(onClick = { historyOpen = true }, enabled = state.history.isNotEmpty()) {
-                            Icon(Icons.Outlined.History, contentDescription = "Earlier conversations")
+                            Icon(Icons.Outlined.History, contentDescription = t("Earlier conversations"))
                         }
                         DropdownMenu(expanded = historyOpen, onDismissRequest = { historyOpen = false }) {
                             for (c in state.history) {
@@ -122,7 +123,7 @@ fun AskScreen(
                             }
                         }
                     }
-                    IconButton(onClick = viewModel::newChat) { Icon(Icons.Outlined.AddComment, contentDescription = "New chat") }
+                    IconButton(onClick = viewModel::newChat) { Icon(Icons.Outlined.AddComment, contentDescription = t("New chat")) }
                 },
             )
         },
@@ -156,7 +157,7 @@ private fun NotSetUp(onOpenSettings: () -> Unit, modifier: Modifier) {
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(Icons.Outlined.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
-        Text("Ask your tasks anything", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 16.dp))
+        Text(t("Ask your tasks anything"), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 16.dp))
         Text(
             "Connect a model you bring (a key for OpenAI, Anthropic, Gemini or OpenRouter, or your own Ollama or Open WebUI), " +
                 "test it and switch Ask on.",
@@ -164,7 +165,7 @@ private fun NotSetUp(onOpenSettings: () -> Unit, modifier: Modifier) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp),
         )
-        Button(onClick = onOpenSettings, modifier = Modifier.padding(top = 16.dp)) { Text("Set up the assistant") }
+        Button(onClick = onOpenSettings, modifier = Modifier.padding(top = 16.dp)) { Text(t("Set up the assistant")) }
     }
 }
 
@@ -238,7 +239,7 @@ internal fun Conversation(state: AskUiState, viewModel: AskViewModel, onTaskClic
             item(key = "error") {
                 Column {
                     Text(error, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
-                    TextButton(onClick = viewModel::retry) { Text("Retry") }
+                    TextButton(onClick = viewModel::retry) { Text(t("Retry")) }
                 }
             }
         }
@@ -250,8 +251,8 @@ internal fun Conversation(state: AskUiState, viewModel: AskViewModel, onTaskClic
             onDismissRequest = { confirmBig = false },
             title = { Text("Change $n tasks?") },
             text = { Text("This card changes more than ${AiContract.limits.proposalConfirmTwiceAbove} tasks at once. You can undo it right after.") },
-            confirmButton = { TextButton(onClick = { confirmBig = false; viewModel.apply() }) { Text("Apply") } },
-            dismissButton = { TextButton(onClick = { confirmBig = false }) { Text("Cancel") } },
+            confirmButton = { TextButton(onClick = { confirmBig = false; viewModel.apply() }) { Text(t("Apply")) } },
+            dismissButton = { TextButton(onClick = { confirmBig = false }) { Text(t("Cancel")) } },
         )
     }
 }
@@ -374,7 +375,7 @@ private fun ProposalCard(pending: PendingProposal, onApply: () -> Unit, onDeclin
                 }
             }
             if (proposal.skipped.isNotEmpty()) {
-                Text("Skipped:", style = MaterialTheme.typography.labelMedium)
+                Text(t("Skipped:"), style = MaterialTheme.typography.labelMedium)
                 for (s in proposal.skipped) {
                     val why = when (s.reason) {
                         "not_found" -> "not found"
@@ -386,8 +387,8 @@ private fun ProposalCard(pending: PendingProposal, onApply: () -> Unit, onDeclin
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                 Spacer(Modifier.weight(1f))
-                OutlinedButton(onClick = onDecline) { Text("Decline") }
-                Button(onClick = onApply) { Text("Apply") }
+                OutlinedButton(onClick = onDecline) { Text(t("Decline")) }
+                Button(onClick = onApply) { Text(t("Apply")) }
             }
         }
     }
@@ -435,7 +436,7 @@ internal fun InputBar(state: AskUiState, viewModel: AskViewModel) {
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
-                placeholder = { Text("Ask about your tasks") },
+                placeholder = { Text(t("Ask about your tasks")) },
                 modifier = Modifier.weight(1f),
                 maxLines = 5,
             )
@@ -446,7 +447,7 @@ internal fun InputBar(state: AskUiState, viewModel: AskViewModel) {
                 },
                 enabled = text.isNotBlank() && !busy,
             ) {
-                Icon(Icons.AutoMirrored.Outlined.Send, contentDescription = "Send")
+                Icon(Icons.AutoMirrored.Outlined.Send, contentDescription = t("Send"))
             }
         }
     }

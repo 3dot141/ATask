@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.guided
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -97,7 +98,7 @@ fun GuidedSortScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = "Close") }
+                        IconButton(onClick = onClose) { Icon(Icons.Outlined.Close, contentDescription = t("Close")) }
                     },
                 )
                 if (!state.finished && state.total > 0) {
@@ -147,14 +148,14 @@ fun GuidedSortScreen(
         AlertDialog(
             onDismissRequest = { confirmDelete = null },
             title = { Text("Delete \"${task.title}\"?") },
-            text = { Text("Deleting cannot be undone.") },
+            text = { Text(t("Deleting cannot be undone.")) },
             confirmButton = {
                 TextButton(onClick = {
                     confirmDelete = null
                     viewModel.delete()
-                }) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                }) { Text(t("Delete"), color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { confirmDelete = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { confirmDelete = null }) { Text(t("Cancel")) } },
         )
     }
 }
@@ -179,7 +180,7 @@ private fun SortCard(
                 value = draft.title ?: task.title,
                 onValueChange = viewModel::setTitle,
                 textStyle = MaterialTheme.typography.titleMedium,
-                label = { Text("Title") },
+                label = { Text(t("Title")) },
                 modifier = Modifier.fillMaxWidth().dashedOutline(outline, CardDraft.FIELD_TITLE in draft.suggested),
             )
             val meta = buildList {
@@ -194,7 +195,7 @@ private fun SortCard(
                     color = if (DueDates.isOverdue(task.dueDate, day.date, day.zone)) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(1f),
                 )
-                TextButton(onClick = onOpenTask) { Text("Open") }
+                TextButton(onClick = onOpenTask) { Text(t("Open")) }
             }
             SuggestionLine(state.suggestion, state.suggesting)
 
@@ -251,13 +252,13 @@ private fun SortCard(
 @Composable
 private fun CompleteLabel() {
     Icon(Icons.Outlined.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
-    Text("Complete", modifier = Modifier.padding(start = 8.dp))
+    Text(t("Complete"), modifier = Modifier.padding(start = 8.dp))
 }
 
 @Composable
 private fun DeleteLabel() {
     Icon(Icons.Outlined.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
-    Text("Delete", modifier = Modifier.padding(start = 8.dp))
+    Text(t("Delete"), modifier = Modifier.padding(start = 8.dp))
 }
 
 /** Back, Skip and [nextLabel] under every card or page; Next on a card without changes is Skip. */
@@ -275,9 +276,9 @@ internal fun CardButtons(
             Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 16.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            TextButton(onClick = onBack, enabled = canGoBack && !busy) { Text("Back") }
+            TextButton(onClick = onBack, enabled = canGoBack && !busy) { Text(t("Back")) }
             Spacer(Modifier.weight(1f))
-            OutlinedButton(onClick = onSkip, enabled = !busy) { Text("Skip") }
+            OutlinedButton(onClick = onSkip, enabled = !busy) { Text(t("Skip")) }
             Spacer(Modifier.size(8.dp))
             Button(onClick = onNext, enabled = !busy) { Text(nextLabel) }
         }

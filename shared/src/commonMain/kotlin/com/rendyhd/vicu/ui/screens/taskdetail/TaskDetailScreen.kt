@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.taskdetail
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -425,7 +426,7 @@ fun TaskDetailScreen(
                         AnimatedCheckbox(
                             done = task.done,
                             onToggle = viewModel::requestToggleDone,
-                            contentDescription = "Complete task",
+                            contentDescription = t("Complete task"),
                             modifier = Modifier.padding(top = 2.dp),
                         )
                         Box(modifier = Modifier.weight(1f)) {
@@ -468,7 +469,7 @@ fun TaskDetailScreen(
                                     Box {
                                         if (titleFieldValue.text.isEmpty()) {
                                             Text(
-                                                text = "Task title",
+                                                text = t("Task title"),
                                                 style = editorTitleStyle(),
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             )
@@ -544,12 +545,12 @@ fun TaskDetailScreen(
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(
-                                text = "Description changed on another device",
+                                text = t("Description changed on another device"),
                                 style = MaterialTheme.typography.titleSmall,
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Your draft is still here. Choose which version should be saved.",
+                                text = t("Your draft is still here. Choose which version should be saved."),
                                 style = MaterialTheme.typography.bodySmall,
                             )
                             Row(
@@ -558,10 +559,10 @@ fun TaskDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 TextButton(onClick = viewModel::useRemoteDescription) {
-                                    Text("Use server")
+                                    Text(t("Use server"))
                                 }
                                 Button(onClick = viewModel::keepLocalDescription) {
-                                    Text("Keep mine")
+                                    Text(t("Keep mine"))
                                 }
                             }
                         }
@@ -631,9 +632,9 @@ fun TaskDetailScreen(
                                     },
                                 )
                             }
-                            PresetChip(label = "Pick a date…", onClick = { showDatePicker = true })
+                            PresetChip(label = t("Pick a date…"), onClick = { showDatePicker = true })
                             if (hasDueDate) {
-                                PresetChip(label = "Clear", danger = true, onClick = {
+                                PresetChip(label = t("Clear"), danger = true, onClick = {
                                     viewModel.clearDueDate()
                                     openRow = null
                                 })
@@ -666,7 +667,7 @@ fun TaskDetailScreen(
                                 )
                             }
                             if (priorityLabel != null) {
-                                PresetChip(label = "None", onClick = {
+                                PresetChip(label = t("None"), onClick = {
                                     viewModel.setPriority(0)
                                     openRow = null
                                 })
@@ -767,9 +768,9 @@ fun TaskDetailScreen(
                                         openRow = null
                                     })
                                 }
-                                PresetChip(label = "Place…", icon = Icons.Outlined.Place, onClick = { showLocationDialog = true })
+                                PresetChip(label = t("Place…"), icon = Icons.Outlined.Place, onClick = { showLocationDialog = true })
                             }
-                            PresetChip(label = "Pick a time…", onClick = { showReminderPicker = true })
+                            PresetChip(label = t("Pick a time…"), onClick = { showReminderPicker = true })
                         }
                     },
                     EditorEntry("repeat", set = recurrence.isRecurring, addLabel = "Repeat", addIcon = Icons.Outlined.Repeat, onAdd = { toggle("repeat") }) {
@@ -794,9 +795,9 @@ fun TaskDetailScreen(
                                     openRow = null
                                 })
                             }
-                            PresetChip(label = "Custom…", selected = current == RecurrencePreset.CUSTOM, onClick = { showRecurrencePicker = true })
+                            PresetChip(label = t("Custom…"), selected = current == RecurrencePreset.CUSTOM, onClick = { showRecurrencePicker = true })
                             if (recurrence.isRecurring) {
-                                PresetChip(label = "Don't repeat", danger = true, onClick = {
+                                PresetChip(label = t("Don't repeat"), danger = true, onClick = {
                                     viewModel.setRecurrence(RecurrenceValue.NONE)
                                     openRow = null
                                 })
@@ -918,7 +919,7 @@ fun TaskDetailScreen(
             if (state.subtasks.isNotEmpty() || showSubtaskInput) {
                 item(key = "divider_subtasks") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Subtasks", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(t("Subtasks"), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(4.dp))
                 }
 
@@ -954,7 +955,7 @@ fun TaskDetailScreen(
                         OutlinedTextField(
                             value = subtaskInput,
                             onValueChange = { subtaskInput = it },
-                            placeholder = { Text("Subtask title") },
+                            placeholder = { Text(t("Subtask title")) },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions(
@@ -974,7 +975,7 @@ fun TaskDetailScreen(
                                     showSubtaskInput = false
                                     subtaskInput = ""
                                 }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Cancel")
+                                    Icon(Icons.Default.Close, contentDescription = t("Cancel"))
                                 }
                             },
                         )
@@ -982,7 +983,7 @@ fun TaskDetailScreen(
                         TextButton(onClick = { showSubtaskInput = true }) {
                             Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Add subtask")
+                            Text(t("Add subtask"))
                         }
                     }
                 }
@@ -1024,7 +1025,7 @@ fun TaskDetailScreen(
                                 IconButton(onClick = { viewModel.removeRelation(kind, related.id) }) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Remove relation",
+                                        contentDescription = t("Remove relation"),
                                         modifier = Modifier.size(18.dp),
                                     )
                                 }
@@ -1036,7 +1037,7 @@ fun TaskDetailScreen(
             if (visibleAttachments.isNotEmpty()) {
                 item(key = "divider_attachments") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                    Text("Attachments", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(t("Attachments"), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.height(4.dp))
                 }
 
@@ -1096,7 +1097,7 @@ fun TaskDetailScreen(
                         IconButton(onClick = { attachmentPendingDelete = attachment }) {
                             Icon(
                                 Icons.Default.Delete,
-                                contentDescription = "Delete",
+                                contentDescription = t("Delete"),
                                 tint = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(18.dp),
                             )
@@ -1159,7 +1160,7 @@ fun TaskDetailScreen(
     attachmentPendingDelete?.let { attachment ->
         AlertDialog(
             onDismissRequest = { attachmentPendingDelete = null },
-            title = { Text("Delete attachment?") },
+            title = { Text(t("Delete attachment?")) },
             text = { Text("\"${attachment.fileName}\" will be removed from this task. This cannot be undone.") },
             confirmButton = {
                 TextButton(
@@ -1167,9 +1168,9 @@ fun TaskDetailScreen(
                         attachmentPendingDelete = null
                         viewModel.deleteAttachment(attachment.id)
                     },
-                ) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                ) { Text(t("Delete"), color = MaterialTheme.colorScheme.error) }
             },
-            dismissButton = { TextButton(onClick = { attachmentPendingDelete = null }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { attachmentPendingDelete = null }) { Text(t("Cancel")) } },
         )
     }
 
@@ -1189,15 +1190,15 @@ fun TaskDetailScreen(
         val count = state.task?.unfinishedDescendants()?.size ?: 0
         AlertDialog(
             onDismissRequest = viewModel::dismissCompletion,
-            title = { Text("Complete task and subtasks?") },
+            title = { Text(t("Complete task and subtasks?")) },
             text = {
                 Text("This will also complete $count unfinished ${if (count == 1) "subtask" else "subtasks"}.")
             },
             confirmButton = {
-                TextButton(onClick = viewModel::confirmCompletion) { Text("Complete all") }
+                TextButton(onClick = viewModel::confirmCompletion) { Text(t("Complete all")) }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::dismissCompletion) { Text("Cancel") }
+                TextButton(onClick = viewModel::dismissCompletion) { Text(t("Cancel")) }
             },
         )
     }
@@ -1206,15 +1207,15 @@ fun TaskDetailScreen(
         val count = subtask.descendantsDepthFirst().count { !it.done }
         AlertDialog(
             onDismissRequest = viewModel::dismissSubtaskCompletion,
-            title = { Text("Complete task and subtasks?") },
+            title = { Text(t("Complete task and subtasks?")) },
             text = {
                 Text("This will also complete $count unfinished ${if (count == 1) "subtask" else "subtasks"}.")
             },
             confirmButton = {
-                TextButton(onClick = viewModel::confirmSubtaskCompletion) { Text("Complete all") }
+                TextButton(onClick = viewModel::confirmSubtaskCompletion) { Text(t("Complete all")) }
             },
             dismissButton = {
-                TextButton(onClick = viewModel::dismissSubtaskCompletion) { Text("Cancel") }
+                TextButton(onClick = viewModel::dismissSubtaskCompletion) { Text(t("Cancel")) }
             },
         )
     }
@@ -1394,18 +1395,18 @@ private fun EditorHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onClose) {
-            Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = "Close")
+            Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = t("Close"))
         }
         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
             VicuDragHandleBar()
         }
         Box {
             IconButton(onClick = { showMore = true }, enabled = menuEnabled) {
-                Icon(Icons.Default.MoreHoriz, contentDescription = "More")
+                Icon(Icons.Default.MoreHoriz, contentDescription = t("More"))
             }
             DropdownMenu(expanded = showMore, onDismissRequest = { showMore = false }) {
                 DropdownMenuItem(
-                    text = { Text("Add relation") },
+                    text = { Text(t("Add relation")) },
                     onClick = {
                         showMore = false
                         onAddRelation()
@@ -1413,7 +1414,7 @@ private fun EditorHeader(
                 )
                 if (onBreakIntoSteps != null) {
                     DropdownMenuItem(
-                        text = { Text("Break into steps") },
+                        text = { Text(t("Break into steps")) },
                         onClick = {
                             showMore = false
                             onBreakIntoSteps()
@@ -1421,7 +1422,7 @@ private fun EditorHeader(
                     )
                 }
                 DropdownMenuItem(
-                    text = { Text("Delete task", color = MaterialTheme.colorScheme.error) },
+                    text = { Text(t("Delete task"), color = MaterialTheme.colorScheme.error) },
                     onClick = {
                         showMore = false
                         onDelete()

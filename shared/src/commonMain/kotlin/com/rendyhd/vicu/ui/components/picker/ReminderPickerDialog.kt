@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.components.picker
 
+import com.rendyhd.vicu.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -117,7 +118,7 @@ fun ReminderPickerDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Reminders") },
+        title = { Text(t("Reminders")) },
         text = {
             Column {
                 if (locationReminder != null) {
@@ -143,7 +144,7 @@ fun ReminderPickerDialog(
                         IconButton(onClick = onRemoveLocation) {
                             Icon(
                                 Icons.Default.Close,
-                                contentDescription = "Remove location reminder",
+                                contentDescription = t("Remove location reminder"),
                                 modifier = Modifier.padding(4.dp),
                             )
                         }
@@ -175,7 +176,7 @@ fun ReminderPickerDialog(
                                 IconButton(onClick = { onRemoveReminder(index) }) {
                                     Icon(
                                         Icons.Default.Close,
-                                        contentDescription = "Remove",
+                                        contentDescription = t("Remove"),
                                         modifier = Modifier.padding(4.dp),
                                     )
                                 }
@@ -193,10 +194,10 @@ fun ReminderPickerDialog(
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Add reminder")
+                        Text(t("Add reminder"))
                     }
                 } else {
-                    Text("Quick add", style = MaterialTheme.typography.labelMedium)
+                    Text(t("Quick add"), style = MaterialTheme.typography.labelMedium)
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -229,7 +230,7 @@ fun ReminderPickerDialog(
                             onClick = { openPickers(existing = null, index = -1) },
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Text("Pick date & time...")
+                            Text(t("Pick date & time..."))
                         }
 
                         if (onLocationClick != null) {
@@ -249,7 +250,7 @@ fun ReminderPickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Done")
+                Text(t("Done"))
             }
         },
         dismissButton = {},
@@ -261,10 +262,10 @@ fun ReminderPickerDialog(
         DatePickerDialog(
             onDismissRequest = ::closePickers,
             confirmButton = {
-                TextButton(onClick = { step = STEP_TIME }) { Text("Next") }
+                TextButton(onClick = { step = STEP_TIME }) { Text(t("Next")) }
             },
             dismissButton = {
-                TextButton(onClick = ::closePickers) { Text("Cancel") }
+                TextButton(onClick = ::closePickers) { Text(t("Cancel")) }
             },
         ) {
             // Scrolls when the dialog is shorter than the calendar (a phone in landscape).
@@ -301,7 +302,7 @@ fun ReminderPickerDialog(
         )
         AlertDialog(
             onDismissRequest = ::closePickers,
-            title = { Text("Set time") },
+            title = { Text(t("Set time")) },
             text = {
                 TimePicker(state = timePickerState)
             },
@@ -326,7 +327,7 @@ fun ReminderPickerDialog(
                 ) { Text(if (editingIndex >= 0) "Save" else "Add") }
             },
             dismissButton = {
-                TextButton(onClick = ::closePickers) { Text("Cancel") }
+                TextButton(onClick = ::closePickers) { Text(t("Cancel")) }
             },
         )
     }
