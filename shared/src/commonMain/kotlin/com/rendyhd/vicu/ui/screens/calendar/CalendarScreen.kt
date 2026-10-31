@@ -3,6 +3,7 @@ package com.rendyhd.vicu.ui.screens.calendar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -64,6 +67,7 @@ import com.rendyhd.vicu.ui.components.shared.VicuTopAppBar
 import com.rendyhd.vicu.ui.components.shared.rememberVicuTopBarScroll
 import com.rendyhd.vicu.ui.i18n.LocalStrings
 import com.rendyhd.vicu.ui.navigation.ScreenReady
+import com.rendyhd.vicu.util.WhenLogic
 import com.rendyhd.vicu.voice.TaskDefaults
 import kotlinx.datetime.LocalDate
 import org.koin.compose.viewmodel.koinViewModel
@@ -130,9 +134,27 @@ fun CalendarScreen(
                 onNext = { viewModel.showMonth(1) },
                 previousLabel = s.previousMonth,
                 nextLabel = s.nextMonth,
+                showToday = state.month != WhenLogic.monthStart(state.today) || state.selected != state.today,
+                todayLabel = s.todayLabel,
+                onToday = viewModel::goToToday,
             )
             WeekdayRow(s.weekdaysShort)
             MonthGrid(
+                modifier = Modifier.pointerInput(Unit) {
+                    // Swiping the grid changes the month, the way the native calendar pages.
+                    val threshold = 48.dp.toPx()
+                    var drag = 0f
+                    detectHorizontalDragGestures(
+                        onDragStart = { drag = 0f },
+                        onDragEnd = {
+                            if (drag >= threshold) viewModel.showMonth(-1)
+                            else if (drag <= -threshold) viewModel.showMonth(1)
+                        },
+                    ) { change, amount ->
+                        change.consume()
+                        drag += amount
+                    }
+                },
                 cells = state.cells,
                 today = state.today,
                 selected = state.selected,
@@ -265,6 +287,9 @@ private fun MonthHeader(
     onNext: () -> Unit,
     previousLabel: String,
     nextLabel: String,
+    showToday: Boolean,
+    todayLabel: String,
+    onToday: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -278,6 +303,9 @@ private fun MonthHeader(
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(1f),
         )
+        if (showToday) {
+            TextButton(onClick = onToday) { Text(todayLabel) }
+        }
         IconButton(onClick = onPrevious) {
             Icon(Icons.AutoMirrored.Outlined.KeyboardArrowLeft, contentDescription = previousLabel)
         }
@@ -304,6 +332,7 @@ private fun WeekdayRow(weekdays: List<String>) {
 
 @Composable
 private fun MonthGrid(
+    modifier: Modifier = Modifier,
     cells: List<CalendarCell>,
     today: LocalDate,
     selected: LocalDate,
@@ -312,7 +341,7 @@ private fun MonthGrid(
     eventColor: Color,
     todayLabel: String,
 ) {
-    Column(Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+    Column(modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
         cells.chunked(7).forEach { week ->
             Row(Modifier.fillMaxWidth()) {
                 for (cell in week) {

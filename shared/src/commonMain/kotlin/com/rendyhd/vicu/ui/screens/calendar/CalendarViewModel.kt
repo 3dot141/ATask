@@ -121,6 +121,16 @@ class CalendarViewModel(
         viewModelScope.launch { loadEvents() }
     }
 
+    /** Jumps back to today's month and day, the way a calendar's "today" button does. */
+    fun goToToday() {
+        monthTouched = false
+        _uiState.update {
+            it.copy(month = WhenLogic.monthStart(it.today), selected = it.today)
+        }
+        publish()
+        viewModelScope.launch { loadEvents() }
+    }
+
     fun select(date: LocalDate) {
         _uiState.update {
             it.copy(
