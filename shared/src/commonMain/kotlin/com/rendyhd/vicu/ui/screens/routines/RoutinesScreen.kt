@@ -34,7 +34,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -159,7 +163,7 @@ fun RoutinesScreen(
                         }
                         DropdownMenu(expanded = pageMenuOpen, onDismissRequest = { pageMenuOpen = false }) {
                             DropdownMenuItem(
-                                text = { Text(if (remindersEnabled) "Pause all reminders" else "Resume reminders") },
+                                text = { Text(if (remindersEnabled) t("Pause all reminders") else "Resume reminders") },
                                 trailingIcon = {
                                     Switch(
                                         checked = remindersEnabled,
@@ -177,7 +181,7 @@ fun RoutinesScreen(
                                     pageMenuOpen = false
                                     viewModel.exportCsv { export ->
                                         scope.launch {
-                                            clipboard.copyPlainText(t("Routine history"), export.csv)
+                                            clipboard.copyPlainText(("Routine history"), export.csv)
                                             snackbar.showSnackbar(
                                                 if (export.complete) {
                                                     "Routine history copied"
@@ -244,7 +248,7 @@ fun RoutinesScreen(
             }
 
             if (state.active.isNotEmpty()) {
-                item(key = "all_header", contentType = "header") { SectionLabel("ALL ROUTINES") }
+                item(key = "all_header", contentType = "header") { SectionLabel(t("ALL ROUTINES")) }
             }
             items(state.active, key = { it.definition.id }, contentType = { "routine" }) { routine ->
                 RoutineDefinitionCard(
@@ -264,7 +268,7 @@ fun RoutinesScreen(
             }
 
             if (state.archived.isNotEmpty()) {
-                item(key = "archived_header", contentType = "header") { SectionLabel("ARCHIVED") }
+                item(key = "archived_header", contentType = "header") { SectionLabel(t("ARCHIVED")) }
                 items(state.archived, key = { "archived_${it.definition.id}" }, contentType = { "routine" }) { routine ->
                     RoutineDefinitionCard(
                         routine = routine,
@@ -367,7 +371,7 @@ fun RoutinesScreen(
 
 @Composable
 fun RoutineDaySummary(day: RoutineDay, modifier: Modifier = Modifier) {
-    val progress = if (day.scheduledCount == 0) "Ready when you are" else "${day.completedCount} of ${day.scheduledCount} done"
+    val progress = if (day.scheduledCount == 0) t("Ready when you are") else "${day.completedCount} of ${day.scheduledCount} done"
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
             CircularProgressIndicator(
@@ -379,7 +383,7 @@ fun RoutineDaySummary(day: RoutineDay, modifier: Modifier = Modifier) {
         }
         Spacer(Modifier.width(14.dp))
         Column {
-            Text(t("Today’s rhythm"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(("Today’s rhythm"), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(progress, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -417,7 +421,7 @@ fun RoutineOccurrenceRow(
                 }
             } else {
                 Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
-                    Icon(checkIcon, contentDescription = if (complete) "Done" else "Not done", tint = checkTint)
+                    Icon(checkIcon, contentDescription = if (complete) "Done" else t("Not done"), tint = checkTint)
                 }
             }
             Column(modifier = Modifier.weight(1f)) {
@@ -429,7 +433,7 @@ fun RoutineOccurrenceRow(
                 )
                 val detail = buildList {
                     add(timeText(occurrence.slot.reminderMinutes, LocalDateFormat.current))
-                    if (occurrence.status == OccurrenceStatus.NOT_LOGGED) add("Not logged")
+                    if (occurrence.status == OccurrenceStatus.NOT_LOGGED) add(t("Not logged"))
                     when {
                         loggedBy != null -> add(loggedBy)
                         skipped -> add("Skipped")
@@ -597,7 +601,7 @@ private fun RoutineHistoryDialog(
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(routine.definition.name, style = MaterialTheme.typography.headlineSmall)
                 Text(
-                    if (logged.isEmpty()) "No history yet" else "$adherence% completed · $completed of ${logged.size} logged",
+                    if (logged.isEmpty()) t("No history yet") else "$adherence% completed · $completed of ${logged.size} logged",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -650,7 +654,7 @@ private data class EditorTime(
     val slot: RoutineSlot?,
 )
 
-private val FollowUpOptions = listOf(0 to "Off", 15 to "15 min", 30 to "30 min", 60 to "1 hour")
+private val FollowUpOptions = listOf(0 to t("Off"), 15 to "15 min", 30 to "30 min", 60 to "1 hour")
 
 private fun followUpText(minutes: Int): String =
     FollowUpOptions.firstOrNull { it.first == minutes }?.second ?: "$minutes min"
@@ -701,15 +705,22 @@ private fun RoutineEditorDialog(
     val valid = name.isNotBlank() && times.isNotEmpty() && shareComplete &&
         (!afterCompletion || (intervalDays != null && intervalDays in 1..365))
 
-    Dialog(onDismissRequest = onDismiss) {
-        Card(
-            modifier = Modifier.fillMaxWidth().heightIn(max = 720.dp),
-            shape = RoundedCornerShape(28.dp),
-        ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(if (routine == null) "New routine" else "Edit routine", style = MaterialTheme.typography.headlineSmall)
+    // A sheet from the bottom edge, full width, the way a form of this length reads best.
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+                Text(if (routine == null) t("New routine") else t("Edit routine"), style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.height(12.dp))
-                Column(modifier = Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 560.dp)
+                        .verticalScroll(rememberScrollState()),
+                ) {
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -721,7 +732,7 @@ private fun RoutineEditorDialog(
                     )
 
                     Spacer(Modifier.height(18.dp))
-                    EditorLabel("TIMES")
+                    EditorLabel(t("TIMES"))
                     times.forEach { time ->
                         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                             TextButton(onClick = { pickingTime = time.key }) {
@@ -732,7 +743,7 @@ private fun RoutineEditorDialog(
                             }) {
                                 Icon(
                                     if (time.remind) Icons.Outlined.NotificationsActive else Icons.Outlined.NotificationsOff,
-                                    contentDescription = if (time.remind) "Reminder on" else "Reminder off",
+                                    contentDescription = if (time.remind) "Reminder on" else t("Reminder off"),
                                     tint = if (time.remind) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
@@ -740,7 +751,7 @@ private fun RoutineEditorDialog(
                                 var followUpMenu by remember { mutableStateOf(false) }
                                 TextButton(onClick = { followUpMenu = true }, enabled = time.remind) {
                                     Text(
-                                        "Follow up: ${followUpText(time.followUpMinutes)}",
+                                        "${t("Follow up:")} ${followUpText(time.followUpMinutes)}",
                                         style = MaterialTheme.typography.bodySmall,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
@@ -780,7 +791,7 @@ private fun RoutineEditorDialog(
                     }
 
                     Spacer(Modifier.height(14.dp))
-                    EditorLabel("REPEAT")
+                    EditorLabel(t("REPEAT"))
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilterChip(selected = !afterCompletion, onClick = { afterCompletion = false }, label = { Text(t("On a schedule")) })
                         FilterChip(selected = afterCompletion, onClick = { afterCompletion = true }, label = { Text(t("After completion")) })
@@ -789,7 +800,7 @@ private fun RoutineEditorDialog(
                         if (afterCompletion) {
                             "Comes back a set number of days after you complete it."
                         } else {
-                            "Repeats on the days you pick, whether or not you did it last time."
+                            t("Repeats on the days you pick, whether or not you did it last time.")
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -797,7 +808,7 @@ private fun RoutineEditorDialog(
                     Spacer(Modifier.height(8.dp))
                     if (afterCompletion) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(t("Show again"), style = MaterialTheme.typography.bodyMedium)
+                            Text(("Show again"), style = MaterialTheme.typography.bodyMedium)
                             Spacer(Modifier.width(8.dp))
                             OutlinedTextField(
                                 value = interval,
@@ -842,14 +853,14 @@ private fun RoutineEditorDialog(
                                 FilterChip(
                                     selected = weekInterval == weeks,
                                     onClick = { weekInterval = weeks },
-                                    label = { Text(if (weeks == 1) "Every week" else "Every $weeks weeks") },
+                                    label = { Text(if (weeks == 1) t("Every week") else "每 $weeks 周") },
                                 )
                             }
                         }
                     }
 
                     Spacer(Modifier.height(14.dp))
-                    EditorLabel("COLOR")
+                    EditorLabel(t("COLOR"))
                     IconColorPicker(selectedHex = color, onSelect = { color = it })
 
                     Spacer(Modifier.height(14.dp))
@@ -906,10 +917,9 @@ private fun RoutineEditorDialog(
                                 share,
                             )
                         },
-                    ) { Text(if (saving) "Saving…" else "Save") }
+                    ) { Text(if (saving) t("Saving…") else t("Save")) }
                 }
             }
-        }
     }
 
     pickingTime?.let { key ->
@@ -940,7 +950,7 @@ private fun RoutineEditorDialog(
 }
 
 /**
- * "Share with" (cross-app semantics 6.9): "Only you" or a person the user already shares a project
+ * "Share with" (cross-app semantics 6.9): t("Only you") or a person the user already shares a project
  * with, the "Visible to" line, and the project that will hold it, chosen when the person is in more
  * than one. The owner changes it; a member sees who shared it. [onChange] gets the choice and
  * whether it is complete (a project picked).
@@ -1013,11 +1023,11 @@ private fun ShareWithField(
         OutlinedButton(
             onClick = { menuOpen = true },
             modifier = Modifier.fillMaxWidth().semantics {
-                contentDescription = "Share with: ${person?.let { Collaboration.displayName(it.person.toCollabUser()) } ?: "Only you"}"
+                contentDescription = "Share with: ${person?.let { Collaboration.displayName(it.person.toCollabUser()) } ?: t("Only you")}"
             },
         ) {
             Text(
-                person?.let { Collaboration.displayName(it.person.toCollabUser()) } ?: "Only you",
+                person?.let { Collaboration.displayName(it.person.toCollabUser()) } ?: t("Only you"),
                 modifier = Modifier.weight(1f),
             )
             Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
@@ -1069,7 +1079,7 @@ private fun ShareWithField(
         VisibleToLine(offered.single().members, state.me, keptIn = offered.single().project.title)
     } else {
         Spacer(Modifier.height(8.dp))
-        EditorLabel("KEEP IN")
+        EditorLabel(t("KEEP IN"))
         offered.forEach { option ->
             val selected = option.project.id == projectId
             Row(
@@ -1146,9 +1156,9 @@ private fun SectionLabel(text: String) {
 /** A new routine starts at 09:00, every day. */
 private const val NEW_ROUTINE_MINUTES = 9 * 60
 
-private val WeekdayLetters = listOf("M", "T", "W", "T", "F", "S", "S")
-private val WeekdayNames = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-private val WeekdayShortNames = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+private val WeekdayLetters = listOf("一", "二", "三", "四", "五", "六", "日")
+private val WeekdayNames = listOf(t("Monday"), t("Tuesday"), t("Wednesday"), t("Thursday"), t("Friday"), t("Saturday"), t("Sunday"))
+private val WeekdayShortNames = listOf(t("Mon"), t("Tue"), t("Wed"), t("Thu"), t("Fri"), t("Sat"), t("Sun"))
 
 private fun timeText(minutes: Int, format: DateDisplayFormat): String =
     DateDisplay.formatTime(LocalTime(minutes / 60, minutes % 60), format)
@@ -1158,7 +1168,7 @@ internal fun routineSummary(definition: RoutineDefinition, format: DateDisplayFo
     val schedule = when (val value = definition.schedule) {
         is RoutineSchedule.Calendar -> {
             val days = if (value.weekdays.isEmpty() || value.weekdays.size == 7) {
-                "Every day"
+                t("Every day")
             } else {
                 value.weekdays.sorted().mapNotNull { WeekdayShortNames.getOrNull(it - 1) }.joinToString(", ")
             }

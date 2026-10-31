@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -102,12 +105,26 @@ fun ProjectEditDialog(
         availableParents.find { it.id == parentId }?.title ?: "None (top-level)"
     }
 
-    AlertDialog(
+    // A sheet from the bottom edge, full width, like the routine editor.
+    ModalBottomSheet(
         onDismissRequest = onDismiss,
-        title = { Text(if (isEdit) "Edit Project" else "Create Project") },
-        text = {
-            // The sharing section can make the dialog taller than the screen.
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            Text(
+                if (isEdit) t("Edit Project") else t("Create Project"),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            // The sharing section can make the sheet taller than the screen.
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 520.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -219,23 +236,20 @@ fun ProjectEditDialog(
                     ProjectSharingSection(project = project, modifier = Modifier.padding(top = 24.dp))
                 }
             }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    if (name.isNotBlank()) {
-                        onSave(name.trim(), selectedColor, parentId)
-                    }
-                },
-                enabled = name.isNotBlank(),
-            ) {
-                Text(if (isEdit) "Save" else "Create")
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onDismiss) { Text(t("Cancel")) }
+                TextButton(
+                    onClick = {
+                        if (name.isNotBlank()) {
+                            onSave(name.trim(), selectedColor, parentId)
+                        }
+                    },
+                    enabled = name.isNotBlank(),
+                ) {
+                    Text(if (isEdit) t("Save") else t("Create"))
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(t("Cancel"))
-            }
-        },
-    )
+        }
+    }
 }

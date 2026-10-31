@@ -186,7 +186,7 @@ private fun ReviewRow(
         ) {
             Icon(
                 imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                contentDescription = if (expanded) "Collapse" else "Expand",
+                contentDescription = if (expanded) t("Collapse") else t("Expand"),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Box(
@@ -355,7 +355,7 @@ private fun ReviewTaskRow(
     }
 }
 
-/** The review state of a row: grey for "Not reviewed yet" and "3d ago", amber for the one overdue state. */
+/** The review state of a row: grey for t("Not reviewed yet") and "3d ago", amber for the one overdue state. */
 @Composable
 private fun StalenessPillView(pill: StalenessPill) {
     val scheme = MaterialTheme.colorScheme

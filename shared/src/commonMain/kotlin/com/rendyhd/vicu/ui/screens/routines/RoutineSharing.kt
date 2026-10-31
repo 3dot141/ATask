@@ -1,5 +1,6 @@
 package com.rendyhd.vicu.ui.screens.routines
 
+import com.rendyhd.vicu.ui.i18n.t
 import com.rendyhd.vicu.domain.model.CollabState
 import com.rendyhd.vicu.domain.model.OccurrenceStatus
 import com.rendyhd.vicu.domain.model.Project
@@ -23,7 +24,7 @@ data class SharePersonOption(
     val person: User,
     /** The eligible projects this person can tick it off in; all of theirs when [canPick] is false. */
     val projects: List<ShareProjectOption>,
-    /** False when the person can only read every eligible project ("Can view only"). */
+    /** False when the person can only read every eligible project (t("Can view only")). */
     val canPick: Boolean,
 )
 
@@ -140,7 +141,7 @@ object RoutineSharing {
 
     /**
      * What the delete confirmation of a project adds when it holds shared routines:
-     * `It also holds the shared routine "Feed the cat". ...`; null when it holds none.
+     * `It also holds the shared routine t("Feed the cat"). ...`; null when it holds none.
      */
     fun deleteProjectNote(routineNames: List<String>): String? {
         if (routineNames.isEmpty()) return null
