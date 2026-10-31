@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.fab
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ internal const val SAY_A_TASK = "Say a task"
  * its click does not fire. The task said gets [defaults], the list's own; [openQuickAdd] is the
  * button's tap, for a device that cannot listen.
  *
- * A screen reader gets "Say a task" as a custom action; dragging only saves taps, so it has none.
+ * A screen reader gets t("Say a task") as a custom action; dragging only saves taps, so it has none.
  */
 @Composable
 internal fun Modifier.fabGestures(

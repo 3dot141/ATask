@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.ask
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.ai.AiContract
@@ -277,10 +278,10 @@ class AskViewModel(
     private fun announce(proposal: Proposal, applied: Applied) {
         val n = applied.appliedIds.size
         val text = when {
-            n == 0 -> "Nothing was changed"
-            proposal is Proposal.Create -> if (n == 1) "Added 1 task" else "Added $n tasks"
-            proposal is Proposal.Complete && proposal.done -> if (n == 1) "Completed 1 task" else "Completed $n tasks"
-            else -> if (n == 1) "Changed 1 task" else "Changed $n tasks"
+            n == 0 -> t("Nothing was changed")
+            proposal is Proposal.Create -> if (n == 1) t("Added 1 task") else "Added $n tasks"
+            proposal is Proposal.Complete && proposal.done -> if (n == 1) t("Completed 1 task") else "Completed $n tasks"
+            else -> if (n == 1) t("Changed 1 task") else "Changed $n tasks"
         }
         val undo = applied.undo
         if (undo == null) messages.post(text) else messages.post(text, "Undo") { viewModelScope.launch { undo() } }
@@ -352,7 +353,7 @@ class AskViewModel(
                 return
             }
             SpeechAvailability.DENIED -> {
-                messages.post("Allow the microphone in Settings to talk to Vicu.", "Settings") { speech.openSettings() }
+                messages.post(t("Allow the microphone in Settings to talk to Vicu."), "Settings") { speech.openSettings() }
                 return
             }
             SpeechAvailability.UNAVAILABLE -> {

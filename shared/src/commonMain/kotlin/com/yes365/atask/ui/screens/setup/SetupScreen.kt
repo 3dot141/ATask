@@ -282,7 +282,7 @@ private fun CleartextWarning(modifier: Modifier = Modifier) {
         ) {
             Icon(Icons.Filled.Warning, contentDescription = null)
             Text(
-                text = "This address is not encrypted (http://). Your password or token would cross " +
+                text = t("This address is not encrypted (http://). Your password or token would cross ") +
                     "the network in plain text. Use https:// unless this server is only reachable " +
                     "on your own network.",
                 style = MaterialTheme.typography.bodySmall,

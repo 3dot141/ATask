@@ -63,7 +63,7 @@ private fun collectDescendantIds(rootId: Long, projects: List<Project>): Set<Lon
 
 /**
  * The parent the dialog starts with: the edited project's own, or [initialParentId] for a new one
- * (0 is top level; "Add subproject" passes the project it was chosen on).
+ * (0 is top level; t("Add subproject") passes the project it was chosen on).
  */
 internal fun startingParentId(project: Project?, initialParentId: Long): Long =
     project?.parentProjectId ?: initialParentId

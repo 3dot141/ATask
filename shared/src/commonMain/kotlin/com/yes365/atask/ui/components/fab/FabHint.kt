@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.fab
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.local.FabHintStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,12 +25,12 @@ data class FabHintState(
 
     companion object {
         /** The hint shows after the fifth task added with +. */
-        const val ADDS_BEFORE_HINT = 5
+        val ADDS_BEFORE_HINT = 5
     }
 }
 
 /**
- * The one-time hint "Hold + to say a task" above the + button: after the fifth task added through
+ * The one-time hint t("Hold + to say a task") above the + button: after the fifth task added through
  * the + button's quick add, unless the user already added one by voice. It is marked shown when it
  * appears, so it never comes back, also when the app is closed while it shows.
  */

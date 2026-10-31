@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.section
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -146,7 +147,7 @@ fun SectionHeader(
 /** What a screen reader says for a header: its name, and how many open tasks the group has. */
 internal fun sectionDescription(title: String, taskCount: Int?): String =
     if (taskCount != null && taskCount > 0) {
-        "$title, ${if (taskCount == 1) "1 task" else "$taskCount tasks"}"
+        "$title, ${if (taskCount == 1) t("1 task") else "$taskCount tasks"}"
     } else {
         title
     }

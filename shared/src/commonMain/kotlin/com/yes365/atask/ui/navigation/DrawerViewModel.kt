@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.navigation
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.auth.AuthManager
@@ -355,7 +356,7 @@ class DrawerViewModel(
         }
     }
 
-    /** The drawer's "New project": creates it and says how that went in the app-wide snackbar. */
+    /** The drawer's t("New project"): creates it and says how that went in the app-wide snackbar. */
     fun createProject(name: String, hexColor: String, parentProjectId: Long) {
         viewModelScope.launch {
             when (val result = projectActions.create(name, hexColor, parentProjectId)) {

@@ -23,7 +23,7 @@ internal fun DiscardOnSignInDialog(
         title = { Text(t("Discard unsynced changes?")) },
         text = {
             Text(
-                "You are signing in to a different account than the one used on this device. " +
+                t("You are signing in to a different account than the one used on this device. ") +
                     "${changesLabel(prompt.unsyncedChanges)} made there never reached the server " +
                     "and will be discarded.",
             )
@@ -40,4 +40,4 @@ internal fun DiscardOnSignInDialog(
 }
 
 private fun changesLabel(count: Int): String =
-    if (count == 1) "One change" else "$count changes"
+    if (count == 1) t("One change") else "$count changes"

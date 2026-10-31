@@ -142,13 +142,13 @@ internal fun WhenTrayContent(
                 )
             }
             PresetChip(
-                label = current.time?.takeIf { !timeIsPreset }?.let { WhenLogic.timeLabel(it, fmt) } ?: "Other time…",
+                label = current.time?.takeIf { !timeIsPreset }?.let { WhenLogic.timeLabel(it, fmt) } ?: t("Other time…"),
                 selected = !timeIsPreset,
                 onClick = onCustomTime,
             )
         }
         PresetChip(
-            label = if (calendarOpen) "Hide calendar" else "Pick a date…",
+            label = if (calendarOpen) t("Hide calendar") else "Pick a date…",
             icon = Icons.Outlined.CalendarMonth,
             selected = calendarOpen,
             onClick = { calendarOpen = !calendarOpen },
@@ -255,7 +255,7 @@ internal fun RemindTrayContent(
         TrayHeading("Place")
         if (places.isEmpty()) {
             Text(
-                "Save places in Settings, Notifications, Places to be reminded when you arrive or leave.",
+                t("Save places in Settings, Notifications, Places to be reminded when you arrive or leave."),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 8.dp),

@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.upcoming
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.Project
 import com.yes365.atask.domain.model.Task
 import com.yes365.atask.ui.screens.shared.TaskProjectGroup
@@ -62,7 +63,7 @@ private fun groupByProject(tasks: List<Task>, projects: List<Project>): List<Tas
             val project = byId[projectId]
             TaskProjectGroup(
                 projectId = projectId,
-                title = project?.title ?: "No project",
+                title = project?.title ?: t("No project"),
                 hexColor = project?.hexColor.orEmpty(),
                 tasks = group,
             )

@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.task
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +25,7 @@ import sh.calvin.reorderable.ReorderableLazyListState
  * the user order tasks by hand (a project, the Inbox). A long press that moves the row drags it
  * ([onDragStarted] / [onDragStopped]); the rows that [canDrag] is false for keep their plain
  * long-press ([onLongClick]). A screen reader cannot drag: [onMoveUp] and [onMoveDown] (null where
- * the move is not possible) are offered as its "Move up" and "Move down" actions instead.
+ * the move is not possible) are offered as its t("Move up") and t("Move down") actions instead.
  *
  * A draggable row has no long click of its own, so the row's click would also fire when a long
  * press is let go without moving (the drag handle's selection). [DragClickGuard] drops that click.

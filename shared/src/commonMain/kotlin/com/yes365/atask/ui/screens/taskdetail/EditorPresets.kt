@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.taskdetail
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.TaskReminder
 import com.yes365.atask.util.DateDisplay
 import com.yes365.atask.util.DateDisplayFormat
@@ -45,19 +46,19 @@ internal fun movedDue(due: String?, date: LocalDate, zone: TimeZone): String {
     return requireNotNull(WhenLogic.dueOf(moved, zone)).toString()
 }
 
-/** What a quick move says on the app snackbar: "Due tomorrow", "Due this weekend". */
+/** What a quick move says on the app snackbar: t("Due tomorrow"), t("Due this weekend"). */
 internal fun quickMoveMessage(choice: WhenQuickChoice): String =
-    "Due " + choice.label.replaceFirstChar { it.lowercase() }
+    t("Due ") + choice.label.replaceFirstChar { it.lowercase() }
 
 /** A reminder the editor offers in place, and what its chip says. */
 internal data class ReminderPreset(val label: String, val reminder: TaskReminder)
 
 /** The relative presets: they count from the due date, so they are offered only when there is one. */
 private val RELATIVE_PRESETS = listOf(
-    "At due time" to 0L,
-    "15 minutes before" to -15 * 60L,
-    "1 hour before" to -60 * 60L,
-    "1 day before" to -24 * 60 * 60L,
+    t("At due time") to 0L,
+    t("15 minutes before") to -15 * 60L,
+    t("1 hour before") to -60 * 60L,
+    t("1 day before") to -24 * 60 * 60L,
 )
 
 /** The evening preset is offered until this hour; after it the evening is too close to plan for. */
@@ -67,7 +68,7 @@ private val MORNING = LocalTime(9, 0)
 
 /**
  * The reminders the editor's Remind row offers without a dialog, at [now] in [zone]:
- * "In 1 hour" (rounded up to the next 5 minutes), "This evening, 18:00" (before 17:00),
+ * t("In 1 hour") (rounded up to the next 5 minutes), "This evening, 18:00" (before 17:00),
  * "Tomorrow, 09:00", and with a due date ([due]) the relative ones that count from it.
  * Times are phrased with [fmt] (12 or 24 hour clock).
  */
@@ -76,7 +77,7 @@ internal fun reminderPresets(due: String?, now: Instant, zone: TimeZone, fmt: Da
     val presets = mutableListOf<ReminderPreset>()
 
     val inAnHour = roundUpToFiveMinutes(now + 1.hours, zone)
-    presets += ReminderPreset("In 1 hour", TaskReminder(reminder = inAnHour.toString()))
+    presets += ReminderPreset(t("In 1 hour"), TaskReminder(reminder = inAnHour.toString()))
     if (local.hour < EVENING_UNTIL_HOUR) {
         val evening = LocalDateTime(local.date, EVENING).toInstant(zone)
         presets += ReminderPreset(

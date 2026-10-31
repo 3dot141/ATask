@@ -57,9 +57,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 /** The GTD part a step belongs to, shown above its first step. */
 private fun groupOf(stepId: String): String = when (stepId) {
-    Guided.STEP_INBOX, Guided.STEP_MIND -> "Get clear"
-    Guided.STEP_WAITING -> "Get creative"
-    else -> "Get current"
+    Guided.STEP_INBOX, Guided.STEP_MIND -> t("Get clear")
+    Guided.STEP_WAITING -> t("Get creative")
+    else -> t("Get current")
 }
 
 /**
@@ -175,12 +175,12 @@ fun WeeklyReviewScreen(
 private fun StepRow(item: WeeklyStepUi, expanded: Boolean, onClick: () -> Unit) {
     val step = item.step
     val detail = when {
-        step.id == Guided.STEP_MIND -> "Talk or type out whatever is on your mind"
-        step.count == 0 -> "Nothing here"
+        step.id == Guided.STEP_MIND -> t("Talk or type out whatever is on your mind")
+        step.count == 0 -> t("Nothing here")
         step.id == Guided.STEP_DONE -> "${step.count} completed this week"
         step.id == Guided.STEP_UPCOMING -> "${step.count} due in the next ${Guided.LOOK_AHEAD_DAYS} days"
-        step.id == Guided.STEP_REVIEW -> if (step.count == 1) "1 project due" else "${step.count} projects due"
-        else -> if (step.count == 1) "1 task" else "${step.count} tasks"
+        step.id == Guided.STEP_REVIEW -> if (step.count == 1) t("1 project due") else "${step.count} projects due"
+        else -> if (step.count == 1) t("1 task") else "${step.count} tasks"
     }
     val looks = step.id == Guided.STEP_DONE || step.id == Guided.STEP_UPCOMING
     Row(

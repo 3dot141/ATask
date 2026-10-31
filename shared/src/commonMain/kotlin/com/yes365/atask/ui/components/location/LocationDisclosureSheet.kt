@@ -23,12 +23,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
  * background location: it names the data, that it is used while the app is closed, and why.
  */
 internal object LocationCopy {
-    const val TITLE = "Remind you at a place"
-    const val DISCLOSURE =
-        "Vicu uses your location to remind you when you arrive at or leave a place you chose, " +
+    val TITLE = t("Remind you at a place")
+    val DISCLOSURE =
+        t("Vicu uses your location to remind you when you arrive at or leave a place you chose, ") +
             "even when the app is closed or not in use."
-    const val PRIVACY =
-        "Your location, and where your places are, stay on this device. Only the names of your places " +
+    val PRIVACY =
+        t("Your location, and where your places are, stay on this device. Only the names of your places ") +
             "and your location reminders sync through your Vikunja server, so your other devices can use them."
     const val ALWAYS = "On the next screen, allow location access all the time (Always)."
     const val ACCESS_NEEDED = "Location reminders need location access set to Always, so they work while Vicu is closed."

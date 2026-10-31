@@ -173,7 +173,7 @@ internal fun SettingsDialogHost(
             }
         }
 
-        // "Add subproject": a new project with the chosen one preselected as its parent.
+        // t("Add subproject"): a new project with the chosen one preselected as its parent.
         is SettingsDialog.SubprojectEditor -> ProjectEditDialog(
             project = null,
             projects = state.projects,

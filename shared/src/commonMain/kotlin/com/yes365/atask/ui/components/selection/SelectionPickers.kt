@@ -101,16 +101,16 @@ fun SelectionPickers(
         SelectionAction.REMOVE -> AlertDialog(
             onDismissRequest = onDismiss,
             title = {
-                Text(if (selectedDescendantCount > 0) "Open parent task to remove" else "Remove selected tasks?")
+                Text(if (selectedDescendantCount > 0) t("Open parent task to remove") else t("Remove selected tasks?"))
             },
             text = {
                 Text(
                     if (selectedDescendantCount > 0) {
                         "The selection includes a parent task with $selectedDescendantCount nested " +
                             "${if (selectedDescendantCount == 1) "subtask" else "subtasks"}. " +
-                            "Open the parent to choose whether to delete or keep them."
+                            t("Open the parent to choose whether to delete or keep them.")
                     } else if (selectedCount == 1) {
-                        "This task will be permanently removed."
+                        t("This task will be permanently removed.")
                     } else {
                         "$selectedCount tasks will be permanently removed."
                     },

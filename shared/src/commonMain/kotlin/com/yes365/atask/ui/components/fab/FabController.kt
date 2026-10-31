@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.fab
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +41,7 @@ class FabController(
      */
     fun startHold(defaults: TaskDefaults, openQuickAdd: () -> Unit): Boolean = begin(handsFree = false, defaults, openQuickAdd)
 
-    /** "Say a task" for a screen reader: listens without a hold; the card has Add and Cancel. */
+    /** t("Say a task") for a screen reader: listens without a hold; the card has Add and Cancel. */
     fun sayTask(defaults: TaskDefaults, openQuickAdd: () -> Unit) {
         begin(handsFree = true, defaults, openQuickAdd)
     }

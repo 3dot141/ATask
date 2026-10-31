@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.settings
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.runtime.saveable.Saver
 
 /**
@@ -26,7 +27,7 @@ internal sealed interface SettingsDialog {
     /** [projectId] null creates a project. */
     data class ProjectEditor(val projectId: Long?) : SettingsDialog
 
-    /** Creates a project with [parentId] chosen as its parent ("Add subproject"). */
+    /** Creates a project with [parentId] chosen as its parent (t("Add subproject")). */
     data class SubprojectEditor(val parentId: Long) : SettingsDialog
     data class DeleteProject(val projectId: Long) : SettingsDialog
     data class ArchiveProject(val projectId: Long) : SettingsDialog
@@ -36,7 +37,7 @@ internal sealed interface SettingsDialog {
     data class RenameCategory(val categoryId: String) : SettingsDialog
     data class MoveToCategory(val projectId: Long) : SettingsDialog
 
-    /** "New category…" in [MoveToCategory]: a new category that [projectId] moves into. */
+    /** t("New category…") in [MoveToCategory]: a new category that [projectId] moves into. */
     data class NewCategoryFor(val projectId: Long) : SettingsDialog
     data class AddCategoryAbove(val projectId: Long) : SettingsDialog
 

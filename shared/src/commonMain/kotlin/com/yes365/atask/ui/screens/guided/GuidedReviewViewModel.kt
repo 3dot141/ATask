@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.guided
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.ai.AiContract
@@ -39,7 +40,7 @@ data class GuidedReviewUiState(
     val index: Int = 0,
     val project: Project? = null,
     val path: String = "",
-    /** "Reviewed 41 days ago" or "Not reviewed yet". */
+    /** t("Reviewed 41 days ago") or "Not reviewed yet". */
     val lastReviewed: String = "",
     val health: ProjectHealth? = null,
     val canArchive: Boolean = false,
@@ -194,7 +195,7 @@ class GuidedReviewViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                if (suggestionsOn) messages.post("No suggestions: " + (e.message ?: "the model did not answer."))
+                if (suggestionsOn) messages.post(t("No suggestions: ") + (e.message ?: "the model did not answer."))
                 suggestionsOn = false
             }
             refreshPage()
@@ -206,7 +207,7 @@ class GuidedReviewViewModel(
     /** A new date (or none) for [task]: an untouched one or the next step. */
     fun schedule(task: Task, due: DueChoice?) {
         val change = CardDraft(due = due).changeOf(task) ?: return
-        val note = if (due == DueChoice.Clear) "No date now" else "Scheduled"
+        val note = if (due == DueChoice.Clear) t("No date now") else "Scheduled"
         act { if (writer.write(change)) done(task.id, note) { log.changed(change, dayClock.day.value.zone) } else failed(task, "change") }
     }
 
@@ -309,8 +310,8 @@ class GuidedReviewViewModel(
             it.copy(
                 finished = true,
                 project = null,
-                summary = if (projects.isEmpty()) "No project was reviewed" else "Projects: $projects",
-                taskSummary = "Tasks: " + log.counts().text,
+                summary = if (projects.isEmpty()) t("No project was reviewed") else "Projects: $projects",
+                taskSummary = t("Tasks: ") + log.counts().text,
                 canUndo = log.all.any { e -> !e.deleted } || reviewedBefore.isNotEmpty() || archivedBefore.isNotEmpty() || created.isNotEmpty(),
             )
         }
@@ -334,7 +335,7 @@ class GuidedReviewViewModel(
             created.clear()
             reviewedBefore.clear()
             archivedBefore.clear()
-            _uiState.update { it.copy(busy = false, canUndo = false, summary = "Everything is back as it was", taskSummary = "") }
+            _uiState.update { it.copy(busy = false, canUndo = false, summary = t("Everything is back as it was"), taskSummary = "") }
         }
     }
 }

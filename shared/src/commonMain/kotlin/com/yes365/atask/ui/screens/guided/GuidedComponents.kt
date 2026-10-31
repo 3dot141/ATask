@@ -154,7 +154,7 @@ internal fun ProjectChoice(
     FilterChip(
         selected = changed,
         onClick = { picking = true },
-        label = { Text(path.ifBlank { "Choose a project" }) },
+        label = { Text(path.ifBlank { t("Choose a project") }) },
         leadingIcon = { Icon(Icons.Outlined.Folder, contentDescription = null, modifier = Modifier.size(18.dp)) },
         modifier = Modifier.dashedOutline(MaterialTheme.colorScheme.primary, suggested),
     )
@@ -177,11 +177,11 @@ internal fun ProjectChoice(
 internal fun SuggestionLine(suggestion: Suggestion?, waiting: Boolean) {
     val text = when {
         suggestion != null -> when (suggestion.close) {
-            "done" -> "Looks done already" + suggestion.reason.let { if (it.isBlank()) "" else ": $it" }
-            "delete" -> "Looks like it can go" + suggestion.reason.let { if (it.isBlank()) "" else ": $it" }
+            "done" -> t("Looks done already") + suggestion.reason.let { if (it.isBlank()) "" else ": $it" }
+            "delete" -> t("Looks like it can go") + suggestion.reason.let { if (it.isBlank()) "" else ": $it" }
             else -> if (suggestion.leavesIt) "Fine as it is: ${suggestion.reason}" else suggestion.reason
         }
-        waiting -> "Getting a suggestion"
+        waiting -> t("Getting a suggestion")
         else -> return
     }
     Row(

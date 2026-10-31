@@ -34,7 +34,7 @@ internal fun AuthDebugLogDialog(onDismiss: () -> Unit) {
     val dispatchers: AppDispatchers = koinInject()
     LogTextDialog(
         title = t("Auth Debug Log"),
-        copyLabel = "Auth debug log",
+        copyLabel = t("Auth debug log"),
         // The log is a file: read it off the main thread.
         read = { withContext(dispatchers.io) { AuthDebugLog.readLog() } },
         newestLast = true,

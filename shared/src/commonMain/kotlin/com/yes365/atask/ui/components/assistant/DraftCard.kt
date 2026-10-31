@@ -73,15 +73,15 @@ fun Modifier.dashedOutline(color: Color, active: Boolean): Modifier =
 /** Why a field was left empty, in words for the card; [brainDump] for a brain dump's limits (section 4.8.3). */
 fun droppedText(d: DroppedField, brainDump: Boolean = false): String = when (d.field) {
     "when" -> "Did not understand the date “${d.value.toString().trim('"')}”"
-    "priority" -> "Left out the priority"
-    "repeat" -> "Left out the repeat"
-    "reminder" -> "Left out the reminder"
-    "place" -> "No saved place matches"
-    "title" -> "Skipped a task without a title"
+    "priority" -> t("Left out the priority")
+    "repeat" -> t("Left out the repeat")
+    "reminder" -> t("Left out the reminder")
+    "place" -> t("No saved place matches")
+    "title" -> t("Skipped a task without a title")
     "task" -> "More than ${if (brainDump) AiContract.limits.brainDumpTasksMax else AiContract.limits.draftsMax} tasks: the rest were left out"
     "project" -> "More than ${AiContract.limits.brainDumpProjectsMax} new projects: the rest were left out"
-    "project_title" -> "Skipped a new project without a name"
-    "parent" -> "Its parent project was not found, so it goes at the top level"
+    "project_title" -> t("Skipped a new project without a name")
+    "parent" -> t("Its parent project was not found, so it goes at the top level")
     else -> "Left out ${d.field}"
 }
 
@@ -171,15 +171,15 @@ fun DraftCard(
                     )
                 }
                 draft.reminder?.let { r ->
-                    val text = r.beforeDueMinutes?.let { m -> if (m == 0) "Remind at due time" else "Remind ${minutesText(m)} before" }
-                        ?: r.at?.let { at -> "Remind " + DateDisplay.format(DateContext.CHIP, at, LocalClockDay.current.date, false, LocalDateFormat.current) }
+                    val text = r.beforeDueMinutes?.let { m -> if (m == 0) t("Remind at due time") else "Remind ${minutesText(m)} before" }
+                        ?: r.at?.let { at -> t("Remind ") + DateDisplay.format(DateContext.CHIP, at, LocalClockDay.current.date, false, LocalDateFormat.current) }
                         ?: ""
                     DraftChip(text, "reminder" in guessed, "reminder" in changed, if (editable) ({ onChange(draft.copy(reminder = null)) }) else null, editable)
                 }
                 draft.place?.let { p ->
                     val name = context?.places?.firstOrNull { it.id == p.placeId }?.name ?: "a place"
                     DraftChip(
-                        text = (if (p.trigger == "leave") "When I leave " else "When I arrive at ") + name,
+                        text = (if (p.trigger == "leave") t("When I leave ") else t("When I arrive at ")) + name,
                         guessed = "place" in guessed,
                         changed = "place" in changed,
                         onClick = if (editable) ({ onChange(draft.copy(place = null)) }) else null,
@@ -207,8 +207,8 @@ fun DraftCard(
 }
 
 private fun minutesText(minutes: Int): String = when {
-    minutes % 1440 == 0 -> (minutes / 1440).let { if (it == 1) "1 day" else "$it days" }
-    minutes % 60 == 0 -> (minutes / 60).let { if (it == 1) "1 hour" else "$it hours" }
+    minutes % 1440 == 0 -> (minutes / 1440).let { if (it == 1) t("1 day") else "$it days" }
+    minutes % 60 == 0 -> (minutes / 60).let { if (it == 1) t("1 hour") else "$it hours" }
     else -> "$minutes min"
 }
 
@@ -283,7 +283,7 @@ private fun ProjectChip(
 private fun PriorityChip(draft: CheckedDraft, editable: Boolean, guessed: Boolean, changed: Boolean, onChange: (CheckedDraft) -> Unit) {
     if (draft.priority == null && !editable) return
     var open by remember { mutableStateOf(false) }
-    val names = listOf("No priority", "Low", "Medium", "High", "Urgent")
+    val names = listOf(t("No priority"), "Low", "Medium", "High", "Urgent")
     Box {
         DraftChip(if (draft.priority == null) "Priority" else names[draft.priority], guessed, changed, if (editable) ({ open = true }) else null)
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {

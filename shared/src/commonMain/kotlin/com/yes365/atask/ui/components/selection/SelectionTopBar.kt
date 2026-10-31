@@ -66,15 +66,15 @@ fun SelectionTopBar(
                     overflowExpanded = false
                     onSchedule()
                 }
-                SelectionMenuItem("Set priority") {
+                SelectionMenuItem(t("Set priority")) {
                     overflowExpanded = false
                     onSetPriority()
                 }
-                SelectionMenuItem("Move project") {
+                SelectionMenuItem(t("Move project")) {
                     overflowExpanded = false
                     onMove()
                 }
-                SelectionMenuItem("Apply label") {
+                SelectionMenuItem(t("Apply label")) {
                     overflowExpanded = false
                     onApplyLabel()
                 }

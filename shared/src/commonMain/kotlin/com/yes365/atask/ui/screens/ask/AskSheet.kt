@@ -127,7 +127,7 @@ fun AskSheet(
                         InputBar(state, viewModel)
                     } else {
                         Text(
-                            "Ask is off. Turn it on in Settings, Assistant.",
+                            t("Ask is off. Turn it on in Settings, Assistant."),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                         )
@@ -147,7 +147,7 @@ private fun Header(state: AskUiState, viewModel: AskViewModel, onClose: () -> Un
         Column(Modifier.weight(1f).padding(start = 12.dp)) {
             Text(if (state.talkMode) "Talk" else "Ask", style = MaterialTheme.typography.titleMedium)
             Text(
-                if (about.isNotBlank()) "About $about, or anything else" else "Ask about your tasks, or tap the microphone and talk",
+                if (about.isNotBlank()) "About $about, or anything else" else t("Ask about your tasks, or tap the microphone and talk"),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,

@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.location
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.location.DeviceLocation
@@ -93,7 +94,7 @@ class PlacesViewModel(
                     throw e
                 } catch (e: Exception) {
                     Logger.w(TAG, "Place search failed: ${e.message}")
-                    PlaceSearchState.Failed("Could not search. Check the connection and try again.")
+                    PlaceSearchState.Failed(t("Could not search. Check the connection and try again."))
                 }
             }
         }
@@ -137,7 +138,7 @@ class PlacesViewModel(
         viewModelScope.launch { locations.deletePlace(place.id) }
     }
 
-    /** The device's position as a place ("Current location" when nothing is known about it), or null. */
+    /** The device's position as a place (t("Current location") when nothing is known about it), or null. */
     fun useCurrentLocation(onFound: (PlaceSuggestion?) -> Unit) {
         viewModelScope.launch {
             _locating.value = true
@@ -146,7 +147,7 @@ class PlacesViewModel(
                     lastPoint = point
                     val named = runCatching { search.reverse(point) }.getOrNull()
                     named?.copy(latitude = point.latitude, longitude = point.longitude)
-                        ?: PlaceSuggestion("Current location", "", point.latitude, point.longitude)
+                        ?: PlaceSuggestion(t("Current location"), "", point.latitude, point.longitude)
                 }
             } finally {
                 _locating.value = false

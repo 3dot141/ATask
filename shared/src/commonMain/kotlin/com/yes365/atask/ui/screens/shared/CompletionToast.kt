@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.shared
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.repository.TaskRepository
 import com.yes365.atask.util.AppMessages
 import com.yes365.atask.util.NetworkResult
@@ -18,7 +19,7 @@ object NoCompletionToast : CompletionToast {
 }
 
 /**
- * The "Completed, Undo" snackbar of the contract (docs/cross-app-semantics-v1.md section 7.3).
+ * The t("Completed, Undo") snackbar of the contract (docs/cross-app-semantics-v1.md section 7.3).
  * The first row that collapses posts "Completed"; while that message is still within
  * [CompletionHold.TOAST_MILLIS] a further row replaces it with "2 completed", "3 completed" and
  * the 6 s clock restarts (the app scaffold shows only the newest message). Undo reopens every row

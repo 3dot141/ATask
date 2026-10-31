@@ -60,7 +60,7 @@ fun NotificationPermissionSheet(coordinator: NotificationPermissionCoordinator) 
                     .fillMaxWidth()
                     .padding(top = 8.dp),
             ) {
-                Text(if (toSettings) "Open settings" else "Allow notifications")
+                Text(if (toSettings) t("Open settings") else t("Allow notifications"))
             }
             TextButton(
                 onClick = coordinator::dismiss,

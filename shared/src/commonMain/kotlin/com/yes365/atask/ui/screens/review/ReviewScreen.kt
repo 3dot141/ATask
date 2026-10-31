@@ -137,7 +137,7 @@ fun ReviewScreen(
             val items = if (state.tab == ReviewTab.DUE) state.due else state.all
             if (items.isEmpty()) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(if (state.tab == ReviewTab.DUE) "You're caught up." else "No tracked projects.")
+                    Text(if (state.tab == ReviewTab.DUE) t("You're caught up.") else t("No tracked projects."))
                 }
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -355,7 +355,7 @@ private fun ReviewTaskRow(
     }
 }
 
-/** The review state of a row: grey for t("Not reviewed yet") and "3d ago", amber for the one overdue state. */
+/** The review state of a row: grey for t("Not reviewed yet") and t("3d ago"), amber for the one overdue state. */
 @Composable
 private fun StalenessPillView(pill: StalenessPill) {
     val scheme = MaterialTheme.colorScheme

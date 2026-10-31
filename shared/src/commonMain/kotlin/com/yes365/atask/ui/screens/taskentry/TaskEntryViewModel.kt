@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.taskentry
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.AppMessages
 import com.yes365.atask.util.Logger
 import com.yes365.atask.util.randomUuid
@@ -106,7 +107,7 @@ data class TaskEntryUiState(
         get() = pickedPlace ?: placeMatch?.let { PlacePick(it.place, it.trigger) }
 }
 
-/** "Remind me when I arrive at (or leave) [place]", before the task exists. */
+/** t("Remind me when I arrive at (or leave) [place]"), before the task exists. */
 data class PlacePick(val place: SavedPlace, val trigger: LocationTrigger)
 
 class TaskEntryViewModel(
@@ -600,7 +601,7 @@ class TaskEntryViewModel(
                 }
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(isSaving = false, error = e.message ?: "Failed to save task")
+                    it.copy(isSaving = false, error = e.message ?: t("Failed to save task"))
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.task
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -94,11 +95,11 @@ private fun buildChipList(result: ParseResult, today: LocalDate, dateFormat: Dat
 
 /** What a screen reader says for the close icon of a chip: it names what is removed. */
 internal fun chipDismissDescription(type: TokenType, label: String): String = when (type) {
-    TokenType.DATE -> "Remove due date"
-    TokenType.PRIORITY -> "Remove priority"
+    TokenType.DATE -> t("Remove due date")
+    TokenType.PRIORITY -> t("Remove priority")
     TokenType.LABEL -> "Remove label $label"
     TokenType.PROJECT -> "Remove project $label"
-    TokenType.RECURRENCE -> "Remove repeat"
+    TokenType.RECURRENCE -> t("Remove repeat")
     TokenType.PLACE -> "Remove location reminder"
 }
 

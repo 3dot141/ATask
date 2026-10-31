@@ -116,7 +116,7 @@ fun GuidedReviewScreen(
                     onBack = viewModel::back,
                     onSkip = viewModel::skip,
                     onNext = viewModel::markReviewed,
-                    nextLabel = "Mark reviewed",
+                    nextLabel = t("Mark reviewed"),
                 )
             }
         },
@@ -125,8 +125,8 @@ fun GuidedReviewScreen(
             when {
                 state.loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
                 state.finished -> FinishedPane(
-                    title = if (state.total == 0) "Nothing to review" else "Review done",
-                    summary = if (state.total == 0) "No project is due for review." else listOf(state.summary, state.taskSummary).filter { it.isNotBlank() }.joinToString("\n"),
+                    title = if (state.total == 0) t("Nothing to review") else t("Review done"),
+                    summary = if (state.total == 0) t("No project is due for review.") else listOf(state.summary, state.taskSummary).filter { it.isNotBlank() }.joinToString("\n"),
                     canUndo = state.canUndo,
                     busy = state.busy,
                     onUndo = viewModel::undoAll,
@@ -177,7 +177,7 @@ private fun ReviewPage(
             )
             if (state.suggesting) SuggestionLine(null, waiting = true)
 
-            ChoiceHeading("Still working on it?")
+            ChoiceHeading(t("Still working on it?"))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(selected = true, onClick = {}, label = { Text(t("Keep")) })
                 if (state.canArchive) {
@@ -201,7 +201,7 @@ private fun ReviewPage(
                 }
             }
 
-            ChoiceHeading("Next step")
+            ChoiceHeading(t("Next step"))
             val next = state.nextTask
             if (next != null) {
                 OutlinedCard(Modifier.fillMaxWidth()) {
@@ -243,7 +243,7 @@ private fun UntouchedTaskRow(row: UntouchedRow, busy: Boolean, viewModel: Guided
     Column(Modifier.fillMaxWidth().padding(start = 12.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f).clickable(enabled = task.title.isNotEmpty(), onClick = onOpen)) {
-                Text(task.title.ifEmpty { "A task" }, style = MaterialTheme.typography.bodyLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                Text(task.title.ifEmpty { t("A task") }, style = MaterialTheme.typography.bodyLarge, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 val detail = note ?: row.untouchedDays?.let { "Untouched for ${it} days" }
                 if (detail != null) {
                     Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

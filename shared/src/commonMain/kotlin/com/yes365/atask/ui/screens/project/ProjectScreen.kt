@@ -344,7 +344,7 @@ fun ProjectScreen(
         if (exit == ProjectExit.LEFT) onProjectGone()
     }
 
-    // "Mark reviewed" offers Undo, the same snackbar as the review screen's.
+    // t("Mark reviewed") offers Undo, the same snackbar as the review screen's.
     LaunchedEffect(reviewUndo) {
         val previous = reviewUndo ?: return@LaunchedEffect
         val result = snackbarHostState.showSnackbar(

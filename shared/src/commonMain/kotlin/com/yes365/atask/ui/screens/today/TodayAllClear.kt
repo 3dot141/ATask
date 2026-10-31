@@ -92,7 +92,7 @@ private fun NextUpOffer(task: Task, onOpenUpcoming: () -> Unit) {
     Row(
         modifier = Modifier
             .heightIn(min = 48.dp)
-            .clickable(onClickLabel = "Open Upcoming", role = Role.Button, onClick = onOpenUpcoming)
+            .clickable(onClickLabel = t("Open Upcoming"), role = Role.Button, onClick = onOpenUpcoming)
             .padding(horizontal = 12.dp)
             .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,

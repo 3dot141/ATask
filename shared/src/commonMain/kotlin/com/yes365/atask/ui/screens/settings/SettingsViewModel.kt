@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.settings
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.countOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -369,7 +370,7 @@ class SettingsViewModel(
 
     // --- Inbox project ---
 
-    /** The Inbox project picker and a project's "Set as Inbox". */
+    /** The Inbox project picker and a project's t("Set as Inbox"). */
     fun setInboxProject(projectId: Long) {
         viewModelScope.launch {
             val result = projectActions.setInbox(projectId)
@@ -424,7 +425,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             sessionCleanup.clearCaches(discardUnsynced)
             platformSettingsHooks.triggerImmediateSync()
-            _messages.update { null to "Cache cleared, syncing..." }
+            _messages.update { null to t("Cache cleared, syncing...") }
         }
     }
 
@@ -574,7 +575,7 @@ class SettingsViewModel(
             val label = Label(id = 0, title = name, hexColor = hexColor)
             when (val result = labelRepository.create(label)) {
                 is NetworkResult.Success -> {
-                    _messages.update { null to "Label created" }
+                    _messages.update { null to t("Label created") }
                 }
                 is NetworkResult.Error -> {
                     _messages.update { result.message to null }
@@ -589,7 +590,7 @@ class SettingsViewModel(
             val updated = label.copy(title = name, hexColor = hexColor)
             when (val result = labelRepository.update(updated)) {
                 is NetworkResult.Success -> {
-                    _messages.update { null to "Label updated" }
+                    _messages.update { null to t("Label updated") }
                 }
                 is NetworkResult.Error -> {
                     _messages.update { result.message to null }
@@ -603,7 +604,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             when (val result = labelRepository.delete(labelId)) {
                 is NetworkResult.Success -> {
-                    _messages.update { null to "Label deleted" }
+                    _messages.update { null to t("Label deleted") }
                 }
                 is NetworkResult.Error -> {
                     _messages.update { result.message to null }
@@ -618,7 +619,7 @@ class SettingsViewModel(
     fun updateBottomBarSlot(index: Int, slot: BottomBarSlot) {
         viewModelScope.launch {
             bottomBarPrefsStore.updateSlot(index, slot)
-            _messages.update { null to "Bottom bar updated" }
+            _messages.update { null to t("Bottom bar updated") }
         }
     }
 
@@ -629,7 +630,7 @@ class SettingsViewModel(
     fun resetBottomBar() {
         viewModelScope.launch {
             bottomBarPrefsStore.reset()
-            _messages.update { null to "Bottom bar reset to defaults" }
+            _messages.update { null to t("Bottom bar reset to defaults") }
         }
     }
 
@@ -638,14 +639,14 @@ class SettingsViewModel(
     fun saveCustomList(customList: CustomList) {
         viewModelScope.launch {
             customListRepository.upsert(customList)
-            _messages.update { null to "List saved" }
+            _messages.update { null to t("List saved") }
         }
     }
 
     fun deleteCustomList(id: String) {
         viewModelScope.launch {
             customListRepository.delete(id)
-            _messages.update { null to "List deleted" }
+            _messages.update { null to t("List deleted") }
         }
     }
 
@@ -822,7 +823,7 @@ class SettingsViewModel(
                 _messages.update { null to result }
             }
         } catch (e: Exception) {
-            _messages.update { (e.message ?: "Failed to send notification") to null }
+            _messages.update { (e.message ?: t("Failed to send notification")) to null }
         }
     }
 
@@ -852,14 +853,14 @@ class SettingsViewModel(
 
     fun triggerSync() {
         platformSettingsHooks.triggerImmediateSync()
-        _messages.update { null to "Sync started" }
+        _messages.update { null to t("Sync started") }
     }
 
     fun retryFailedActions() {
         viewModelScope.launch {
             pendingActionDao.retryAllFailed()
             platformSettingsHooks.triggerImmediateSync()
-            _messages.update { null to "Retrying failed actions" }
+            _messages.update { null to t("Retrying failed actions") }
         }
     }
 
@@ -869,7 +870,7 @@ class SettingsViewModel(
             // The rows those changes protected may differ from the server; refresh them fully.
             syncCursor.requestFullReconcile()
             platformSettingsHooks.triggerImmediateSync()
-            _messages.update { null to "Failed actions cleared" }
+            _messages.update { null to t("Failed actions cleared") }
         }
     }
 

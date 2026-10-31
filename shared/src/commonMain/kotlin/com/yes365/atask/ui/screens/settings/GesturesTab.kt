@@ -46,24 +46,24 @@ import com.yes365.atask.data.local.SwipeAction
 import com.yes365.atask.ui.components.task.SwipeActions
 
 /** Shown above the two swipe settings. */
-internal const val SWIPE_INTRO =
-    "Choose what swiping a task does. A swipe needs a drag of half the row's width."
+internal val SWIPE_INTRO =
+    t("Choose what swiping a task does. A swipe needs a drag of half the row's width.")
 
 /**
  * What dragging does, and what a TalkBack user does instead: every row that can be dragged has
- * "Move up" and "Move down" among its actions.
+ * t("Move up") and t("Move down") among its actions.
  */
-internal const val DRAG_GESTURE_TEXT =
-    "Reorder tasks in the Inbox and in projects ordered by hand, and the projects, lists and " +
+internal val DRAG_GESTURE_TEXT =
+    t("Reorder tasks in the Inbox and in projects ordered by hand, and the projects, lists and ") +
         "labels in the menu. With TalkBack, use the Move up and Move down actions of the row instead."
 
 /**
  * A completed task stays in the list for a few seconds (struck through), whichever way it was
  * completed. No snackbar is shown for it, and none for the swipe actions.
  */
-internal const val UNDO_TIP =
-    "Tip: A task you complete stays in the list for a few seconds. " +
-        "Tap its checkbox again to undo."
+internal val UNDO_TIP =
+    t("Tip: A task you complete stays in the list for a few seconds. ") +
+        t("Tap its checkbox again to undo.")
 
 // ========== Gestures Tab ==========
 
@@ -98,7 +98,7 @@ internal fun GesturesTab(
         item(key = "swipe_right") {
             SwipeSettingRow(
                 icon = Icons.Outlined.SwipeRight,
-                gesture = "Swipe Right",
+                gesture = t("Swipe Right"),
                 action = swipeRight,
                 onClick = { choosingRight = true },
             )
@@ -107,7 +107,7 @@ internal fun GesturesTab(
         item(key = "swipe_left") {
             SwipeSettingRow(
                 icon = Icons.Outlined.SwipeLeft,
-                gesture = "Swipe Left",
+                gesture = t("Swipe Left"),
                 action = swipeLeft,
                 onClick = { choosingRight = false },
             )
@@ -133,7 +133,7 @@ internal fun GesturesTab(
         item(key = "gesture_long_press") {
             GestureRow(
                 icon = Icons.Outlined.TouchApp,
-                gesture = "Long Press",
+                gesture = t("Long Press"),
                 description = t("Select multiple tasks"),
                 color = MaterialTheme.colorScheme.tertiary,
             )
@@ -142,7 +142,7 @@ internal fun GesturesTab(
         item(key = "gesture_drag") {
             GestureRow(
                 icon = Icons.Outlined.DragHandle,
-                gesture = "Long Press and Drag",
+                gesture = t("Long Press and Drag"),
                 description = DRAG_GESTURE_TEXT,
                 color = MaterialTheme.colorScheme.secondary,
             )
@@ -151,7 +151,7 @@ internal fun GesturesTab(
         item(key = "gesture_checkbox") {
             GestureRow(
                 icon = Icons.Outlined.CheckCircle,
-                gesture = "Tap Checkbox",
+                gesture = t("Tap Checkbox"),
                 description = t("Toggle task completion"),
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -190,7 +190,7 @@ internal fun GesturesTab(
 
     choosingRight?.let { right ->
         ChoiceDialog(
-            title = if (right) "Swipe right" else "Swipe left",
+            title = if (right) t("Swipe right") else t("Swipe left"),
             options = SwipeAction.entries.map { it.name to SwipeActions.name(it) },
             selected = (if (right) swipeRight else swipeLeft).name,
             onPick = { name ->

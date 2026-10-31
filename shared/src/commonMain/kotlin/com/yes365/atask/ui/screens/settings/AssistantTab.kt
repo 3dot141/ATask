@@ -65,7 +65,7 @@ import org.koin.compose.koinInject
 
 /** The languages offered for local speech (Whisper's codes); `auto` detects per phrase. */
 internal val SPEECH_LANGUAGES: List<Pair<String, String>> = listOf(
-    "auto" to "Detect automatically",
+    "auto" to t("Detect automatically"),
     "en" to "English", "nl" to "Dutch", "de" to "German", "fr" to "French", "es" to "Spanish",
     "it" to "Italian", "pt" to "Portuguese", "pl" to "Polish", "sv" to "Swedish", "da" to "Danish",
     "no" to "Norwegian", "fi" to "Finnish", "cs" to "Czech", "uk" to "Ukrainian", "ru" to "Russian",
@@ -99,7 +99,7 @@ internal fun AssistantTab(
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         item(key = "intro") {
             Text(
-                "Bring your own model: a key for OpenAI, Anthropic, Gemini or OpenRouter, or a model running on your own " +
+                t("Bring your own model: a key for OpenAI, Anthropic, Gemini or OpenRouter, or a model running on your own ") +
                     "computer with Ollama or Open WebUI. Vicu calls it straight from this device; you pay your provider " +
                     "for what you use. Nothing is sent until you set it up and agree.",
                 style = MaterialTheme.typography.bodyMedium,
@@ -112,7 +112,7 @@ internal fun AssistantTab(
         item(key = "provider_header") { SectionHeader(Icons.Outlined.AutoAwesome, "Thinking") }
         item(key = "thinking_intro") {
             Text(
-                "The model that turns what you say into tasks and answers your questions. It runs at your provider, with your key.",
+                t("The model that turns what you say into tasks and answers your questions. It runs at your provider, with your key."),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
@@ -139,7 +139,7 @@ internal fun AssistantTab(
                     }
                     if (AiSettings.isInsecureRemote(address)) {
                         Text(
-                            "This address uses plain http outside your local network: your tasks would travel unencrypted.",
+                            t("This address uses plain http outside your local network: your tasks would travel unencrypted."),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                         )
@@ -172,7 +172,7 @@ internal fun AssistantTab(
             }
             if (separateAsk) {
                 item(key = "model_ask") {
-                    ModelField("Ask model", settings.askModel, state.models, viewModel::setAskModel)
+                    ModelField(t("Ask model"), settings.askModel, state.models, viewModel::setAskModel)
                 }
             }
             item(key = "model_actions") {
@@ -196,7 +196,7 @@ internal fun AssistantTab(
             item(key = "dictation") {
                 SwitchRow(
                     label = t("Smart dictation"),
-                    description = "Hold +, slide up to the sparkle and keep talking: your tasks appear as cards while you talk, " +
+                    description = t("Hold +, slide up to the sparkle and keep talking: your tasks appear as cards while you talk, ") +
                         "with dates, projects and labels, for you to check before adding. Holding + and letting go still " +
                         "adds one task at once. Also Break into steps in a task's menu, and Make tasks when you share text to Vicu.",
                     checked = settings.dictationOn,
@@ -208,7 +208,7 @@ internal fun AssistantTab(
                 item(key = "brain_dump") {
                     SwitchRow(
                         label = t("Brain dump"),
-                        description = "Smart dictation starts as a brain dump: talk as long as you like and nothing is sent " +
+                        description = t("Smart dictation starts as a brain dump: talk as long as you like and nothing is sent ") +
                             "until you tap Organize. Then everything you said is sorted into projects, subprojects, tasks, " +
                             "subtasks and notes, for you to check before adding. The same switch is at the top of the dictation sheet.",
                         checked = settings.brainDump,
@@ -220,8 +220,8 @@ internal fun AssistantTab(
             item(key = "ask") {
                 SwitchRow(
                     label = t("Ask"),
-                    description = "Tap the sparkle next to Search on any list, or Ask in the menu, and ask about your tasks. " +
-                        "Changes come as cards; nothing changes until you apply one.",
+                    description = t("Tap the sparkle next to Search on any list, or Ask in the menu, and ask about your tasks. ") +
+                        t("Changes come as cards; nothing changes until you apply one."),
                     checked = settings.askOn,
                     onCheckedChange = { viewModel.setFeature(AssistantFeature.ASK, it) },
                 )
@@ -254,11 +254,11 @@ internal fun AssistantTab(
         item(key = "speech_intro") {
             Text(
                 if (state.localSpeechAvailable) {
-                    "Turns your voice into text on this phone, before anything goes to the model; audio never leaves the " +
+                    t("Turns your voice into text on this phone, before anything goes to the model; audio never leaves the ") +
                         "device. Download a speech model for better accuracy with your project and label names; without one, " +
                         "the system's speech recognition is used."
                 } else {
-                    "Local speech is not available on this device; the system's speech recognition is used."
+                    t("Local speech is not available on this device; the system's speech recognition is used.")
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -316,7 +316,7 @@ internal fun AssistantTab(
             }
         }
         // --- Privacy ---
-        item(key = "privacy_header") { SectionHeader(Icons.Outlined.Lock, "What is sent") }
+        item(key = "privacy_header") { SectionHeader(Icons.Outlined.Lock, t("What is sent")) }
         item(key = "privacy") {
             Text(
                 PRIVACY_TEXT,
@@ -388,8 +388,8 @@ internal fun AssistantTab(
     }
 }
 
-private const val PRIVACY_TEXT =
-    "Dictation sends the text of what you said and the names of your projects, labels and places. Ask and Talk " +
+private val PRIVACY_TEXT =
+    t("Dictation sends the text of what you said and the names of your projects, labels and places. Ask and Talk ") +
         "send your messages and the tasks the model looks up. Audio stays on this phone unless you choose your " +
         "provider for speech. Hidden tasks, comments, attachments, your Vikunja token and your server address are " +
         "never sent. The key is kept in this device's secure storage and never syncs."
@@ -402,14 +402,14 @@ private fun KeyField(hasKey: Boolean, required: Boolean, onSave: (String) -> Uni
         OutlinedTextField(
             value = key,
             onValueChange = { key = it },
-            label = { Text(if (required) "API key" else "API key (optional)") },
+            label = { Text(if (required) t("API key") else t("API key (optional)")) },
             placeholder = { if (hasKey) Text(t("Saved. Type a new key to replace it.")) },
             singleLine = true,
             visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
                 IconButton(onClick = { visible = !visible }) {
-                    Icon(if (visible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility, contentDescription = if (visible) "Hide key" else "Show key")
+                    Icon(if (visible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility, contentDescription = if (visible) t("Hide key") else t("Show key"))
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -459,15 +459,15 @@ private fun TestResult(state: AssistantUiState) {
         val ask = s.capabilities(s.askModel)
         if (dictation == null && ask == null) return
         Column(Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-            if (dictation != null) ResultLine(dictation.structured != null, "Dictation model: " + if (dictation.structured != null) "ready" else "no structured answers")
-            if (ask != null) ResultLine(ask.tools && ask.structured != null, "Ask model: " + if (ask.tools) "ready" else "does not call tools")
+            if (dictation != null) ResultLine(dictation.structured != null, t("Dictation model: ") + if (dictation.structured != null) "ready" else "no structured answers")
+            if (ask != null) ResultLine(ask.tools && ask.structured != null, t("Ask model: ") + if (ask.tools) "ready" else "does not call tools")
         }
         return
     }
     Column(Modifier.padding(horizontal = 16.dp, vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        ResultLine(test.models != null, if (test.models != null) "Model list: ${test.models.size} models" else "Model list: not available (type the name)")
-        ResultLine(test.canDictate, if (test.canDictate) "Structured answers work (${test.structured?.wire})" else "No structured answers: dictation cannot use this model")
-        ResultLine(test.tools, if (test.tools) "Tool calls work: Ask and Talk can use this model" else "No tool calls: Ask and Talk cannot use this model")
+        ResultLine(test.models != null, if (test.models != null) "Model list: ${test.models.size} models" else t("Model list: not available (type the name)"))
+        ResultLine(test.canDictate, if (test.canDictate) "Structured answers work (${test.structured?.wire})" else t("No structured answers: dictation cannot use this model"))
+        ResultLine(test.tools, if (test.tools) t("Tool calls work: Ask and Talk can use this model") else t("No tool calls: Ask and Talk cannot use this model"))
         for (problem in test.problems.take(4)) {
             Text(problem, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -479,7 +479,7 @@ private fun ResultLine(ok: Boolean, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             if (ok) Icons.Outlined.CheckCircle else Icons.Outlined.ErrorOutline,
-            contentDescription = if (ok) "Works" else "Does not work",
+            contentDescription = if (ok) "Works" else t("Does not work"),
             tint = if (ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
             modifier = Modifier.size(18.dp),
         )

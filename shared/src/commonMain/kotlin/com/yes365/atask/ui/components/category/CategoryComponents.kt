@@ -145,7 +145,7 @@ fun CategoryHeader(
                             Modifier.combinedClickable(
                                 role = Role.Button,
                                 onClickLabel = if (collapsed) "Expand" else "Collapse",
-                                onLongClickLabel = "More options",
+                                onLongClickLabel = t("More options"),
                                 onLongClick = { menuOpen = true },
                                 onClick = onToggle,
                             )
@@ -258,8 +258,8 @@ fun CategoryNameDialog(
 }
 
 /**
- * "Move to category…" for [projectTitle]: no category or one of [categories] (display order), the
- * one it is in ([currentId]) marked, and "New category…" to make one and move it there.
+ * t("Move to category…") for [projectTitle]: no category or one of [categories] (display order), the
+ * one it is in ([currentId]) marked, and t("New category…") to make one and move it there.
  */
 @Composable
 fun MoveToCategoryDialog(

@@ -167,8 +167,8 @@ fun InboxScreen(
                     item {
                         EmptyState(
                             icon = Icons.Outlined.Inbox,
-                            title = if (state.notice != null) "Inbox unavailable" else "Inbox is empty",
-                            subtitle = state.notice ?: "Tasks without a project appear here",
+                            title = if (state.notice != null) t("Inbox unavailable") else "Inbox is empty",
+                            subtitle = state.notice ?: t("Tasks without a project appear here"),
                         )
                     }
                 } else {

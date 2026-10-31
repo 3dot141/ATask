@@ -217,7 +217,7 @@ internal fun DescriptionField(
     val editorTheme = vicuCascadeEditorTheme()
     val editorStrings = remember {
         CascadeEditorStrings.default().copy(
-            emptyDocumentPlaceholder = "Add notes",
+            emptyDocumentPlaceholder = t("Add notes"),
         )
     }
     val editorRegistry = remember { createVikunjaDescriptionEditorRegistry() }

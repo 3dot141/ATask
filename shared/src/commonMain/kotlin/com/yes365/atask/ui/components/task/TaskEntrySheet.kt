@@ -434,7 +434,7 @@ fun TaskEntrySheet(
                 )
             }
             EntryTray.REMIND -> {
-                // The times are read when the tray opens, so "In 1 hour" means from now.
+                // The times are read when the tray opens, so t("In 1 hour") means from now.
                 val presets = remember(which, fields.dueDate, dateFormat) {
                     reminderPresets(fields.dueDate, SystemTimeSource.now(), day.zone, dateFormat)
                 }
@@ -1049,7 +1049,7 @@ private fun Checklist(items: List<String>, onAdd: (String) -> Unit, onRemove: (I
             TextField(
                 value = draft,
                 onValueChange = { draft = it },
-                placeholder = { Text(if (items.isEmpty()) "Checklist" else "Add an item") },
+                placeholder = { Text(if (items.isEmpty()) "Checklist" else t("Add an item")) },
                 singleLine = true,
                 modifier = Modifier.weight(1f),
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),

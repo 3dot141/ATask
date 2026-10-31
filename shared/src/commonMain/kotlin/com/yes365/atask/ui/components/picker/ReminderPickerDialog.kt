@@ -58,11 +58,11 @@ import kotlinx.datetime.toInstant
 private data class RelativeOption(val label: String, val seconds: Long, val relativeTo: String)
 
 private val RELATIVE_OPTIONS = listOf(
-    RelativeOption("At due time", 0, "due_date"),
-    RelativeOption("5 minutes before", -300, "due_date"),
-    RelativeOption("15 minutes before", -900, "due_date"),
-    RelativeOption("1 hour before", -3600, "due_date"),
-    RelativeOption("1 day before", -86400, "due_date"),
+    RelativeOption(t("At due time"), 0, "due_date"),
+    RelativeOption(t("5 minutes before"), -300, "due_date"),
+    RelativeOption(t("15 minutes before"), -900, "due_date"),
+    RelativeOption(t("1 hour before"), -3600, "due_date"),
+    RelativeOption(t("1 day before"), -86400, "due_date"),
 )
 
 // Where the add or edit of an absolute reminder is. The list dialog stays underneath the pickers.
@@ -85,7 +85,7 @@ fun ReminderPickerDialog(
     onLocationClick: (() -> Unit)? = null,
     onRemoveLocation: () -> Unit = {},
 ) {
-    // Relative reminders ("15 min before" etc.) anchor to the due date; without one they'd
+    // Relative reminders (t("15 min before") etc.) anchor to the due date; without one they'd
     // never fire, so disable them and tell the user why.
     val hasDueDate = dueDate.isNotBlank() && !DateUtils.isNullDate(dueDate)
     val is24Hour = LocalIs24Hour.current
@@ -152,7 +152,7 @@ fun ReminderPickerDialog(
                 }
                 if (reminders.isEmpty() && locationReminder == null) {
                     Text(
-                        "No reminders set",
+                        t("No reminders set"),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -203,7 +203,7 @@ fun ReminderPickerDialog(
                     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         if (!hasDueDate) {
                             Text(
-                                "Set a due date to use relative reminders",
+                                t("Set a due date to use relative reminders"),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -241,7 +241,7 @@ fun ReminderPickerDialog(
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
-                                Text(if (locationReminder == null) "At a location..." else "Change location...")
+                                Text(if (locationReminder == null) t("At a location...") else t("Change location..."))
                             }
                         }
                     }
@@ -275,7 +275,7 @@ fun ReminderPickerDialog(
                     .padding(start = 12.dp, end = 12.dp, top = 16.dp),
             ) {
                 Text(
-                    "Select date",
+                    t("Select date"),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 12.dp),

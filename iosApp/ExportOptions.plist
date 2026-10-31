@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Export of the release archive to App Store Connect (TestFlight), used by scripts/testflight.sh and .github/workflows/ios.yml. -->
+<!-- Export of the release archive to App Store Connect (TestFlight). Manual signing: the three
+     App Store profiles are created through the ASC API (the local key cannot update profiles
+     automatically), so the archive names them per target. -->
 <plist version="1.0">
 <dict>
 	<key>method</key>
@@ -8,7 +10,20 @@
 	<key>destination</key>
 	<string>upload</string>
 	<key>signingStyle</key>
-	<string>automatic</string>
+	<string>manual</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.yes365.atask</key>
+		<string>ATask App Store</string>
+		<key>com.yes365.atask.widgets</key>
+		<string>ATaskWidgets App Store</string>
+		<key>com.yes365.atask.share</key>
+		<string>ATaskShare App Store</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>Apple Distribution</string>
+	<key>teamID</key>
+	<string>C6422MSGP6</string>
 	<key>uploadSymbols</key>
 	<true/>
 	<key>manageAppVersionAndBuildNumber</key>

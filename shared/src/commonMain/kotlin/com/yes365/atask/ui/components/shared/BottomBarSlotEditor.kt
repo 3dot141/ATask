@@ -84,7 +84,7 @@ fun BottomBarSlotEditor(
             Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                 // Type dropdown
                 Text(
-                    "View type",
+                    t("View type"),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -127,7 +127,7 @@ fun BottomBarSlotEditor(
                 if (selectedType == BottomBarSlotType.PROJECT && projects.isNotEmpty()) {
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "Select project",
+                        t("Select project"),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -172,7 +172,7 @@ fun BottomBarSlotEditor(
                 if (selectedType == BottomBarSlotType.CUSTOM_LIST && customLists.isNotEmpty()) {
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "Select list",
+                        t("Select list"),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -221,7 +221,7 @@ fun BottomBarSlotEditor(
                     HorizontalDivider()
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "Choose icon",
+                        t("Choose icon"),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -234,7 +234,7 @@ fun BottomBarSlotEditor(
 
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "Choose colour",
+                        t("Choose colour"),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

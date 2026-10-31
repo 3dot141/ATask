@@ -26,11 +26,11 @@ internal object SwipeActions {
     /** The choice in Settings. */
     fun name(action: SwipeAction): String = when (action) {
         SwipeAction.COMPLETE -> "Complete"
-        SwipeAction.CHOOSE_WHEN -> "Choose when"
-        SwipeAction.DUE_TODAY -> "Due today"
-        SwipeAction.DUE_TOMORROW -> "Due tomorrow"
-        SwipeAction.URGENT -> "Mark urgent"
-        SwipeAction.MOVE -> "Move to project"
+        SwipeAction.CHOOSE_WHEN -> t("Choose when")
+        SwipeAction.DUE_TODAY -> t("Due today")
+        SwipeAction.DUE_TOMORROW -> t("Due tomorrow")
+        SwipeAction.URGENT -> t("Mark urgent")
+        SwipeAction.MOVE -> t("Move to project")
         SwipeAction.DELETE -> "Delete"
         SwipeAction.NONE -> "Nothing"
     }
@@ -49,15 +49,15 @@ internal object SwipeActions {
 
     /** What the swipe does, as the Gestures tab says it. */
     fun description(action: SwipeAction): String = when (action) {
-        SwipeAction.COMPLETE -> "Complete the task"
-        SwipeAction.CHOOSE_WHEN -> "Open the When sheet to choose a day and time"
-        SwipeAction.DUE_TODAY -> "Make the task due today"
-        SwipeAction.DUE_TOMORROW -> "Make the task due tomorrow"
-        SwipeAction.URGENT -> "Mark the task urgent (priority 4)"
-        SwipeAction.MOVE -> "Choose a project to move the task to"
+        SwipeAction.COMPLETE -> t("Complete the task")
+        SwipeAction.CHOOSE_WHEN -> t("Open the When sheet to choose a day and time")
+        SwipeAction.DUE_TODAY -> t("Make the task due today")
+        SwipeAction.DUE_TOMORROW -> t("Make the task due tomorrow")
+        SwipeAction.URGENT -> t("Mark the task urgent (priority 4)")
+        SwipeAction.MOVE -> t("Choose a project to move the task to")
         SwipeAction.DELETE ->
-            "Delete the task. Asks first while Confirm before deleting is on, and always for a task with subtasks"
-        SwipeAction.NONE -> "Nothing: the row stays put"
+            t("Delete the task. Asks first while Confirm before deleting is on, and always for a task with subtasks")
+        SwipeAction.NONE -> t("Nothing: the row stays put")
     }
 
     fun icon(action: SwipeAction): ImageVector = when (action) {
@@ -105,14 +105,14 @@ fun DeleteTaskDialog(
     val hasDescendants = descendantCount > 0
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (hasDescendants) "Delete task and subtasks?" else "Delete task?") },
+        title = { Text(if (hasDescendants) t("Delete task and subtasks?") else t("Delete task?")) },
         text = {
             Text(
                 if (hasDescendants) {
                     "This task has $descendantCount ${if (descendantCount == 1) "subtask" else "subtasks"}. " +
-                        "Delete them too, or keep them as standalone tasks."
+                        t("Delete them too, or keep them as standalone tasks.")
                 } else {
-                    "This action cannot be undone."
+                    t("This action cannot be undone.")
                 },
             )
         },
@@ -124,7 +124,7 @@ fun DeleteTaskDialog(
                     }
                 }
                 TextButton(onClick = { onDelete(true) }) {
-                    Text(if (hasDescendants) "Delete all" else "Delete", color = MaterialTheme.colorScheme.error)
+                    Text(if (hasDescendants) t("Delete all") else "Delete", color = MaterialTheme.colorScheme.error)
                 }
             }
         },

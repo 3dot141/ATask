@@ -128,7 +128,7 @@ private sealed interface ThreadEntry {
     }
 }
 
-/** The thread as entries: the "Visible to" line first, a divider before each new day (section 9.5). */
+/** The thread as entries: the t("Visible to") line first, a divider before each new day (section 9.5). */
 private fun threadEntries(
     comments: List<TaskComment>,
     loading: Boolean,
@@ -256,7 +256,7 @@ fun TaskCommentsScreen(
                             ) {
                                 Icon(
                                     imageVector = if (on) Icons.Filled.NotificationsActive else Icons.Outlined.NotificationsNone,
-                                    contentDescription = if (on) "Notifications on for this task" else "Notify me about new comments",
+                                    contentDescription = if (on) t("Notifications on for this task") else t("Notify me about new comments"),
                                 )
                             }
                         }
@@ -308,7 +308,7 @@ fun TaskCommentsScreen(
                             CircularProgressIndicator(modifier = Modifier.size(24.dp))
                         }
                         ThreadEntry.Empty -> Text(
-                            text = state.error?.let { "Could not read the comments: $it" } ?: "No comments yet.",
+                            text = state.error?.let { "Could not read the comments: $it" } ?: t("No comments yet."),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.fillMaxWidth().padding(vertical = 36.dp),
@@ -365,7 +365,7 @@ fun TaskCommentsScreen(
     }
 }
 
-/** "Visible to you, Maya and Sam" with their avatars: what makes posting deliberate. */
+/** t("Visible to you, Maya and Sam") with their avatars: what makes posting deliberate. */
 @Composable
 private fun VisibleToRow(members: List<User>, me: Long?) {
     if (members.isEmpty()) return
@@ -443,7 +443,7 @@ private fun CommentRow(
     }
     val edited = !comment.pending && Collaboration.isCommentEdited(comment.created, comment.updated)
     val status = when {
-        comment.pending -> "Waiting to sync"
+        comment.pending -> t("Waiting to sync")
         edited -> "$time · edited"
         else -> time
     }
@@ -468,12 +468,12 @@ private fun CommentRow(
                         .combinedClickable(
                             onClick = { if (selected) onSelect() },
                             onLongClick = onSelect,
-                            onLongClickLabel = "Show comment actions",
+                            onLongClickLabel = t("Show comment actions"),
                         )
                         .semantics {
                             customActions = buildList {
                                 if (canEdit) add(CustomAccessibilityAction("Edit comment") { onEdit(); true })
-                                if (canDelete) add(CustomAccessibilityAction("Delete comment") { onDelete(); true })
+                                if (canDelete) add(CustomAccessibilityAction(t("Delete comment")) { onDelete(); true })
                             }
                         }
                 } else {

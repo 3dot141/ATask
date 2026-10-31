@@ -52,7 +52,7 @@ internal fun LazyListScope.accountSection(
             InfoRow(
                 label = t("Auth method"),
                 value = when (state.authMethod) {
-                    "oidc" -> "Signed in via SSO"
+                    "oidc" -> t("Signed in via SSO")
                     "password" -> "Password"
                     "api_token" -> "API Token"
                     else -> state.authMethod.ifBlank { t("Unknown") }

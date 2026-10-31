@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.guided
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.ai.AiSettingsStore
@@ -25,7 +26,7 @@ data class WeeklyReviewUiState(
     /** The tasks of `done` (Look back) and `upcoming` (Look ahead). */
     val recentlyDone: List<Task> = emptyList(),
     val lookAhead: List<Task> = emptyList(),
-    /** "Last done 9 days ago", or "Not done yet". */
+    /** t("Last done 9 days ago"), or t("Not done yet"). */
     val lastDone: String = "",
     val dictationReady: Boolean = false,
     val finished: Boolean = false,
@@ -66,7 +67,7 @@ class WeeklyReviewViewModel(
                     steps = steps,
                     recentlyDone = Guided.recentlyDone(w),
                     lookAhead = Guided.lookAhead(w),
-                    lastDone = if (age == null) "Not done yet" else "Last done ${Guided.ago(age)}",
+                    lastDone = if (age == null) t("Not done yet") else "Last done ${Guided.ago(age)}",
                     dictationReady = ai.dictationReady,
                 )
             }.collect { next -> _uiState.update { next.copy(finished = it.finished) } }

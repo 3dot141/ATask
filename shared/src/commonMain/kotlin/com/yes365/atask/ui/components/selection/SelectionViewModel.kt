@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.selection
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.domain.model.Label
@@ -56,7 +57,7 @@ class SelectionViewModel(
     private val appScope: CoroutineScope,
     private val dayClock: DayClock,
     navigationTicker: NavigationTicker = NavigationTicker(),
-    /** Where completed rows that no screen holds go: the app-wide "Completed, Undo" toast. */
+    /** Where completed rows that no screen holds go: the app-wide t("Completed, Undo") toast. */
     private val completionToast: CompletionToast = NoCompletionToast,
 ) : ViewModel() {
 
@@ -252,7 +253,7 @@ class SelectionViewModel(
     private suspend fun updateSelected(ids: Set<Long>, verb: String, change: (Task) -> Task) {
         val byId = taskRepository.getByIds(ids).associateBy { it.id }
         // A selected task that is gone from the cache counts as a failure, not as done.
-        val missing = ids.filter { it !in byId }.map { BulkOutcome(it, NetworkResult.Error("Task is no longer available")) }
+        val missing = ids.filter { it !in byId }.map { BulkOutcome(it, NetworkResult.Error(t("Task is no longer available"))) }
         val outcomes = runBulk(byId.keys.toList()) { taskRepository.update(change(byId.getValue(it))) }
         finishBulk(verb, outcomes + missing)
     }
@@ -283,7 +284,7 @@ class SelectionViewModel(
                         } catch (e: CancellationException) {
                             throw e
                         } catch (e: Exception) {
-                            NetworkResult.Error(e.message ?: "Unexpected error")
+                            NetworkResult.Error(e.message ?: t("Unexpected error"))
                         }
                         BulkOutcome(id, result)
                     }

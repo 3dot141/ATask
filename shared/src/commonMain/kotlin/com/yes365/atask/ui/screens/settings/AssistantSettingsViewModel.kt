@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.settings
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.ai.AiContract
@@ -121,7 +122,7 @@ class AssistantSettingsViewModel(
         viewModelScope.launch {
             val id = store.current().providerId ?: return@launch
             keys.setKey(id, key.trim().ifEmpty { null })
-            local.update { it.copy(test = null, message = if (key.isBlank()) "Key removed" else "Key saved on this device") }
+            local.update { it.copy(test = null, message = if (key.isBlank()) t("Key removed") else t("Key saved on this device")) }
             refreshKey()
             testNewModels()
         }
@@ -165,7 +166,7 @@ class AssistantSettingsViewModel(
             local.update { it.copy(loadingModels = true, modelsError = null) }
             try {
                 val models = providers.listModels(store.current())
-                local.update { it.copy(models = models, loadingModels = false, modelsError = if (models.isEmpty()) "The provider lists no models. Type the model's name." else null) }
+                local.update { it.copy(models = models, loadingModels = false, modelsError = if (models.isEmpty()) t("The provider lists no models. Type the model's name.") else null) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: LlmException) {
@@ -182,7 +183,7 @@ class AssistantSettingsViewModel(
             val settings = store.current()
             val models = listOf(settings.dictationModel, settings.askModel).filter { it.isNotBlank() }.distinct()
             if (models.isEmpty()) {
-                local.update { it.copy(testing = false, message = "Choose a model first") }
+                local.update { it.copy(testing = false, message = t("Choose a model first")) }
                 return@launch
             }
             var last: ConnectionTest? = null
@@ -238,12 +239,12 @@ class AssistantSettingsViewModel(
         val why = local.value.test?.problems?.firstOrNull()
         val problem = when {
             !on -> null
-            model.isBlank() -> "Choose a model first."
-            s.capabilities(model) == null -> why ?: "The model could not be tested. Check the key and the connection."
+            model.isBlank() -> t("Choose a model first.")
+            s.capabilities(model) == null -> why ?: t("The model could not be tested. Check the key and the connection.")
             feature == AssistantFeature.DICTATION && s.capabilities(model)?.structured == null ->
-                why ?: "This model did not give a structured answer in the test, which dictation needs. Choose another model."
+                why ?: t("This model did not give a structured answer in the test, which dictation needs. Choose another model.")
             feature != AssistantFeature.DICTATION && s.capabilities(model)?.tools != true ->
-                why ?: "This model did not call a tool in the test, which Ask needs. Choose another model."
+                why ?: t("This model did not call a tool in the test, which Ask needs. Choose another model.")
             else -> null
         }
         if (problem != null) {
@@ -318,7 +319,7 @@ class AssistantSettingsViewModel(
             conversations.clear()
             keptTranscripts.clear()
             speechHost.release()
-            local.update { AssistantUiState(localSpeechAvailable = it.localSpeechAvailable, suggestedSpeechModel = it.suggestedSpeechModel, message = "Assistant data deleted") }
+            local.update { AssistantUiState(localSpeechAvailable = it.localSpeechAvailable, suggestedSpeechModel = it.suggestedSpeechModel, message = t("Assistant data deleted")) }
         }
     }
 

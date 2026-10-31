@@ -159,7 +159,7 @@ private fun NotSetUp(onOpenSettings: () -> Unit, modifier: Modifier) {
         Icon(Icons.Outlined.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(48.dp))
         Text(t("Ask your tasks anything"), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 16.dp))
         Text(
-            "Connect a model you bring (a key for OpenAI, Anthropic, Gemini or OpenRouter, or your own Ollama or Open WebUI), " +
+            t("Connect a model you bring (a key for OpenAI, Anthropic, Gemini or OpenRouter, or your own Ollama or Open WebUI), ") +
                 "test it and switch Ask on.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -190,8 +190,8 @@ internal fun Conversation(state: AskUiState, viewModel: AskViewModel, onTaskClic
         if (conversation.messages.isEmpty()) {
             item(key = "hello") {
                 Text(
-                    if (state.talkMode) "Just talk, for example: “What's on today?”"
-                    else "Ask about your tasks, for example “What is overdue?” or “Move everything for the trip to Friday”.",
+                    if (state.talkMode) t("Just talk, for example: “What's on today?”")
+                    else t("Ask about your tasks, for example “What is overdue?” or “Move everything for the trip to Friday”."),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -320,9 +320,9 @@ private fun TaskMarkRow(task: Task, onClick: () -> Unit, onToggle: () -> Unit) {
 private fun OutcomeLine(outcome: ProposalOutcome) {
     val text = when (outcome.status) {
         "applied" -> "Applied"
-        "partly_applied" -> "Partly applied"
+        "partly_applied" -> t("Partly applied")
         "declined" -> "Declined"
-        else -> "Not applied"
+        else -> t("Not applied")
     }
     Text(
         "$text: ${outcome.summary}",
@@ -344,9 +344,9 @@ private fun ProposalCard(pending: PendingProposal, onApply: () -> Unit, onDeclin
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 when (proposal) {
-                    is Proposal.Create -> if (proposal.size == 1) "Add 1 task" else "Add ${proposal.size} tasks"
-                    is Proposal.Update -> if (proposal.size == 1) "Change 1 task" else "Change ${proposal.size} tasks"
-                    is Proposal.Complete -> (if (proposal.done) "Complete " else "Open again ") + if (proposal.size == 1) "1 task" else "${proposal.size} tasks"
+                    is Proposal.Create -> if (proposal.size == 1) t("Add 1 task") else "Add ${proposal.size} tasks"
+                    is Proposal.Update -> if (proposal.size == 1) t("Change 1 task") else "Change ${proposal.size} tasks"
+                    is Proposal.Complete -> (if (proposal.done) t("Complete ") else t("Open again ")) + if (proposal.size == 1) t("1 task") else "${proposal.size} tasks"
                 },
                 style = MaterialTheme.typography.titleSmall,
             )
@@ -359,12 +359,12 @@ private fun ProposalCard(pending: PendingProposal, onApply: () -> Unit, onDeclin
                         Text(change.before.title, style = MaterialTheme.typography.bodyMedium)
                         val lines = buildList {
                             change.title?.let { add("Title: $it") }
-                            change.due?.let { (local, hasTime) -> add("Due: " + DateDisplay.format(DateContext.CHIP, local, day.date, !hasTime, format)) }
-                            if (change.clearDue) add("Due: no date")
-                            change.projectId?.let { add("Project: " + snapshot.path(it)) }
-                            if (change.labelsAdd.isNotEmpty()) add("Add labels: " + change.labelsAdd.joinToString(", "))
-                            if (change.labelsRemove.isNotEmpty()) add("Remove labels: " + change.labelsRemove.joinToString(", ") { it.title })
-                            change.priority?.let { add("Priority: " + listOf("none", "low", "medium", "high", "urgent")[it]) }
+                            change.due?.let { (local, hasTime) -> add(t("Due: ") + DateDisplay.format(DateContext.CHIP, local, day.date, !hasTime, format)) }
+                            if (change.clearDue) add(t("Due: no date"))
+                            change.projectId?.let { add(t("Project: ") + snapshot.path(it)) }
+                            if (change.labelsAdd.isNotEmpty()) add(t("Add labels: ") + change.labelsAdd.joinToString(", "))
+                            if (change.labelsRemove.isNotEmpty()) add(t("Remove labels: ") + change.labelsRemove.joinToString(", ") { it.title })
+                            change.priority?.let { add(t("Priority: ") + listOf("none", "low", "medium", "high", "urgent")[it]) }
                             change.appendNotes?.let { add("Add to notes: $it") }
                         }
                         for (line in lines) Text(line, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -403,9 +403,9 @@ internal fun InputBar(state: AskUiState, viewModel: AskViewModel) {
         if (mic.on) {
             Text(
                 when {
-                    mic.speaking -> "Speaking. Tap the microphone to talk."
+                    mic.speaking -> t("Speaking. Tap the microphone to talk.")
                     mic.words.isNotBlank() -> mic.words
-                    else -> "Listening. Just talk; a pause sends it."
+                    else -> t("Listening. Just talk; a pause sends it.")
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
@@ -421,9 +421,9 @@ internal fun InputBar(state: AskUiState, viewModel: AskViewModel) {
                     contentColor = if (mic.on) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSecondaryContainer,
                     modifier = Modifier.size(48.dp).semantics {
                         contentDescription = when {
-                            mic.speaking -> "Stop the answer and talk"
-                            mic.on -> "Microphone on. Tap to stop listening"
-                            else -> "Talk: turn the microphone on"
+                            mic.speaking -> t("Stop the answer and talk")
+                            mic.on -> t("Microphone on. Tap to stop listening")
+                            else -> t("Talk: turn the microphone on")
                         }
                     },
                 ) {

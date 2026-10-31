@@ -60,7 +60,7 @@ fun VoiceAddCard(state: VoiceAddState, onDone: () -> Unit, onCancel: () -> Unit)
                 .widthIn(max = 560.dp)
                 // Taps on the card stay on it.
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {}
-                .semantics { paneTitle = "Say a task" },
+                .semantics { paneTitle = t("Say a task") },
             shape = MaterialTheme.shapes.extraLarge,
             color = scheme.surfaceContainerHigh,
             contentColor = scheme.onSurface,
@@ -72,7 +72,7 @@ fun VoiceAddCard(state: VoiceAddState, onDone: () -> Unit, onCancel: () -> Unit)
                     MicPulse(level = state.level, listening = listening, reduceMotion = rememberReduceMotion())
                     Spacer(Modifier.size(16.dp))
                     Text(
-                        text = state.text.ifBlank { if (listening) "Listening…" else "Turning your words into text…" },
+                        text = state.text.ifBlank { if (listening) "Listening…" else t("Turning your words into text…") },
                         style = MaterialTheme.typography.titleMedium,
                         color = if (state.text.isBlank()) scheme.onSurfaceVariant else scheme.onSurface,
                         modifier = Modifier

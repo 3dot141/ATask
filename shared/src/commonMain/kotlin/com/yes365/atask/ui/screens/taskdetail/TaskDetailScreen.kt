@@ -592,7 +592,7 @@ fun TaskDetailScreen(
                 val locationLabel = locationReminder?.label()
                 val hasReminder = task.reminders.isNotEmpty() || locationLabel != null
                 val reminderText = if (!hasReminder) "" else ReminderFormat.summary(task.reminders, dateFormat, locationLabel)
-                val projectName = state.allProjects.find { it.id == task.projectId }?.title ?: "No project"
+                val projectName = state.allProjects.find { it.id == task.projectId }?.title ?: t("No project")
                 val (doneSubtasks, totalSubtasks) = remember(task.relatedTasks) { task.subtaskProgress() }
                 val collab = LocalCollab.current
                 val access = collab.access(task.projectId)
@@ -736,7 +736,7 @@ fun TaskDetailScreen(
                                     removeDescription = "Remove location reminder",
                                 )
                             }
-                            // The times are read when the row opens, so "In 1 hour" means from now.
+                            // The times are read when the row opens, so t("In 1 hour") means from now.
                             val presets = remember(openRow, task.dueDate, dateFormat) {
                                 reminderPresets(task.dueDate, SystemTimeSource.now(), clockDay.zone, dateFormat)
                             }
@@ -847,7 +847,7 @@ fun TaskDetailScreen(
                         PropertyRow(
                             icon = Icons.Outlined.AttachFile,
                             name = "Attachments",
-                            value = if (count == 1) "1 file" else "$count files",
+                            value = if (count == 1) t("1 file") else "$count files",
                             description = "Add attachment, $count attached",
                             onClick = filePickerLauncher,
                         )
@@ -928,7 +928,7 @@ fun TaskDetailScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable(onClickLabel = "Open subtask") { openSubtask(subtask.id) }
+                            .clickable(onClickLabel = t("Open subtask")) { openSubtask(subtask.id) }
                             .padding(vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -1288,7 +1288,7 @@ fun TaskDetailScreen(
         )
     }
 
-    // The permission explanation for the "Arrive: Home" presets; the location dialog hosts its own.
+    // The permission explanation for the t("Arrive: Home") presets; the location dialog hosts its own.
     if (!showLocationDialog) LocationDisclosureSheet(placesViewModel)
 
     if (showLocationDialog) {
@@ -1338,12 +1338,12 @@ fun TaskDetailScreen(
 }
 
 /** Where the subtasks section starts in the editor's list: after the headline, the quick moves, the notes and the properties. */
-private const val SUBTASKS_ITEM_INDEX = 4
+private val SUBTASKS_ITEM_INDEX = 4
 
 /** How many label chips a Tags row shows before "+N". */
-private const val MAX_ROW_LABELS = 2
+private val MAX_ROW_LABELS = 2
 
-/** How many saved places the Remind row offers as "Arrive: Home" presets. */
+/** How many saved places the Remind row offers as t("Arrive: Home") presets. */
 private const val MAX_PLACE_PRESETS = 3
 
 /** The scrim over the list behind the editor. */

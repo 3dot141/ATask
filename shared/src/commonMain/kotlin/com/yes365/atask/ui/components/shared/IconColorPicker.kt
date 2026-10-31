@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.shared
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -57,7 +58,7 @@ fun IconColorPicker(
     val initialOther = remember { currentOther }
     val other = currentOther ?: initialOther
     FlowRow(modifier = modifier.selectableGroup()) {
-        ColorSwatch(name = "No colour", color = null, selected = selected.isEmpty(), onClick = { onSelect("") })
+        ColorSwatch(name = t("No colour"), color = null, selected = selected.isEmpty(), onClick = { onSelect("") })
         PRESET_COLORS.forEach { hex ->
             ColorSwatch(
                 name = PRESET_COLOR_NAMES[hex] ?: hex,
@@ -68,7 +69,7 @@ fun IconColorPicker(
         }
         if (other != null) {
             ColorSwatch(
-                name = "Custom colour",
+                name = t("Custom colour"),
                 color = parseHexColor(other),
                 selected = selected == normalizedColorHex(other),
                 onClick = { onSelect(other) },

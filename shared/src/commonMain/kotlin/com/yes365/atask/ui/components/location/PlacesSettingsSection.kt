@@ -80,9 +80,9 @@ fun PlacesSettingsSection(viewModel: PlacesViewModel) {
                 Text(t("Location access"), style = MaterialTheme.typography.bodyLarge)
                 Text(
                     text = when (access) {
-                        LocationAccess.ALWAYS -> "Always: location reminders work while Vicu is closed"
-                        LocationAccess.WHILE_USING -> "Only while using the app: location reminders need Always"
-                        LocationAccess.NONE -> "Off: location reminders need Always"
+                        LocationAccess.ALWAYS -> t("Always: location reminders work while Vicu is closed")
+                        LocationAccess.WHILE_USING -> t("Only while using the app: location reminders need Always")
+                        LocationAccess.NONE -> t("Off: location reminders need Always")
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = if (access == LocationAccess.ALWAYS) {
@@ -206,7 +206,7 @@ private fun AddPlaceDialog(viewModel: PlacesViewModel, onDone: () -> Unit, locat
     if (picked != null) {
         PlaceNameDialog(
             title = t("Name this place"),
-            initial = picked.name.takeUnless { it == "Current location" }.orEmpty(),
+            initial = picked.name.takeUnless { it == t("Current location") }.orEmpty(),
             onSave = { name ->
                 viewModel.addPlace(name, picked)
                 close()
@@ -244,7 +244,7 @@ private fun AddPlaceDialog(viewModel: PlacesViewModel, onDone: () -> Unit, locat
                 ) {
                     Icon(Icons.Outlined.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(if (locating) "Finding your location…" else "Use current location")
+                    Text(if (locating) t("Finding your location…") else t("Use current location"))
                 }
             }
         },

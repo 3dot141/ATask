@@ -280,7 +280,7 @@ fun TaskItem(
                                     if (expandable) {
                                         Modifier
                                             .clickable(
-                                                onClickLabel = if (subtasksExpanded) "Collapse subtasks" else "Expand subtasks",
+                                                onClickLabel = if (subtasksExpanded) t("Collapse subtasks") else t("Expand subtasks"),
                                                 role = Role.Button,
                                             ) { subtasksExpanded = !subtasksExpanded }
                                             .minimumInteractiveComponentSize()
@@ -499,7 +499,7 @@ private fun InlineSubtaskTree(
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
                             .clickable(
-                                onClickLabel = if (expanded) "Collapse subtasks" else "Expand subtasks",
+                                onClickLabel = if (expanded) t("Collapse subtasks") else t("Expand subtasks"),
                                 role = Role.Button,
                             ) { expanded = !expanded },
                         verticalAlignment = Alignment.CenterVertically,

@@ -192,7 +192,7 @@ fun LocationReminderDialog(
                 Text(t("Places"), style = MaterialTheme.typography.labelLarge)
                 if (places.isEmpty()) {
                     Text(
-                        "Save places like Home or Work to pick them quickly.",
+                        t("Save places like Home or Work to pick them quickly."),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -229,7 +229,7 @@ fun LocationReminderDialog(
                 ) {
                     Icon(Icons.Outlined.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(if (locating) "Finding your location…" else "Use current location")
+                    Text(if (locating) t("Finding your location…") else t("Use current location"))
                 }
 
                 Text(t("Distance"), style = MaterialTheme.typography.labelLarge)
@@ -284,7 +284,7 @@ fun LocationReminderDialog(
     naming?.let { suggestion ->
         PlaceNameDialog(
             title = t("Save place"),
-            initial = suggestion.name.takeUnless { it == "Current location" }.orEmpty(),
+            initial = suggestion.name.takeUnless { it == t("Current location") }.orEmpty(),
             onSave = { name ->
                 viewModel.addPlace(name, suggestion) { place -> choose(place) }
                 naming = null
@@ -327,7 +327,7 @@ internal fun PlaceSearchField(
             is PlaceSearchState.Failed -> SearchNote(results.message, error = true)
             is PlaceSearchState.Results -> {
                 if (results.places.isEmpty()) {
-                    SearchNote("No places found")
+                    SearchNote(t("No places found"))
                 } else {
                     results.places.take(MAX_RESULTS).forEach { place ->
                         Row(

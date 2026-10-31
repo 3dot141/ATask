@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.comments
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yes365.atask.auth.TokenStorage
@@ -35,7 +36,7 @@ data class TaskCommentsUiState(
     val loadingOlder: Boolean = false,
     /** Why the thread could not be read; what is cached still shows. */
     val error: String? = null,
-    /** "Notify me": null while not known. */
+    /** t("Notify me"): null while not known. */
     val subscribed: Boolean? = null,
     /** Whether Notify me is offered: not with an API token, which may not follow tasks (section 9.7). */
     val canFollow: Boolean = false,
@@ -143,7 +144,7 @@ class TaskCommentsViewModel(
         viewModelScope.launch { appMessages.postIfRefused(collaboration.deleteComment(id, commentId), "delete the comment") }
     }
 
-    /** "Notify me": switched at once, put back with a message when the server refuses. */
+    /** t("Notify me"): switched at once, put back with a message when the server refuses. */
     fun setSubscribed(on: Boolean) {
         val id = taskId.value.takeIf { it != 0L } ?: return
         val before = status.value.subscribed

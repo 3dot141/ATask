@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.collab
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.compositionLocalOf
 import com.yes365.atask.domain.model.CollabState
@@ -41,7 +42,7 @@ data class CollabUi(
             emptyList()
         }
 
-    /** "You, Maya" and the like, for [people] already in order. */
+    /** t("You, Maya") and the like, for [people] already in order. */
     fun nameList(people: List<User>): String = Collaboration.nameList(people.map { it.toCollabUser() }, state.me)
 }
 

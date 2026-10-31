@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.task
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,11 +43,11 @@ val LocalTaskRowActions = staticCompositionLocalOf<TaskRowActions?> { null }
 /** The things a screen reader can do to a task row besides the row's own tap (open) and long press (select). */
 internal enum class TaskRowAction(val label: String) {
     COMPLETE("Complete"),
-    REOPEN("Mark as not done"),
-    DUE_TODAY("Due today"),
-    DUE_TOMORROW("Due tomorrow"),
-    MOVE_UP("Move up"),
-    MOVE_DOWN("Move down"),
+    REOPEN(t("Mark as not done")),
+    DUE_TODAY(t("Due today")),
+    DUE_TOMORROW(t("Due tomorrow")),
+    MOVE_UP(t("Move up")),
+    MOVE_DOWN(t("Move down")),
 }
 
 /** Complete or reopen always; scheduling only for an open task, and only when something can do it. */
@@ -67,7 +68,7 @@ internal fun taskRowActions(
 }
 
 /**
- * TalkBack "Move up" / "Move down" for a row that can be dragged to reorder (a drawer entry, say).
+ * TalkBack t("Move up") / t("Move down") for a row that can be dragged to reorder (a drawer entry, say).
  * A null callback means the move is not possible from there, and its action is not offered.
  */
 internal fun Modifier.moveCustomActions(onMoveUp: (() -> Unit)?, onMoveDown: (() -> Unit)?): Modifier =
@@ -95,11 +96,11 @@ internal fun Modifier.taskRowCustomActions(actions: List<Pair<TaskRowAction, () 
 
 /** The spoken form of a priority, or null when there is none. */
 internal fun priorityDescription(priority: Int): String? = when (priority) {
-    1 -> "Low priority"
-    2 -> "Medium priority"
-    3 -> "High priority"
-    4 -> "Urgent priority"
-    5 -> "Do now priority"
+    1 -> t("Low priority")
+    2 -> t("Medium priority")
+    3 -> t("High priority")
+    4 -> t("Urgent priority")
+    5 -> t("Do now priority")
     else -> null
 }
 

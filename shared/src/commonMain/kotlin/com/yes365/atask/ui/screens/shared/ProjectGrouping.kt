@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.shared
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.Project
 import com.yes365.atask.domain.model.Task
 
@@ -30,7 +31,7 @@ fun buildTaskProjectGroups(
             val title = when {
                 inboxId != null && projectId == inboxId -> "Inbox"
                 project != null -> project.title
-                else -> "No project"
+                else -> t("No project")
             }
             TaskProjectGroup(
                 projectId = projectId,

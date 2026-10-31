@@ -2,6 +2,7 @@
 
 package com.yes365.atask.ui.components.task
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -188,7 +189,7 @@ internal class DescriptionEditorSession(
         if (warnings.isEmpty()) return
         val limitExceeded = warnings.any { it is HtmlDecodeWarning.InputLimitExceeded }
         val summary = if (limitExceeded) {
-            "Cascade HTML import rejected an over-limit description"
+            t("Cascade HTML import rejected an over-limit description")
         } else {
             "Cascade HTML import completed with ${warnings.size} warning(s)"
         }

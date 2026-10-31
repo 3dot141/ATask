@@ -1,4 +1,5 @@
 package com.yes365.atask.ui.screens.taskdetail
+import com.yes365.atask.ui.i18n.t
 
 /** The name of a priority level, or null for none (0) and for numbers outside Vikunja's range. */
 fun priorityName(priority: Int): String? = when (priority) {
@@ -6,7 +7,7 @@ fun priorityName(priority: Int): String? = when (priority) {
     2 -> "Medium"
     3 -> "High"
     4 -> "Urgent"
-    5 -> "Do now"
+    5 -> t("Do now")
     else -> null
 }
 

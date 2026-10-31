@@ -141,4 +141,4 @@ private fun RowScope.FailedActionsText(failedCount: Int) {
     )
 }
 
-internal fun changesLabel(count: Int): String = if (count == 1) "1 change" else "$count changes"
+internal fun changesLabel(count: Int): String = if (count == 1) t("1 change") else "$count changes"

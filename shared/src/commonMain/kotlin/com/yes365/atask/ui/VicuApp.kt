@@ -527,7 +527,7 @@ fun VicuApp(
         showTaskEntrySheet = true
     }
 
-    // Tasks added through the + button's quick add count towards the "Hold + to say a task" hint.
+    // Tasks added through the + button's quick add count towards the t("Hold + to say a task") hint.
     var taskEntryFromFab by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(authState) {
@@ -632,7 +632,7 @@ fun VicuApp(
     }
 
     // The app icon's Dictate (Android launcher shortcut, iOS quick action): smart dictation, listening,
-    // when it is set up; otherwise the voice card without a hold, as "Say a task" (Add and Cancel).
+    // when it is set up; otherwise the voice card without a hold, as t("Say a task") (Add and Cancel).
     val smartDictation: DictationMic = koinInject()
     val startDictationValue = startDictation?.collectAsStateWithLifecycle()?.value
     LaunchedEffect(startDictationValue, authState) {

@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.shared
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.auth.AuthManager
 import com.yes365.atask.data.repository.ProjectCategoryPreferences
 import com.yes365.atask.data.repository.SyncedPreferences
@@ -49,7 +50,7 @@ sealed interface SiblingMoveResult {
 
 /** The message for a new order that could not be saved, with the server's reason when there is one. */
 fun orderNotSavedMessage(detail: String): String =
-    if (detail.isBlank()) "Could not save the new order" else "Could not save the new order: $detail"
+    if (detail.isBlank()) t("Could not save the new order") else "Could not save the new order: $detail"
 
 /** "Archive" and "Delete" are not offered on the Inbox, and this is said when one gets through anyway. */
 const val ARCHIVE_INBOX_REFUSED = "Select another Inbox project before archiving this project"
@@ -98,7 +99,7 @@ class ProjectActions(
     /** Makes [projectId] the Inbox, on every device of the account: the same as the Inbox project picker. */
     suspend fun setInbox(projectId: Long): ProjectActionResult {
         syncedPreferences?.chooseInbox(projectId) ?: authManager.onInboxProjectSelected(projectId)
-        return ProjectActionResult.Done("Inbox project updated")
+        return ProjectActionResult.Done(t("Inbox project updated"))
     }
 
     /** Archives [project]. The Inbox cannot be archived until another project is the Inbox. */
@@ -113,7 +114,7 @@ class ProjectActions(
         val result = projectRepository.update(project.copy(isArchived = archived))
         // A widget set to this project shows it gone, or back.
         if (result !is NetworkResult.Error) repositoryHooks.updateWidgets()
-        return result.toResult(if (archived) "Project archived" else "Project restored")
+        return result.toResult(if (archived) t("Project archived") else t("Project restored"))
     }
 
     /** Deletes the project and its tasks. */
@@ -240,7 +241,7 @@ class ProjectActions(
     }
 
     /**
-     * "Add category above" [projectId] (section 13.4): a new category [name] that starts at that
+     * t("Add category above") [projectId] (section 13.4): a new category [name] that starts at that
      * project and holds it and every project after it in its group.
      */
     suspend fun addCategoryAbove(projectId: Long, name: String): ProjectActionResult {

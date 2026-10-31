@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.task
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -81,7 +82,7 @@ private fun squareBangPath(scale: Float): Path = Path().apply {
 }
 
 /**
- * The priority mark of a task, 14 dp, spoken as its description ("High priority"); nothing for no
+ * The priority mark of a task, 14 dp, spoken as its description (t("High priority")); nothing for no
  * priority. Colour comes from the priority role of the theme.
  */
 @Composable

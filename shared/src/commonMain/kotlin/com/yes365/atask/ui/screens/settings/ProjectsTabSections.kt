@@ -49,7 +49,7 @@ internal fun LazyListScope.inboxSection(
         val archivedInbox = state.archivedProjects.find { it.id == state.inboxProjectId }
         val inboxName = activeInbox?.title
             ?: archivedInbox?.let { "${it.title} (archived — select another project)" }
-            ?: "Not set"
+            ?: t("Not set")
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -128,7 +128,7 @@ internal fun LazyListScope.displaySection(
             ) {
                 Text(
                     text = if (ownOrderCount == 1) {
-                        "1 project has its own order"
+                        t("1 project has its own order")
                     } else {
                         "$ownOrderCount projects have their own order"
                     },
@@ -158,7 +158,7 @@ internal fun LazyListScope.displaySection(
             SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                 val options = listOf(
                     SubprojectDisplayMode.SECTIONS to "Sections",
-                    SubprojectDisplayMode.PROJECT_ROWS to "Project rows",
+                    SubprojectDisplayMode.PROJECT_ROWS to t("Project rows"),
                 )
                 options.forEachIndexed { index, (mode, label) ->
                     SegmentedButton(
@@ -343,8 +343,8 @@ internal fun LazyListScope.customListsSection(
             val status = state.customListSyncStatus
             val message = when (status) {
                 CustomListSyncStatus.Idle -> ""
-                CustomListSyncStatus.Syncing -> "Syncing custom lists…"
-                CustomListSyncStatus.Pending -> "Custom-list changes are pending"
+                CustomListSyncStatus.Syncing -> t("Syncing custom lists…")
+                CustomListSyncStatus.Pending -> t("Custom-list changes are pending")
                 is CustomListSyncStatus.Offline -> status.message
                 is CustomListSyncStatus.Error -> status.message
                 is CustomListSyncStatus.UpdateRequired -> status.message

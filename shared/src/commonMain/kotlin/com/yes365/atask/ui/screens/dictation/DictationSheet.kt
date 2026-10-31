@@ -168,11 +168,11 @@ private fun Header(ui: DictationUi, onClose: () -> Unit, onBrainDump: (Boolean) 
             Icon(Icons.Outlined.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Text(
                 when (ui.phase) {
-                    DictationPhase.LISTENING -> if (ui.brainDump) "Brain dump" else "Say your tasks"
-                    DictationPhase.THINKING -> if (ui.brainDump) "Organizing" else "Making tasks"
-                    DictationPhase.REVIEW -> if (ui.brainDump) planTitle(ui.projects, ui.drafts) else if (ui.drafts.size == 1) "1 task to check" else "${ui.drafts.size} tasks to check"
-                    DictationPhase.FAILED -> if (ui.brainDump) "Not organized" else "Not turned into tasks"
-                    DictationPhase.EMPTY -> "Nothing to add"
+                    DictationPhase.LISTENING -> if (ui.brainDump) "Brain dump" else t("Say your tasks")
+                    DictationPhase.THINKING -> if (ui.brainDump) "Organizing" else t("Making tasks")
+                    DictationPhase.REVIEW -> if (ui.brainDump) planTitle(ui.projects, ui.drafts) else if (ui.drafts.size == 1) t("1 task to check") else "${ui.drafts.size} tasks to check"
+                    DictationPhase.FAILED -> if (ui.brainDump) t("Not organized") else t("Not turned into tasks")
+                    DictationPhase.EMPTY -> t("Nothing to add")
                 },
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(start = 12.dp).weight(1f),
@@ -221,9 +221,9 @@ private fun PhaseBody(ui: DictationUi, micUi: DictationMicUi, controller: Dictat
             Icon(Icons.Outlined.Mic, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Text(
                 if (micUi.on || micUi.starting) {
-                    "Keep talking. Pause, and your tasks appear as cards."
+                    t("Keep talking. Pause, and your tasks appear as cards.")
                 } else {
-                    "Turn on the microphone and say your tasks."
+                    t("Turn on the microphone and say your tasks.")
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -236,21 +236,21 @@ private fun PhaseBody(ui: DictationUi, micUi: DictationMicUi, controller: Dictat
         ) {
             CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
             Text(
-                if (ui.brainDump) "Sorting your brain dump into projects and tasks" else "Turning what you said into tasks",
+                if (ui.brainDump) t("Sorting your brain dump into projects and tasks") else t("Turning what you said into tasks"),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(start = 12.dp),
             )
         }
         DictationPhase.FAILED, DictationPhase.EMPTY -> Column(Modifier.fillMaxWidth().padding(20.dp)) {
             Text(
-                if (ui.phase == DictationPhase.EMPTY) "The model found no tasks in what you said." else ui.error ?: "The model did not answer.",
+                if (ui.phase == DictationPhase.EMPTY) t("The model found no tasks in what you said.") else ui.error ?: t("The model did not answer."),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 if (ui.brainDump) {
-                    "Your brain dump is kept: try again, or go back to it to change or add to it."
+                    t("Your brain dump is kept: try again, or go back to it to change or add to it.")
                 } else {
-                    "What you said is kept: try again, or add it as one task as quick add would read it."
+                    t("What you said is kept: try again, or add it as one task as quick add would read it.")
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -289,7 +289,7 @@ private fun PhaseBody(ui: DictationUi, micUi: DictationMicUi, controller: Dictat
             }
             item(key = "legend") {
                 Text(
-                    "A dashed outline marks what Vicu guessed. Tap a chip to change it, or say what to change or what to add.",
+                    t("A dashed outline marks what Vicu guessed. Tap a chip to change it, or say what to change or what to add."),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
@@ -316,7 +316,7 @@ private fun Footer(ui: DictationUi, micUi: DictationMicUi, controller: Dictation
                     Spacer(Modifier.weight(1f))
                     TextButton(onClick = controller::discard, enabled = !ui.adding) { Text(t("Discard")) }
                     Button(onClick = controller::add, enabled = ui.drafts.isNotEmpty() && !ui.adding && !ui.editing) {
-                        Text(if (ui.drafts.size == 1) "Add task" else "Add ${ui.drafts.size} tasks")
+                        Text(if (ui.drafts.size == 1) t("Add task") else "Add ${ui.drafts.size} tasks")
                     }
                 }
                 DictationPhase.FAILED, DictationPhase.EMPTY -> {
@@ -363,9 +363,9 @@ private fun BrainDumpSwitch(on: Boolean, onChange: (Boolean) -> Unit) {
         }
         Text(
             if (on) {
-                "Talk as long as you like. Nothing is sent until you tap Organize; then everything is sorted into projects, subprojects, tasks, subtasks and notes."
+                t("Talk as long as you like. Nothing is sent until you tap Organize; then everything is sorted into projects, subprojects, tasks, subtasks and notes.")
             } else {
-                "Each pause turns what you said into task cards. Turn on Brain dump to talk as long as you like and have it all organized at the end."
+                t("Each pause turns what you said into task cards. Turn on Brain dump to talk as long as you like and have it all organized at the end.")
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -464,7 +464,7 @@ private fun PlanList(ui: DictationUi, controller: DictationController) {
         }
         item(key = "legend") {
             Text(
-                "A dashed outline marks what Vicu guessed. Tap a name or a chip to change it, or say or type a change below and tap Update.",
+                t("A dashed outline marks what Vicu guessed. Tap a name or a chip to change it, or say or type a change below and tap Update."),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
@@ -507,7 +507,7 @@ private fun PlanGroupHeader(group: PlanGroup, ui: DictationUi, editable: Boolean
                         modifier = Modifier.fillMaxWidth().semantics { contentDescription = t("New project name") },
                     )
                     Text(
-                        "New project " + newProjectPlace(project, ui.projects, ui.context),
+                        t("New project ") + newProjectPlace(project, ui.projects, ui.context),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(start = 16.dp),
@@ -541,7 +541,7 @@ private fun MicToggle(micUi: DictationMicUi, onToggle: () -> Unit) {
         color = if (on) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
         contentColor = if (on) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.size(48.dp).semantics {
-            contentDescription = if (on) "Microphone on. Tap to stop listening" else "Microphone off. Tap to keep talking"
+            contentDescription = if (on) t("Microphone on. Tap to stop listening") else t("Microphone off. Tap to keep talking")
         },
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -598,9 +598,9 @@ internal fun newProjectPlace(project: CheckedProject, projects: List<CheckedProj
     return if (parent == null) "at the top level" else "in $parent"
 }
 
-/** "2 new projects, 14 tasks" for the plan's header. */
+/** t("2 new projects, 14 tasks") for the plan's header. */
 internal fun planTitle(projects: List<CheckedProject>, drafts: List<CheckedDraft>): String {
-    val tasks = if (drafts.size == 1) "1 task" else "${drafts.size} tasks"
+    val tasks = if (drafts.size == 1) t("1 task") else "${drafts.size} tasks"
     return when (projects.size) {
         0 -> tasks
         1 -> "1 new project, $tasks"

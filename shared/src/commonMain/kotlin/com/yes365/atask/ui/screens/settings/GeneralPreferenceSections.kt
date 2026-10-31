@@ -231,7 +231,7 @@ internal fun LazyListScope.widgetSection(
             Column(modifier = Modifier.weight(1f)) {
                 Text(t("Smart add button"), style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "Add tasks to the widget's project or list target",
+                    t("Add tasks to the widget's project or list target"),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -254,7 +254,7 @@ internal fun LazyListScope.widgetSection(
             Column(modifier = Modifier.weight(1f)) {
                 Text(t("Context navigation"), style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "Tapping the widget title opens the matching screen",
+                    t("Tapping the widget title opens the matching screen"),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -460,7 +460,7 @@ internal fun LazyListScope.behaviorSection(
             @OptIn(ExperimentalMaterial3Api::class)
             SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
                 val options = listOf(
-                    com.yes365.atask.data.local.SubtaskDisplayMode.INSIDE_TASK to "Inside task",
+                    com.yes365.atask.data.local.SubtaskDisplayMode.INSIDE_TASK to t("Inside task"),
                     com.yes365.atask.data.local.SubtaskDisplayMode.EXPANDABLE to "Expandable",
                 )
                 options.forEachIndexed { index, (mode, label) ->
@@ -515,11 +515,11 @@ internal fun LazyListScope.behaviorSection(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (hasCustom) "Custom sound selected" else "Pick a custom sound",
+                        text = if (hasCustom) t("Custom sound selected") else t("Pick a custom sound"),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
-                        text = if (hasCustom) "Tap to change" else "Default: system notification sound",
+                        text = if (hasCustom) t("Tap to change") else t("Default: system notification sound"),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -546,7 +546,7 @@ private fun HiddenSharedRoutines(viewModel: HiddenRoutinesViewModel = koinViewMo
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Text(t("Hidden shared routines"), style = MaterialTheme.typography.bodyLarge)
         Text(
-            "Routines someone shared with you that you hid. They stay shared; only you do not see them.",
+            t("Routines someone shared with you that you hid. They stay shared; only you do not see them."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

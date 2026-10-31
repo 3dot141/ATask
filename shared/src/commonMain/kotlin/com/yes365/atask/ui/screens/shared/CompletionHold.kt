@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.shared
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.Task
 import com.yes365.atask.ui.navigation.NavigationTicker
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +30,7 @@ data class HeldRow(val task: Task, val scope: Long, val index: Int, val changed:
  * [holdMillis] (the contract's 5 s), when the user undoes the change or goes to another
  * destination (the [navigationTicker]; a rotation does not end it), or when the change fails
  * ([release]). A row whose hold ends by time or navigation collapses: it leaves the list and is
- * handed to [toast], which shows "Completed, Undo" (docs/cross-app-semantics-v1.md section 7).
+ * handed to [toast], which shows t("Completed, Undo") (docs/cross-app-semantics-v1.md section 7).
  *
  * Use one instance per screen. A screen passes each list it shows through [merge]; lists that
  * are shown several times (a project and its sub-project sections) give each its own [merge]
@@ -155,7 +156,7 @@ class CompletionHold(
         /** How long a completed row stays in its list (the contract's `completion.holdMs`). */
         const val HOLD_MILLIS = 5_000L
 
-        /** How long the "Completed, Undo" toast stays (`completion.toastMs`). */
+        /** How long the t("Completed, Undo") toast stays (`completion.toastMs`). */
         const val TOAST_MILLIS = 6_000L
 
         /** The toast's action label (`completion.toast.action`). */

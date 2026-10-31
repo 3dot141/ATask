@@ -34,8 +34,8 @@ data class SharePersonOption(
  */
 object RoutineSharing {
 
-    const val EXPLANATION =
-        "A shared routine is kept in a project you share with that person, so everyone in that project can see it " +
+    val EXPLANATION =
+        t("A shared routine is kept in a project you share with that person, so everyone in that project can see it ") +
             "and tick it off. Only people you already share a project with are listed; to share with someone else, " +
             "share a project with them first, in Vicu or in Vikunja. Deleting that project deletes the routine and its " +
             "history for everyone, and if you lose access to the project, you lose the routine."
@@ -86,7 +86,7 @@ object RoutineSharing {
     /** The user may tick it off and edit it: they can write to its project. */
     fun canWrite(routine: Routine, state: CollabState): Boolean = state.access(routine.projectId).canWrite
 
-    /** "Shared with Maya", "Shared with Maya and Sam", "Shared with Maya, Sam and Lee"; the others only. */
+    /** t("Shared with Maya"), t("Shared with Maya and Sam"), t("Shared with Maya, Sam and Lee"); the others only. */
     fun sharedWithText(members: List<User>, me: Long?): String {
         val names = members.filter { it.id != me }.map { Collaboration.displayName(it.toCollabUser()) }
         return when (names.size) {
@@ -96,20 +96,20 @@ object RoutineSharing {
         }
     }
 
-    /** "Shared by Maya": the owner's name, from the people of the routine's project. */
+    /** t("Shared by Maya"): the owner's name, from the people of the routine's project. */
     fun sharedByText(routine: Routine, state: CollabState): String {
         val owner = state.access(routine.projectId).members.firstOrNull { it.id == routine.ownerId }
-        return owner?.let { "Shared by ${Collaboration.displayName(it.toCollabUser())}" } ?: "Shared with you"
+        return owner?.let { "Shared by ${Collaboration.displayName(it.toCollabUser())}" } ?: t("Shared with you")
     }
 
-    /** The card's line: "Shared with Maya" for the owner, "Shared by Maya" for a member; null when private. */
+    /** The card's line: t("Shared with Maya") for the owner, t("Shared by Maya") for a member; null when private. */
     fun cardText(routine: Routine, state: CollabState): String? = when {
         !isShared(routine, state) -> null
         isOwn(routine, state.me) -> sharedWithText(state.access(routine.projectId).members, state.me)
         else -> sharedByText(routine, state)
     }
 
-    /** "Done by Maya", "Skipped by you"; null when nobody is to be named or the routine is not shared. */
+    /** t("Done by Maya"), t("Skipped by you"); null when nobody is to be named or the routine is not shared. */
     fun loggedText(
         routine: Routine,
         status: OccurrenceStatus,
@@ -150,7 +150,7 @@ object RoutineSharing {
             "It also holds the shared routine ${quoted[0]}. Deleting the project deletes the routine and its history for everyone."
         } else {
             "It also holds the shared routines ${quoted.dropLast(1).joinToString(", ")} and ${quoted.last()}. " +
-                "Deleting the project deletes the routines and their history for everyone."
+                t("Deleting the project deletes the routines and their history for everyone.")
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.ask
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,7 +46,7 @@ internal fun AskAgenda(
     Column(modifier.fillMaxWidth()) {
         if (items.isNotEmpty()) {
             Text(
-                "Needs a decision",
+                t("Needs a decision"),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp).semantics { heading() },

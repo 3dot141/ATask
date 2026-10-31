@@ -84,7 +84,7 @@ fun LabelPickerDialog(
 
                 if (filteredLabels.isEmpty()) {
                     Text(
-                        text = if (allLabels.isEmpty()) "No labels yet" else "No label matches",
+                        text = if (allLabels.isEmpty()) "No labels yet" else t("No label matches"),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(vertical = 12.dp),

@@ -308,7 +308,7 @@ fun DrawerContent(
                         expanded = state.projectsExpanded,
                         onToggle = onToggleProjects,
                         onAdd = onCreateProject,
-                        addDescription = "New project",
+                        addDescription = t("New project"),
                     )
                 }
                 if (state.projectsExpanded) {
@@ -428,11 +428,11 @@ fun DrawerContent(
                         NavigationDrawerItem(
                             label = {
                                 Text(
-                                    "New List",
+                                    t("New List"),
                                     color = MaterialTheme.colorScheme.primary,
                                 )
                             },
-                            // Decorative: the label next to it already says "New List".
+                            // Decorative: the label next to it already says t("New List").
                             icon = {
                                 Icon(
                                     Icons.Outlined.Add,

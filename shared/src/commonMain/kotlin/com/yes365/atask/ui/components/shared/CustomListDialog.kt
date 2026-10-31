@@ -58,10 +58,10 @@ private val DUE_DATE_OPTIONS = listOf(
     "all" to "All",
     "overdue" to "Overdue",
     "today" to "Today",
-    "this_week" to "This week",
-    "this_month" to "This month",
-    "has_due_date" to "Has due date",
-    "no_due_date" to "No due date",
+    "this_week" to t("This week"),
+    "this_month" to t("This month"),
+    "has_due_date" to t("Has due date"),
+    "no_due_date" to t("No due date"),
 )
 
 /** The sorts the editor offers: every key [CustomListFilterBuilder.sortTasks] understands. */
@@ -82,11 +82,11 @@ private val ORDER_OPTIONS = listOf(
 
 /** "Changed" counts local days with today included (cross-app semantics 3.3); 0 is no condition. */
 private val CHANGED_OPTIONS = listOf(
-    0 to "Any time",
+    0 to t("Any time"),
     1 to "Today",
-    3 to "In the last 3 days",
-    7 to "In the last 7 days",
-    30 to "In the last 30 days",
+    3 to t("In the last 3 days"),
+    7 to t("In the last 7 days"),
+    30 to t("In the last 30 days"),
 )
 
 /** The "Changed" choices, with a value from another device that is not among them kept selectable. */
@@ -97,21 +97,21 @@ internal fun changedOptions(current: Int?): List<Pair<String, String>> {
 }
 
 internal val ASSIGNED_OPTIONS = listOf(
-    "" to "Any task",
-    "me" to "To me",
-    "others" to "To someone else",
-    "nobody" to "To nobody",
+    "" to t("Any task"),
+    "me" to t("To me"),
+    "others" to t("To someone else"),
+    "nobody" to t("To nobody"),
 )
 
 internal val COMMENTS_OPTIONS = listOf(
-    "" to "Any task",
-    "unread" to "Unread comments",
-    "any" to "Has comments",
+    "" to t("Any task"),
+    "unread" to t("Unread comments"),
+    "any" to t("Has comments"),
 )
 
 /** [options] plus [value] when this version does not offer it (from a newer app), so saving keeps it. */
 internal fun withKeptValue(options: List<Pair<String, String>>, value: String): List<Pair<String, String>> =
-    if (options.any { it.first == value }) options else options + (value to "Set by a newer version")
+    if (options.any { it.first == value }) options else options + (value to t("Set by a newer version"))
 
 /** The switch position for a stored `include_overdue`: an absent key means on. */
 internal fun includeOverdueSwitchOn(stored: Boolean?): Boolean = stored != false
@@ -177,7 +177,7 @@ fun CustomListDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isEdit) "Edit List" else "New List") },
+        title = { Text(if (isEdit) t("Edit List") else t("New List")) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 OutlinedTextField(
@@ -233,7 +233,7 @@ fun CustomListDialog(
                 ) {
                     Text(
                         text = if (selectedProjectIds.isEmpty()) {
-                            if (projectFilterMode == "exclude") "None excluded" else "All projects"
+                            if (projectFilterMode == "exclude") t("None excluded") else t("All projects")
                         } else {
                             if (projectFilterMode == "exclude") "${selectedProjectIds.size} excluded"
                             else "${selectedProjectIds.size} included"
@@ -393,7 +393,7 @@ fun CustomListDialog(
                     tonalElevation = 1.dp,
                 ) {
                     Text(
-                        text = if (selectedLabelIds.isEmpty()) "All labels"
+                        text = if (selectedLabelIds.isEmpty()) t("All labels")
                         else "${selectedLabelIds.size} selected",
                         modifier = Modifier.padding(12.dp),
                         style = MaterialTheme.typography.bodyMedium,
@@ -589,7 +589,7 @@ private fun AddToProjectSelector(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val selectedName = if (selectedProjectId == 0L) "Inbox (default)"
-    else projects.find { it.id == selectedProjectId }?.title ?: "Unavailable project (uses Inbox)"
+    else projects.find { it.id == selectedProjectId }?.title ?: t("Unavailable project (uses Inbox)")
 
     ExposedDropdownMenuBox(
         expanded = expanded,

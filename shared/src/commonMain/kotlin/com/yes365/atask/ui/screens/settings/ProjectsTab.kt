@@ -175,11 +175,11 @@ internal fun projectMenuItems(
     onAddCategoryAbove: (() -> Unit)? = null,
 ): List<RowMenuItem> = buildList {
     add(RowMenuItem("Edit", onClick = onEdit))
-    add(RowMenuItem("Add subproject", onClick = onAddSubproject))
+    add(RowMenuItem(t("Add subproject"), onClick = onAddSubproject))
     onMoveToCategory?.let { add(RowMenuItem(CategoryLabels.MOVE_TO, onClick = it)) }
     onAddCategoryAbove?.let { add(RowMenuItem(CategoryLabels.ADD_ABOVE, onClick = it)) }
     if (!isInbox) {
-        add(RowMenuItem("Set as Inbox", onClick = onSetInbox))
+        add(RowMenuItem(t("Set as Inbox"), onClick = onSetInbox))
         add(RowMenuItem("Archive", onClick = onArchive))
         add(RowMenuItem("Delete", destructive = true, onClick = onDelete))
     }
@@ -228,7 +228,7 @@ private fun LazyListScope.projectsSection(
     // within its category.
     val siblings = levelSiblings(items)
     val categoryIds = categories.categories.map { it.id }
-    // "Add category above" follows the drawer's list (section 13.2), where the Inbox is not listed.
+    // t("Add category above") follows the drawer's list (section 13.2), where the Inbox is not listed.
     val groups = ProjectCategories.layout(state.projects, state.inboxProjectId, categories)
     items(
         items,

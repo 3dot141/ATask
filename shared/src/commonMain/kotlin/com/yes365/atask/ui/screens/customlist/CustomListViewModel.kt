@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.customlist
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.Logger
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -210,7 +211,7 @@ class CustomListViewModel(
                 _uiState.update { it.copy(isDeleted = true) }
             } catch (e: Exception) {
                 Logger.e("CustomListViewModel", "deleteCustomList() failed: ${e.message}", e)
-                _uiState.update { it.copy(error = e.message ?: "Failed to delete list") }
+                _uiState.update { it.copy(error = e.message ?: t("Failed to delete list")) }
             }
         }
     }

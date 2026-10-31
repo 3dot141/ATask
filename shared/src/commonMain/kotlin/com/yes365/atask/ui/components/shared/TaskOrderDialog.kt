@@ -34,7 +34,7 @@ fun TaskOrderDialog(
     onSelect: (TaskOrder?) -> Unit,
     onDismiss: () -> Unit,
     inheritedOrder: TaskOrder? = null,
-    note: String? = "Tasks can be dragged in Manual, and undated ones in Due date, then manual.",
+    note: String? = t("Tasks can be dragged in Manual, and undated ones in Due date, then manual."),
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,

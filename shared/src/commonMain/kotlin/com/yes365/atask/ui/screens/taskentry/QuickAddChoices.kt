@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.taskentry
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.TaskReminder
 import com.yes365.atask.location.LocationTrigger
 import com.yes365.atask.util.DateDisplayFormat
@@ -18,7 +19,7 @@ internal data class WhenTile(val id: Id, val label: String, val hint: String, va
     enum class Id { TODAY, EVENING, TOMORROW, WEEKEND, NEXT_WEEK, NO_DATE }
 }
 
-/** "This evening" is today at this time; offered until it has passed. */
+/** t("This evening") is today at this time; offered until it has passed. */
 internal val EVENING_TIME = LocalTime(18, 0)
 
 /**
@@ -35,7 +36,7 @@ internal fun whenTiles(current: WhenValue, today: LocalDate, now: LocalTime, fmt
     return buildList {
         add(day(WhenTile.Id.TODAY, choices.getValue(WhenQuickChoice.Id.TODAY)))
         if (now < EVENING_TIME) {
-            add(WhenTile(WhenTile.Id.EVENING, "This evening", WhenLogic.timeLabel(EVENING_TIME, fmt), WhenValue(today, EVENING_TIME)))
+            add(WhenTile(WhenTile.Id.EVENING, t("This evening"), WhenLogic.timeLabel(EVENING_TIME, fmt), WhenValue(today, EVENING_TIME)))
         }
         add(day(WhenTile.Id.TOMORROW, choices.getValue(WhenQuickChoice.Id.TOMORROW)))
         add(day(WhenTile.Id.WEEKEND, choices.getValue(WhenQuickChoice.Id.WEEKEND)))
@@ -64,14 +65,14 @@ internal fun selectedTile(tiles: List<WhenTile>, current: WhenValue, today: Loca
 }
 
 /**
- * The Remind chip: the one reminder in words ("Tomorrow, 9:00 AM", "1 hour before", "Arrive:
+ * The Remind chip: the one reminder in words ("Tomorrow, 9:00 AM", t("1 hour before"), "Arrive:
  * Home"), "3 reminders" when there are more, null when there are none (the chip then says
  * "Remind"). The place reminder counts as one.
  */
 internal fun entryRemindWords(reminders: List<TaskReminder>, place: PlacePick?, fmt: DateDisplayFormat): String? =
     ReminderFormat.summary(reminders, fmt, place?.let { entryPlaceLabel(it.place.name, it.trigger) }).ifEmpty { null }
 
-/** "Arrive: Home" or "Leave: Work", as a location reminder reads everywhere else. */
+/** t("Arrive: Home") or t("Leave: Work"), as a location reminder reads everywhere else. */
 internal fun entryPlaceLabel(name: String, trigger: LocationTrigger): String = when (trigger) {
     LocationTrigger.ARRIVE -> "Arrive: $name"
     LocationTrigger.LEAVE -> "Leave: $name"

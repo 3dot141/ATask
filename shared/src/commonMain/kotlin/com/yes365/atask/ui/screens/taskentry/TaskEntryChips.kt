@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.taskentry
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.location.PlaceMatch
 import com.yes365.atask.util.parser.ParseResult
 import com.yes365.atask.util.parser.TokenType
@@ -51,5 +52,5 @@ internal fun entryLabelsWords(pickedTitles: List<String>, parsedNames: List<Stri
     }
 }
 
-/** The place chip: "Arrive: Home" or "Leave: Work", as the reminder shows everywhere else. */
+/** The place chip: t("Arrive: Home") or t("Leave: Work"), as the reminder shows everywhere else. */
 internal fun entryPlaceChipLabel(match: PlaceMatch): String = entryPlaceLabel(match.place.name, match.trigger)

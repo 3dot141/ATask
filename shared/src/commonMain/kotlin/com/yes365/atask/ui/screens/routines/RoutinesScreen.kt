@@ -159,11 +159,11 @@ fun RoutinesScreen(
                 extraActions = {
                     Box {
                         IconButton(onClick = { pageMenuOpen = true }) {
-                            Icon(Icons.Outlined.MoreVert, "Routine options")
+                            Icon(Icons.Outlined.MoreVert, t("Routine options"))
                         }
                         DropdownMenu(expanded = pageMenuOpen, onDismissRequest = { pageMenuOpen = false }) {
                             DropdownMenuItem(
-                                text = { Text(if (remindersEnabled) t("Pause all reminders") else "Resume reminders") },
+                                text = { Text(if (remindersEnabled) t("Pause all reminders") else t("Resume reminders")) },
                                 trailingIcon = {
                                     Switch(
                                         checked = remindersEnabled,
@@ -184,9 +184,9 @@ fun RoutinesScreen(
                                             clipboard.copyPlainText(("Routine history"), export.csv)
                                             snackbar.showSnackbar(
                                                 if (export.complete) {
-                                                    "Routine history copied"
+                                                    t("Routine history copied")
                                                 } else {
-                                                    "Routine history copied, without older history that could not be loaded"
+                                                    t("Routine history copied, without older history that could not be loaded")
                                                 },
                                             )
                                         }
@@ -227,9 +227,9 @@ fun RoutinesScreen(
                 item(key = "empty_today", contentType = "empty") {
                     Text(
                         text = if (state.active.isEmpty()) {
-                            "Add something you do regularly, like taking vitamins or watering the plants."
+                            t("Add something you do regularly, like taking vitamins or watering the plants.")
                         } else {
-                            "Nothing scheduled for today."
+                            t("Nothing scheduled for today.")
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -450,7 +450,7 @@ fun RoutineOccurrenceRow(
 
 /** What the user may do with a routine's card, and its shared line (cross-app semantics 6.9). */
 internal data class RoutineCardAccess(
-    /** "Shared with Maya" or "Shared by Maya"; null while private. */
+    /** t("Shared with Maya") or t("Shared by Maya"); null while private. */
     val sharedLine: String? = null,
     /** The user owns it: share, archive and delete are theirs. */
     val owner: Boolean = true,
@@ -530,7 +530,7 @@ private fun RoutineDefinitionCard(
                 }
             }
             Box {
-                IconButton(onClick = { menuOpen = true }) { Icon(Icons.Outlined.MoreVert, "Routine actions") }
+                IconButton(onClick = { menuOpen = true }) { Icon(Icons.Outlined.MoreVert, t("Routine actions")) }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     if (!archived && access.canWrite) {
                         DropdownMenuItem(
@@ -541,7 +541,7 @@ private fun RoutineDefinitionCard(
                     }
                     if (access.sharedWithMe && access.canWrite && !archived) {
                         DropdownMenuItem(
-                            text = { Text(if (access.myRemindersOn) "Turn off my reminders" else "Turn on my reminders") },
+                            text = { Text(if (access.myRemindersOn) t("Turn off my reminders") else t("Turn on my reminders")) },
                             leadingIcon = {
                                 Icon(if (access.myRemindersOn) Icons.Outlined.NotificationsOff else Icons.Outlined.NotificationsActive, null)
                             },
@@ -654,7 +654,7 @@ private data class EditorTime(
     val slot: RoutineSlot?,
 )
 
-private val FollowUpOptions = listOf(0 to t("Off"), 15 to "15 min", 30 to "30 min", 60 to "1 hour")
+private val FollowUpOptions = listOf(0 to t("Off"), 15 to t("15 min"), 30 to t("30 min"), 60 to t("1 hour"))
 
 private fun followUpText(minutes: Int): String =
     FollowUpOptions.firstOrNull { it.first == minutes }?.second ?: "$minutes min"
@@ -743,7 +743,7 @@ private fun RoutineEditorDialog(
                             }) {
                                 Icon(
                                     if (time.remind) Icons.Outlined.NotificationsActive else Icons.Outlined.NotificationsOff,
-                                    contentDescription = if (time.remind) "Reminder on" else t("Reminder off"),
+                                    contentDescription = if (time.remind) t("Reminder on") else t("Reminder off"),
                                     tint = if (time.remind) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
@@ -798,7 +798,7 @@ private fun RoutineEditorDialog(
                     }
                     Text(
                         if (afterCompletion) {
-                            "Comes back a set number of days after you complete it."
+                            t("Comes back a set number of days after you complete it.")
                         } else {
                             t("Repeats on the days you pick, whether or not you did it last time.")
                         },
@@ -951,7 +951,7 @@ private fun RoutineEditorDialog(
 
 /**
  * "Share with" (cross-app semantics 6.9): t("Only you") or a person the user already shares a project
- * with, the "Visible to" line, and the project that will hold it, chosen when the person is in more
+ * with, the t("Visible to") line, and the project that will hold it, chosen when the person is in more
  * than one. The owner changes it; a member sees who shared it. [onChange] gets the choice and
  * whether it is complete (a project picked).
  */
@@ -965,7 +965,7 @@ private fun ShareWithField(
     val state = collab.state
     var explaining by remember { mutableStateOf(false) }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        EditorLabel("SHARE WITH")
+        EditorLabel(t("SHARE WITH"))
         IconButton(onClick = { explaining = true }) {
             Icon(Icons.Outlined.Info, contentDescription = t("About sharing a routine"), modifier = Modifier.size(18.dp))
         }
@@ -1067,7 +1067,7 @@ private fun ShareWithField(
     }
     if (people.isEmpty()) {
         Text(
-            "Share a project with someone first; then you can share routines with them.",
+            t("Share a project with someone first; then you can share routines with them."),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -1111,7 +1111,7 @@ private fun ShareWithField(
         }
         if (chosen == null) {
             Text(
-                "Choose the project to keep it in",
+                t("Choose the project to keep it in"),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
             )
@@ -1154,7 +1154,7 @@ private fun SectionLabel(text: String) {
 }
 
 /** A new routine starts at 09:00, every day. */
-private const val NEW_ROUTINE_MINUTES = 9 * 60
+private val NEW_ROUTINE_MINUTES = 9 * 60
 
 private val WeekdayLetters = listOf("一", "二", "三", "四", "五", "六", "日")
 private val WeekdayNames = listOf(t("Monday"), t("Tuesday"), t("Wednesday"), t("Thursday"), t("Friday"), t("Saturday"), t("Sunday"))
@@ -1163,7 +1163,7 @@ private val WeekdayShortNames = listOf(t("Mon"), t("Tue"), t("Wed"), t("Thu"), t
 private fun timeText(minutes: Int, format: DateDisplayFormat): String =
     DateDisplay.formatTime(LocalTime(minutes / 60, minutes % 60), format)
 
-/** "Every day · 08:00, 20:00", "Mon, Thu, every 2 weeks · 09:00", "14 days after completion · 18:00". */
+/** t("Every day · 08:00, 20:00"), t("Mon, Thu, every 2 weeks · 09:00"), t("14 days after completion · 18:00"). */
 internal fun routineSummary(definition: RoutineDefinition, format: DateDisplayFormat): String {
     val schedule = when (val value = definition.schedule) {
         is RoutineSchedule.Calendar -> {
@@ -1175,7 +1175,7 @@ internal fun routineSummary(definition: RoutineDefinition, format: DateDisplayFo
             if (value.weekInterval > 1) "$days, every ${value.weekInterval} weeks" else days
         }
         is RoutineSchedule.AfterCompletion ->
-            if (value.intervalDays == 1) "1 day after completion" else "${value.intervalDays} days after completion"
+            if (value.intervalDays == 1) t("1 day after completion") else "${value.intervalDays} days after completion"
     }
     val times = definition.slots.sortedBy { it.reminderMinutes }.joinToString(", ") { timeText(it.reminderMinutes, format) }
     return listOf(schedule, times).filter { it.isNotBlank() }.joinToString(" · ")

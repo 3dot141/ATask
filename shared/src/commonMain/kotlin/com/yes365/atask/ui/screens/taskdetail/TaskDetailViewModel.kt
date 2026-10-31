@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.taskdetail
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.Logger
 import com.yes365.atask.util.PlatformFiles
 import androidx.lifecycle.ViewModel
@@ -394,7 +395,7 @@ class TaskDetailViewModel(
 
     fun requireDescriptionConflictResolution() {
         _uiState.update {
-            it.copy(error = "Choose which description to keep before closing this task.")
+            it.copy(error = t("Choose which description to keep before closing this task."))
         }
     }
 
@@ -930,9 +931,9 @@ class TaskDetailViewModel(
             labelNames = emptyList()
             if (final) {
                 keptTitleMessage = if (edited.title.isBlank()) {
-                    "A task needs a title, so the previous title was kept."
+                    t("A task needs a title, so the previous title was kept.")
                 } else {
-                    "A title cannot be only a date, priority, project or label, so the previous title was kept."
+                    t("A title cannot be only a date, priority, project or label, so the previous title was kept.")
                 }
             }
         }

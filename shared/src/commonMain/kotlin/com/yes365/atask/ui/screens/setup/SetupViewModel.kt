@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.setup
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.data.repository.SyncedPreferences
 import com.yes365.atask.util.Logger
 import androidx.lifecycle.ViewModel
@@ -169,7 +170,7 @@ class SetupViewModel(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                Logger.e(TAG, "Server discovery failed", e)
+                Logger.e(TAG, t("Server discovery failed"), e)
                 baseUrlHolder.baseUrl = ""
                 _uiState.update {
                     it.copy(isLoading = false, error = "Could not connect to server: ${e.message}")
@@ -234,7 +235,7 @@ class SetupViewModel(
 
     fun retryOidcWithTotp(): OidcHandler.AuthParams? {
         if (!isTotpPasscodeComplete(_uiState.value.totpPasscode)) {
-            _uiState.update { it.copy(error = "Enter the 6-digit code from your authenticator app") }
+            _uiState.update { it.copy(error = t("Enter the 6-digit code from your authenticator app")) }
             return null
         }
         return getOidcAuthParams()
@@ -255,7 +256,7 @@ class SetupViewModel(
                 is OidcResult.Success -> verifyAndSignIn(
                     serverUrl = url,
                     token = result.token,
-                    failurePrefix = "Could not verify your account",
+                    failurePrefix = t("Could not verify your account"),
                     createBackupToken = true,
                 ) {
                     authManager.onLoginSuccess(result.token, "oidc", url, provider.key, result.refreshToken)
@@ -266,7 +267,7 @@ class SetupViewModel(
                             isLoading = false,
                             step = SetupStep.OidcTotp,
                             totpPasscode = "",
-                            error = if (totpPasscode == null) null else result.message ?: "That code was not accepted",
+                            error = if (totpPasscode == null) null else result.message ?: t("That code was not accepted"),
                         )
                     }
                 }
@@ -283,11 +284,11 @@ class SetupViewModel(
     fun submitPasswordLogin() {
         val state = _uiState.value
         if (state.username.isBlank() || state.password.isBlank()) {
-            _uiState.update { it.copy(error = "Please enter username and password") }
+            _uiState.update { it.copy(error = t("Please enter username and password")) }
             return
         }
         if (state.showTotpField && !isTotpPasscodeComplete(state.totpPasscode)) {
-            _uiState.update { it.copy(error = "Enter the 6-digit code from your authenticator app") }
+            _uiState.update { it.copy(error = t("Enter the 6-digit code from your authenticator app")) }
             return
         }
 
@@ -298,7 +299,7 @@ class SetupViewModel(
                 is PasswordLoginResult.Success -> verifyAndSignIn(
                     serverUrl = state.serverUrl,
                     token = result.token,
-                    failurePrefix = "Could not verify your account",
+                    failurePrefix = t("Could not verify your account"),
                     createBackupToken = true,
                 ) {
                     authManager.onLoginSuccess(result.token, "password", state.serverUrl, refreshToken = result.refreshToken)
@@ -316,7 +317,7 @@ class SetupViewModel(
     fun submitApiToken() {
         val token = _uiState.value.apiToken.trim()
         if (token.isBlank()) {
-            _uiState.update { it.copy(error = "Please enter an API token") }
+            _uiState.update { it.copy(error = t("Please enter an API token")) }
             return
         }
 
@@ -329,7 +330,7 @@ class SetupViewModel(
             verifyAndSignIn(
                 serverUrl = serverUrl,
                 token = token,
-                failurePrefix = "Invalid API token",
+                failurePrefix = t("Invalid API token"),
                 createBackupToken = false,
             ) {
                 authManager.onApiTokenLogin(token, serverUrl)
@@ -357,7 +358,7 @@ class SetupViewModel(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Logger.e(TAG, "Could not verify the account", e)
+            Logger.e(TAG, t("Could not verify the account"), e)
             _uiState.update { it.copy(isLoading = false, error = "$failurePrefix: ${e.message}") }
             return
         }
@@ -412,7 +413,7 @@ class SetupViewModel(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Logger.e(TAG, "Sign-in failed after verification", e)
+            Logger.e(TAG, t("Sign-in failed after verification"), e)
             _uiState.update { it.copy(isLoading = false, error = "Sign-in failed: ${e.message}") }
             return
         }

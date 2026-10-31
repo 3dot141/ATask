@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.inbox
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.util.Logger
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -64,11 +65,11 @@ class InboxViewModel(
 ) : ViewModel() {
 
     companion object {
-        private const val TAG = "InboxViewModel"
-        private const val ARCHIVED_MESSAGE =
-            "Your Inbox project is archived. Select an active Inbox project in Settings."
-        private const val NO_INBOX_MESSAGE =
-            "No Inbox project is selected. Choose one in Settings."
+        private val TAG = "InboxViewModel"
+        private val ARCHIVED_MESSAGE =
+            t("Your Inbox project is archived. Select an active Inbox project in Settings.")
+        private val NO_INBOX_MESSAGE =
+            t("No Inbox project is selected. Choose one in Settings.")
     }
 
     private val _uiState = MutableStateFlow(InboxUiState())
@@ -191,7 +192,7 @@ class InboxViewModel(
     }
 
     /**
-     * The screen reader's "Move up" / "Move down": the task takes the slot of the one [offset]
+     * The screen reader's t("Move up") / t("Move down"): the task takes the slot of the one [offset]
      * places away and is stored as the drop of a drag to that slot is. Returns false when there is
      * no such slot (an end of the list, a dated task).
      */

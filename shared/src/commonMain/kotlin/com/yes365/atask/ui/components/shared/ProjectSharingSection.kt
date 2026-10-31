@@ -55,17 +55,17 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 /** The copy above the share list, the same on both apps (cross-app semantics 9.7). */
-internal const val SHARE_INTRO =
-    "People you add see every task in this project. Assignees and comments appear on its tasks once it is shared. " +
-        "Your other projects stay private."
+internal val SHARE_INTRO =
+    t("People you add see every task in this project. Assignees and comments appear on its tasks once it is shared. ") +
+        t("Your other projects stay private.")
 
-internal const val SHARE_NO_MATCH =
-    "No one with that username. Names and emails only match people who made themselves findable."
+internal val SHARE_NO_MATCH =
+    t("No one with that username. Names and emails only match people who made themselves findable.")
 
 internal fun permissionLabel(permission: Int): String = when {
     permission >= Permission.ADMIN -> "Admin"
-    permission >= Permission.WRITE -> "Can edit"
-    else -> "Can view"
+    permission >= Permission.WRITE -> t("Can edit")
+    else -> t("Can view")
 }
 
 /** What typing a username found. */
@@ -285,7 +285,7 @@ fun ProjectSharingSection(project: Project, modifier: Modifier = Modifier) {
         val status = when (val found = lookup) {
             Lookup.Idle, Lookup.Searching -> ""
             Lookup.NoMatch -> SHARE_NO_MATCH
-            Lookup.AlreadyMember -> "Already has access."
+            Lookup.AlreadyMember -> t("Already has access.")
             is Lookup.Match -> "${Collaboration.displayName(found.user.toCollabUser())} · @${found.user.username}"
             is Lookup.Failed -> found.message
         }

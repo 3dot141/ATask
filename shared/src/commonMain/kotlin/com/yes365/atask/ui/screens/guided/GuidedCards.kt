@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.guided
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.ai.ask.TaskChange
 import com.yes365.atask.ai.organize.Suggestion
 import com.yes365.atask.domain.model.Task
@@ -79,10 +80,10 @@ data class GuidedCounts(
     val completed: Int = 0,
     val deleted: Int = 0,
 ) {
-    /** "Sorted 12: 5 scheduled, 4 moved, 2 completed, 1 deleted", or "Nothing changed". */
+    /** t("Sorted 12: 5 scheduled, 4 moved, 2 completed, 1 deleted"), or t("Nothing changed"). */
     val text: String
         get() {
-            if (sorted == 0) return "Nothing changed"
+            if (sorted == 0) return t("Nothing changed")
             val parts = listOfNotNull(
                 "$scheduled scheduled".takeIf { scheduled > 0 },
                 "$unscheduled without a date now".takeIf { unscheduled > 0 },

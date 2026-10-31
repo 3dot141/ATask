@@ -32,18 +32,18 @@ import org.koin.compose.viewmodel.koinViewModel
 
 internal val REMINDER_OFFSET_OPTIONS = listOf(
     "None" to 0,
-    "At due time" to -1,
-    "5 min before" to 300,
-    "15 min before" to 900,
-    "30 min before" to 1800,
-    "1 hour before" to 3600,
-    "3 hours before" to 10800,
-    "1 day before" to 86400,
+    t("At due time") to -1,
+    t("5 min before") to 300,
+    t("15 min before") to 900,
+    t("30 min before") to 1800,
+    t("1 hour before") to 3600,
+    t("3 hours before") to 10800,
+    t("1 day before") to 86400,
 )
 internal val REMINDER_RELATIVE_OPTIONS = listOf(
     "Due date" to "due_date",
-    "Start date" to "start_date",
-    "End date" to "end_date",
+    t("Start date") to "start_date",
+    t("End date") to "end_date",
 )
 
 // ========== Notifications Tab ==========

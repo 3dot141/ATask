@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.components.task
 
+import com.yes365.atask.ui.i18n.t
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.yes365.atask.domain.model.Label
 import com.yes365.atask.domain.model.Project
@@ -50,5 +51,5 @@ fun projectMetas(projects: List<Project>): Map<Long, ProjectMeta> =
 fun rowLabels(labels: List<Label>, view: RowView): List<Label> =
     if (view.labelId == null) labels else labels.filter { it.id != view.labelId }
 
-/** The subtask count of the meta line ("1 of 3"). */
+/** The subtask count of the meta line (t("1 of 3")). */
 fun subtaskProgressLabel(completed: Int, total: Int): String = "$completed of $total"

@@ -181,7 +181,7 @@ private fun VoiceCard(capture: VoiceCapture, controller: FabController, reduceMo
         modifier = Modifier
             .fillMaxWidth()
             .widthIn(max = 560.dp)
-            .semantics { paneTitle = "Say a task" },
+            .semantics { paneTitle = t("Say a task") },
         shape = MaterialTheme.shapes.extraLarge,
         color = scheme.surfaceContainerHigh,
         contentColor = scheme.onSurface,
@@ -198,8 +198,8 @@ private fun VoiceCard(capture: VoiceCapture, controller: FabController, reduceMo
                         Text(
                             text = when (capture.phase) {
                                 VoicePhase.LISTENING -> "Listening…"
-                                VoicePhase.FINISHING -> "Turning your words into text…"
-                                VoicePhase.HEARD -> "Didn't catch that"
+                                VoicePhase.FINISHING -> t("Turning your words into text…")
+                                VoicePhase.HEARD -> t("Didn't catch that")
                             },
                             style = MaterialTheme.typography.titleMedium,
                             color = scheme.onSurfaceVariant,
@@ -257,9 +257,9 @@ private fun VoiceCard(capture: VoiceCapture, controller: FabController, reduceMo
             } else {
                 Text(
                     text = when {
-                        capture.cancelArmed -> "Let go to cancel"
-                        capture.canLock -> "Let go to add · slide up to keep talking · down to cancel"
-                        else -> "Let go to add · slide down to cancel"
+                        capture.cancelArmed -> t("Let go to cancel")
+                        capture.canLock -> t("Let go to add · slide up to keep talking · down to cancel")
+                        else -> t("Let go to add · slide down to cancel")
                     },
                     style = MaterialTheme.typography.labelMedium,
                     color = if (capture.cancelArmed) scheme.error else scheme.onSurfaceVariant,

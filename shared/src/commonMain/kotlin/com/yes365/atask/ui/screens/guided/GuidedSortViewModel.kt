@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.guided
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,7 +37,7 @@ data class GuidedSortUiState(
     val index: Int = 0,
     val task: Task? = null,
     val projectPath: String = "",
-    /** "Added 3 weeks ago". */
+    /** t("Added 3 weeks ago"). */
     val added: String? = null,
     val draft: CardDraft = CardDraft(),
     val suggestion: Suggestion? = null,
@@ -186,7 +187,7 @@ class GuidedSortViewModel(
                 throw e
             } catch (e: Exception) {
                 // Said once; the session goes on without suggestions (9.4).
-                if (suggestionsOn) messages.post("No suggestions: " + (e.message ?: "the model did not answer."))
+                if (suggestionsOn) messages.post(t("No suggestions: ") + (e.message ?: "the model did not answer."))
                 suggestionsOn = false
             } finally {
                 waiting -= batch
@@ -274,7 +275,7 @@ class GuidedSortViewModel(
         viewModelScope.launch {
             writing.withLock { writer.undo(log) }
             log.clear()
-            _uiState.update { it.copy(busy = false, canUndo = false, summary = "Everything is back as it was") }
+            _uiState.update { it.copy(busy = false, canUndo = false, summary = t("Everything is back as it was")) }
         }
     }
 

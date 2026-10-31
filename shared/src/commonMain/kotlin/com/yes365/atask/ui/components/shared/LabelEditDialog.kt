@@ -49,7 +49,7 @@ fun LabelEditDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isEdit) "Edit Label" else "Create Label") },
+        title = { Text(if (isEdit) t("Edit Label") else t("Create Label")) },
         text = {
             Column {
                 OutlinedTextField(

@@ -94,7 +94,7 @@ internal object PreservedHtmlBlockRenderer : ScopedBlockRenderer<BlockType> {
                 )
                 Text(
                     text = tagName?.let { "Unsupported <$it> HTML preserved" }
-                        ?: "Unsupported HTML preserved",
+                        ?: t("Unsupported HTML preserved"),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .weight(1f)

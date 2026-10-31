@@ -23,7 +23,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.yes365.atask.util.countOf
 
-/** "3 changes (2 waiting, 1 failed)" for the dialogs below. */
+/** t("3 changes (2 waiting, 1 failed)") for the dialogs below. */
 internal fun unsyncedChangesSummary(pending: Int, failed: Int): String {
     val parts = buildList {
         if (pending > 0) add("$pending waiting")
@@ -32,7 +32,7 @@ internal fun unsyncedChangesSummary(pending: Int, failed: Int): String {
     return "${countOf(pending + failed, "unsynced change")} (${parts.joinToString(", ")})"
 }
 
-/** The sign-out warning: "1 unsynced change (1 waiting) has not reached the server ...". */
+/** The sign-out warning: t("1 unsynced change (1 waiting) has not reached the server ..."). */
 internal fun unsyncedChangesLostWarning(pending: Int, failed: Int): String {
     val verb = if (pending + failed == 1) "has" else "have"
     return "${unsyncedChangesSummary(pending, failed)} $verb not reached the server and will be lost."
@@ -41,9 +41,9 @@ internal fun unsyncedChangesLostWarning(pending: Int, failed: Int): String {
 /** The clear-cache note: the queued changes stay unless discarded. */
 internal fun unsyncedChangesKeptNote(pending: Int, failed: Int): String {
     val rest = if (pending + failed == 1) {
-        "It is kept and sent on the next sync unless you discard it."
+        t("It is kept and sent on the next sync unless you discard it.")
     } else {
-        "They are kept and sent on the next sync unless you discard them."
+        t("They are kept and sent on the next sync unless you discard them.")
     }
     return "${unsyncedChangesSummary(pending, failed)}. $rest"
 }
@@ -75,9 +75,9 @@ internal fun SignOutDialog(
                 if (routineHistoryCount > 0) {
                     val noun = if (routineHistoryCount == 1) "entry" else "entries"
                     Text(
-                        "Routine history that has not been uploaded to your server yet " +
+                        t("Routine history that has not been uploaded to your server yet ") +
                             "($routineHistoryCount $noun) is deleted too. " +
-                            "Open Routines while you are online to upload it first.",
+                            t("Open Routines while you are online to upload it first."),
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
@@ -89,7 +89,7 @@ internal fun SignOutDialog(
                 }
                 if (syncedDataUnsynced) {
                     Text(
-                        "Changes to your custom lists or synced settings have not reached the server yet and will be lost.",
+                        t("Changes to your custom lists or synced settings have not reached the server yet and will be lost."),
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
@@ -135,8 +135,8 @@ internal fun ClearCacheDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    "Clear cached tasks, projects and labels and re-sync from the server? " +
-                        "You will not be signed out.",
+                    t("Clear cached tasks, projects and labels and re-sync from the server? ") +
+                        t("You will not be signed out."),
                 )
                 if (unsynced > 0) {
                     Text(unsyncedChangesKeptNote(pendingCount, failedCount))
@@ -175,8 +175,8 @@ internal fun ClearFailedActionsDialog(
         text = {
             Text(
                 if (failedCount == 1) {
-                    "Discard 1 failed change? It could not be sent to the server and will be lost. " +
-                        "The affected item is refreshed from the server on the next sync."
+                    t("Discard 1 failed change? It could not be sent to the server and will be lost. ") +
+                        t("The affected item is refreshed from the server on the next sync.")
                 } else {
                     "Discard $failedCount failed changes? They could not be sent to the server and will be " +
                         "lost. The affected items are refreshed from the server on the next sync."

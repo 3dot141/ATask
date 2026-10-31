@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.project
 
+import com.yes365.atask.ui.i18n.t
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -70,7 +71,7 @@ data class ProjectMenuState(
     /** Every active project: the parent picker of the edit and new-subproject dialogs. */
     val projects: List<Project> = emptyList(),
     val isInbox: Boolean = false,
-    /** Review tracking is on and this project is tracked, so "Mark reviewed" is offered. */
+    /** Review tracking is on and this project is tracked, so t("Mark reviewed") is offered. */
     val canMarkReviewed: Boolean = false,
     val confirmBeforeDelete: Boolean = true,
     /** The project's own task order; null when it follows [inheritedTaskOrder]. */
@@ -85,7 +86,7 @@ data class ProjectMenuState(
 )
 
 /**
- * The menu for [project]: none for a missing or archived one. "Mark reviewed" needs review tracking
+ * The menu for [project]: none for a missing or archived one. t("Mark reviewed") needs review tracking
  * on and the project tracked: not excluded by its footer, and not the Inbox while the Inbox is left
  * out of review.
  */
@@ -120,11 +121,11 @@ internal fun projectMenuState(
 /** An entry of the project screen's options menu. */
 enum class ProjectMenuEntry(val label: String, val destructive: Boolean = false) {
     SORT("Sort tasks"),
-    EDIT("Edit project"),
-    ADD_SUBPROJECT("Add subproject"),
+    EDIT(t("Edit project")),
+    ADD_SUBPROJECT(t("Add subproject")),
     MOVE_TO_CATEGORY(CategoryLabels.MOVE_TO),
-    SET_INBOX("Set as Inbox"),
-    MARK_REVIEWED("Mark reviewed"),
+    SET_INBOX(t("Set as Inbox")),
+    MARK_REVIEWED(t("Mark reviewed")),
     ARCHIVE("Archive"),
     DELETE("Delete", destructive = true),
 }
@@ -218,9 +219,9 @@ class ProjectViewModel(
                             project = project,
                             isLoading = false,
                             error = if (project?.isArchived == true) {
-                                "This project is archived. Restore it from Settings to view its tasks."
+                                t("This project is archived. Restore it from Settings to view its tasks.")
                             } else {
-                                "Project not found"
+                                t("Project not found")
                             },
                         ),
                     )
@@ -346,7 +347,7 @@ class ProjectViewModel(
     }
 
     /**
-     * The screen reader's "Move up" / "Move down": the task takes the slot of the one [offset]
+     * The screen reader's t("Move up") / t("Move down"): the task takes the slot of the one [offset]
      * places away within its group and is stored as the drop of a drag to that slot is. Returns
      * false when there is no such slot (an end of the group, a dated task).
      */
@@ -452,7 +453,7 @@ class ProjectViewModel(
     private val _exit = MutableStateFlow(ProjectExit.NONE)
     val exit: StateFlow<ProjectExit> = _exit.asStateFlow()
 
-    /** The project as it was before "Mark reviewed", while the snackbar offers to undo it. */
+    /** The project as it was before t("Mark reviewed"), while the snackbar offers to undo it. */
     private val _reviewUndo = MutableStateFlow<Project?>(null)
     val reviewUndo: StateFlow<Project?> = _reviewUndo.asStateFlow()
 
@@ -472,12 +473,12 @@ class ProjectViewModel(
         }
     }
 
-    /** "Move to category…": this project into [category], or with null out of its category. */
+    /** t("Move to category…"): this project into [category], or with null out of its category. */
     fun moveToCategory(category: ProjectCategory?) {
         viewModelScope.launch { currentProject()?.let { report(projectActions.assignCategory(it, category)) } }
     }
 
-    /** "New category…": a new category [name], last, with this project in it. */
+    /** t("New category…"): a new category [name], last, with this project in it. */
     fun moveToNewCategory(name: String) {
         viewModelScope.launch { currentProject()?.let { report(projectActions.createCategory(name, it)) } }
     }
@@ -494,7 +495,7 @@ class ProjectViewModel(
         }
     }
 
-    /** "Add subproject": the dialog started with this project as the parent, which the user may have changed. */
+    /** t("Add subproject"): the dialog started with this project as the parent, which the user may have changed. */
     fun addSubproject(name: String, hexColor: String, parentProjectId: Long) {
         viewModelScope.launch { report(projectActions.create(name, hexColor, parentProjectId)) }
     }
@@ -506,7 +507,7 @@ class ProjectViewModel(
         }
     }
 
-    /** The review screen's "Mark reviewed": the snackbar offers Undo until it goes ([reviewUndo]). */
+    /** The review screen's t("Mark reviewed"): the snackbar offers Undo until it goes ([reviewUndo]). */
     fun markReviewed() {
         viewModelScope.launch {
             val project = currentProject() ?: return@launch

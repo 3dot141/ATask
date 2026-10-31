@@ -83,7 +83,7 @@ private val FormattingButtons = listOf(
     FormattingButton(Icons.Default.FormatItalic, "Italic", SpanStyle.Italic),
     FormattingButton(Icons.Default.FormatUnderlined, "Underline", SpanStyle.Underline),
     FormattingButton(Icons.Default.StrikethroughS, "Strikethrough", SpanStyle.StrikeThrough),
-    FormattingButton(Icons.Default.Code, "Inline code", SpanStyle.InlineCode),
+    FormattingButton(Icons.Default.Code, t("Inline code"), SpanStyle.InlineCode),
 )
 
 private data class BlockTypeButton(
@@ -93,8 +93,8 @@ private data class BlockTypeButton(
 )
 
 private val BlockTypeButtons = listOf(
-    BlockTypeButton(Icons.AutoMirrored.Filled.FormatListBulleted, "Bullet list", BlockType.BulletList),
-    BlockTypeButton(Icons.Default.FormatListNumbered, "Numbered list", BlockType.NumberedList()),
+    BlockTypeButton(Icons.AutoMirrored.Filled.FormatListBulleted, t("Bullet list"), BlockType.BulletList),
+    BlockTypeButton(Icons.Default.FormatListNumbered, t("Numbered list"), BlockType.NumberedList()),
     BlockTypeButton(Icons.Default.Checklist, "Checklist", BlockType.Todo()),
 )
 
@@ -357,7 +357,7 @@ private class DescriptionLinkEditorState {
         val capturedTarget = target ?: return dismiss()
         val normalizedUrl = normalizeDescriptionHref(url)
         if (normalizedUrl == null) {
-            validationError = "Use an http://, https://, or mailto: link"
+            validationError = t("Use an http://, https://, or mailto: link")
             return
         }
         when (
@@ -370,7 +370,7 @@ private class DescriptionLinkEditorState {
             is LinkValidationResult.Valid -> dismiss()
             is LinkValidationResult.Invalid -> {
                 validationError = when (result.error) {
-                    LinkValidationError.Blank -> "Enter a URL"
+                    LinkValidationError.Blank -> t("Enter a URL")
                 }
             }
         }
@@ -400,7 +400,7 @@ private fun DescriptionLinkDialog(
 ) {
     AlertDialog(
         onDismissRequest = state::dismiss,
-        title = { Text(if (state.canRemove) "Edit link" else "Add link") },
+        title = { Text(if (state.canRemove) t("Edit link") else t("Add link")) },
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),

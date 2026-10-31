@@ -60,9 +60,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 /** The title of a session over [queue]. */
 internal fun GuidedQueue.sessionTitle(): String = when (this) {
-    GuidedQueue.INBOX -> "Sort the Inbox"
-    GuidedQueue.OVERDUE -> "Sort out overdue"
-    GuidedQueue.WAITING -> "Waiting a long time"
+    GuidedQueue.INBOX -> t("Sort the Inbox")
+    GuidedQueue.OVERDUE -> t("Sort out overdue")
+    GuidedQueue.WAITING -> t("Waiting a long time")
 }
 
 /**
@@ -126,8 +126,8 @@ fun GuidedSortScreen(
             when {
                 state.loading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
                 state.finished -> FinishedPane(
-                    title = if (state.total == 0) "Nothing to sort" else "All done",
-                    summary = if (state.total == 0) "There is nothing here right now." else state.summary,
+                    title = if (state.total == 0) t("Nothing to sort") else t("All done"),
+                    summary = if (state.total == 0) t("There is nothing here right now.") else state.summary,
                     canUndo = state.canUndo,
                     busy = state.busy,
                     onUndo = viewModel::undoAll,

@@ -1,5 +1,6 @@
 package com.yes365.atask.ui.screens.logbook
 
+import com.yes365.atask.ui.i18n.t
 import com.yes365.atask.domain.model.Task
 import com.yes365.atask.util.DateContext
 import com.yes365.atask.util.DateDisplay
@@ -11,7 +12,7 @@ import kotlinx.datetime.TimeZone
 /** A completed task with the time of day it was completed ("" for a task without a completion time). */
 data class LogbookRowItem(val task: Task, val time: String)
 
-/** One day of the Logbook: its heading ("Today", "Yesterday", "Mon 5 Oct", "September 2026") and its rows. */
+/** One day of the Logbook: its heading ("Today", "Yesterday", t("Mon 5 Oct"), t("September 2026")) and its rows. */
 data class LogbookGroup(val title: String, val rows: List<LogbookRowItem>)
 
 /**
