@@ -50,7 +50,7 @@ android {
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
                 arguments += listOf(
                     "-DCMAKE_BUILD_TYPE=Release",
-                    "-DVICU_SPEECH_SHARED=ON",
+                    "-DATASK_SPEECH_SHARED=ON",
                     "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
                 )
             }

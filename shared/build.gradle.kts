@@ -49,7 +49,7 @@ kotlin {
             description = "Builds libvicu_speech_all.a (native/speech) for $sdk."
             val script = rootProject.file("iosApp/scripts/build-speech.sh")
             inputs.files(script, rootProject.fileTree("native/speech") { include("CMakeLists.txt", "*.cpp", "*.h") })
-            inputs.property("whisperSource", providers.environmentVariable("VICU_WHISPER_SOURCE_DIR").orElse(""))
+            inputs.property("whisperSource", providers.environmentVariable("ATASK_WHISPER_SOURCE_DIR").orElse(""))
             outputs.dir(speechDir.map { it.dir("lib") })
             commandLine(script.absolutePath, sdk, speechDir.get().asFile.absolutePath)
         }

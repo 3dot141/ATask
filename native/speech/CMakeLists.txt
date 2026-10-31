@@ -2,8 +2,8 @@
 # SHA-256. Built by the Android app (externalNativeBuild), the iOS script
 # (iosApp/scripts/build-speech.sh) and the desktop script (scripts/build-speech.mjs).
 #
-#   -DVICU_SPEECH_SHARED=ON|OFF     a shared library (Android, desktop) or a static one (iOS)
-#   -DVICU_WHISPER_SOURCE_DIR=path  an unpacked whisper.cpp to use instead of downloading it
+#   -DATASK_SPEECH_SHARED=ON|OFF     a shared library (Android, desktop) or a static one (iOS)
+#   -DATASK_WHISPER_SOURCE_DIR=path  an unpacked whisper.cpp to use instead of downloading it
 cmake_minimum_required(VERSION 3.22)
 project(vicu_speech C CXX)
 
@@ -11,10 +11,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-option(VICU_SPEECH_SHARED "Build vicu_speech as a shared library" ON)
+option(ATASK_SPEECH_SHARED "Build vicu_speech as a shared library" ON)
 
-set(VICU_WHISPER_VERSION "1.9.5")
-set(VICU_WHISPER_SHA256 "ff1a9053feb509ff9d7729703355541ae9690073a6b1c40eb692c962e0dc1720")
+set(ATASK_WHISPER_VERSION "1.9.5")
+set(ATASK_WHISPER_SHA256 "ff1a9053feb509ff9d7729703355541ae9690073a6b1c40eb692c962e0dc1720")
 
 # whisper.cpp and ggml go inside vicu_speech as static code.
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
@@ -39,23 +39,23 @@ if(APPLE)
 endif()
 
 include(FetchContent)
-if(VICU_WHISPER_SOURCE_DIR)
-    FetchContent_Declare(whisper SOURCE_DIR "${VICU_WHISPER_SOURCE_DIR}")
+if(ATASK_WHISPER_SOURCE_DIR)
+    FetchContent_Declare(whisper SOURCE_DIR "${ATASK_WHISPER_SOURCE_DIR}")
 else()
     # DOWNLOAD_EXTRACT_TIMESTAMP is CMake 3.24 and later; older versions (the Android SDK's 3.22.1)
     # would read it as part of URL_HASH.
-    set(VICU_WHISPER_TIMESTAMP)
+    set(ATASK_WHISPER_TIMESTAMP)
     if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
-        set(VICU_WHISPER_TIMESTAMP DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+        set(ATASK_WHISPER_TIMESTAMP DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
     endif()
     FetchContent_Declare(whisper
-        URL "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${VICU_WHISPER_VERSION}.tar.gz"
-        URL_HASH "SHA256=${VICU_WHISPER_SHA256}"
-        ${VICU_WHISPER_TIMESTAMP})
+        URL "https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v${ATASK_WHISPER_VERSION}.tar.gz"
+        URL_HASH "SHA256=${ATASK_WHISPER_SHA256}"
+        ${ATASK_WHISPER_TIMESTAMP})
 endif()
 FetchContent_MakeAvailable(whisper)
 
-if(VICU_SPEECH_SHARED)
+if(ATASK_SPEECH_SHARED)
     add_library(vicu_speech SHARED vicu_speech.cpp)
 else()
     add_library(vicu_speech STATIC vicu_speech.cpp)
