@@ -2,7 +2,7 @@
 // version.properties at the repository root (the version of both apps).
 #include? "Version.xcconfig"
 
-VICU_BUNDLE_ID_BASE = com.yes365.vicu
+VICU_BUNDLE_ID_BASE = com.yes365.atask
 VICU_APP_GROUP_BASE = group.com.yes365.vicu
 
 // Local.xcconfig (not checked in) holds the signing team for builds on a device, so it survives
