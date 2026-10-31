@@ -46,6 +46,8 @@ fun extractRecurrence(
     input: String,
     consumed: MutableList<IntRange>,
 ): RecurrenceResult {
+    // Chinese has no word boundaries: its phrases are matched by their own extractor.
+    extractRecurrenceZh(input, consumed)?.let { return it }
     val tokens = mutableListOf<ParsedToken>()
 
     // "every N unit" or "every unit"

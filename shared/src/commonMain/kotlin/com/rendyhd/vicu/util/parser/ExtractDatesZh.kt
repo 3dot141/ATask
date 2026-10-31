@@ -46,28 +46,6 @@ private val CLOCK_RE = Regex(
 private val COLON_TIME_RE = Regex("(?:(凌晨|早上|上午|中午|下午|傍晚|晚上))?\\s*(\\d{1,2}):(\\d{2})")
 
 /** Parses the leading number of a Chinese numeral ("十一" → 11); null when it is not one. */
-private fun chineseNumber(text: String): Int? {
-    text.toIntOrNull()?.let { return it }
-    if (text.isEmpty()) return null
-    val digits = mapOf(
-        '一' to 1, '二' to 2, '两' to 2, '三' to 3, '四' to 4,
-        '五' to 5, '六' to 6, '七' to 7, '八' to 8, '九' to 9,
-    )
-    return when {
-        text == "十" -> 10
-        text.startsWith("十") -> digits[text.getOrNull(1)]?.plus(10)
-        text.length == 2 && text[0] == '十' -> null
-        text.endsWith("十") -> digits[text[0]]?.times(10)
-        text.length == 2 && text[1] == '十' -> null
-        text.length >= 3 && text[1] == '十' -> {
-            val tens = digits[text[0]] ?: return null
-            val ones = digits[text[2]] ?: return null
-            tens * 10 + ones
-        }
-        text.length == 1 -> digits[text[0]]
-        else -> null
-    }
-}
 
 private class DateHit(val start: Int, val end: Int, val date: LocalDate, val namesDate: Boolean = true)
 
@@ -82,16 +60,19 @@ private fun findDate(input: String, today: LocalDate, consumed: List<IntRange>):
         val target = WEEKDAY_CHARS[m.groupValues[2].first()] ?: return@let
         val modifier = m.groupValues[1]
         val todayIndex = today.dayOfWeek.ordinal + 1
-        var delta = (target - todayIndex + 7) % 7
-        // A bare weekday means its next occurrence, today counts; "下周" is the week after this one.
-        if (modifier == "下" || modifier == "下下") {
-            val weeks = if (modifier == "下下") 2 else 1
-            delta += weeks * 7
+        // 本周三 is the Wednesday of the calendar week being lived (it may already have passed);
+        // a bare weekday means its next occurrence, today counting; 下周/下下周 are the weeks after,
+        // counted from the same weekday of this week.
+        val delta = when (modifier) {
+            "这", "本" -> target - todayIndex
+            "下" -> target - todayIndex + 7
+            "下下" -> target - todayIndex + 14
+            else -> (target - todayIndex + 7) % 7
         }
         hits += DateHit(m.range.first, m.range.last + 1, today.plus(delta, DateTimeUnit.DAY))
     }
     RELATIVE_RE.findAll(input).forEach { m ->
-        val count = chineseNumber(m.groupValues[1]) ?: return@forEach
+        val count = chineseDigit(m.groupValues[1]) ?: return@forEach
         val date = when (m.groupValues[2]) {
             "天" -> today.plus(count, DateTimeUnit.DAY)
             "周", "星期", "礼拜" -> today.plus(count * 7, DateTimeUnit.DAY)
@@ -127,7 +108,7 @@ private fun findTime(input: String, consumed: List<IntRange>): TimeHit? {
     }
     CLOCK_RE.findAll(input).forEach { m ->
         val raw = m.groupValues[2]
-        val hour = chineseNumber(raw) ?: return@forEach
+        val hour = chineseDigit(raw) ?: return@forEach
         if (hour !in 0..24) return@forEach
         val minute = when {
             m.groupValues[3] == "半" -> 30
@@ -186,14 +167,9 @@ fun extractDateZh(input: String, consumed: MutableList<IntRange>, options: DateO
         }
     }
 
-    date?.let {
-        consumed.add(it.start until it.end)
-        tokens += ParsedToken(TokenType.DATE, it.start, it.end, dateValue, input.substring(it.start, it.end))
-    }
-    time?.let {
-        consumed.add(it.start until it.end)
-        tokens += ParsedToken(TokenType.DATE, it.start, it.end, timeValue, input.substring(it.start, it.end))
-    }
+    // The phrase stays in the title: Chinese reads badly with the time words cut out of the
+    // sentence, so only the due date is taken and the text the person typed is kept whole.
+    // No ranges are consumed and no tokens are emitted for this reason.
 
     // A time-only phrase has no separate date token; the due date carries the day it resolved to.
     return DateResult(due, tokens, hasTime)
