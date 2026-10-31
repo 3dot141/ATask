@@ -86,6 +86,8 @@ fun extractDate(
     consumed: MutableList<IntRange>,
     options: DateOptions,
 ): DateResult {
+    // Chinese has no word boundaries: its phrases are matched by their own extractor.
+    if (containsCjk(input)) return extractDateZh(input, consumed, options)
     val working = buildWorkingText(input, consumed)
     val atoms = findAtoms(working, consumed, options)
     val phrases = mergeAtoms(atoms, working, consumed)
