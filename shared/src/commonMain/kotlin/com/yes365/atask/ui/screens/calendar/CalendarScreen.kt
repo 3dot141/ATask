@@ -262,6 +262,16 @@ private fun CalendarPickerDialog(
                             checked = calendar.id !in hiddenIds,
                             onCheckedChange = { onToggle(calendar.id, it) },
                         )
+                        // The calendar's own colour as a dot, so each row is told apart at a glance.
+                        if (calendar.colorArgb != 0L) {
+                            Box(
+                                Modifier
+                                    .padding(start = 4.dp)
+                                    .size(10.dp)
+                                    .background(Color(calendar.colorArgb), CircleShape),
+                            )
+                            Spacer(Modifier.width(8.dp))
+                        }
                         Column(Modifier.weight(1f)) {
                             Text(calendar.title, style = MaterialTheme.typography.bodyLarge)
                             if (calendar.source.isNotBlank()) {
@@ -435,6 +445,8 @@ private fun SectionLabel(text: String) {
 private fun EventRow(event: DeviceEvent, allDayLabel: String, zone: kotlinx.datetime.TimeZone) {
     val start = Instant.fromEpochMilliseconds(event.startMillis).toLocalDateTime(zone)
     val time = if (event.allDay) allDayLabel else "${start.hour.pad()}:${start.minute.pad()}"
+    // The bar carries the calendar's own colour; 0 (unknown) falls back to the theme.
+    val eventColor = if (event.colorArgb != 0L) Color(event.colorArgb) else null
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -445,7 +457,10 @@ private fun EventRow(event: DeviceEvent, allDayLabel: String, zone: kotlinx.date
             Modifier
                 .width(3.dp)
                 .height(28.dp)
-                .background(MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.extraSmall),
+                .background(
+                    eventColor ?: MaterialTheme.colorScheme.secondary,
+                    MaterialTheme.shapes.extraSmall,
+                ),
         )
         Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {

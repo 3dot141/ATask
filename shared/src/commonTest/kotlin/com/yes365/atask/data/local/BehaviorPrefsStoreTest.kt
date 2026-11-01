@@ -41,13 +41,14 @@ class BehaviorPrefsStoreTest {
     @Test
     fun `a view a newer version wrote is skipped when read and kept when another changes`() = runTest {
         val data = InMemoryPreferencesDataStore()
-        data.edit { it[hiddenKey] = setOf("CALENDAR", "REVIEW") }
+        // A name this version does not know (CALENDAR itself is a view here now).
+        data.edit { it[hiddenKey] = setOf("SOMEDAY", "REVIEW") }
         val store = BehaviorPrefsStore(data)
 
         assertEquals(setOf(DrawerView.REVIEW), store.getPrefs().first().hiddenDrawerViews)
 
         store.setDrawerViewHidden(DrawerView.REVIEW, hidden = false)
-        assertEquals(setOf("CALENDAR"), data.data.first()[hiddenKey])
+        assertEquals(setOf("SOMEDAY"), data.data.first()[hiddenKey])
     }
 
     private val legacyScheduleKey = stringPreferencesKey("schedule_action")

@@ -259,7 +259,7 @@ private fun ScrollableWidget(state: TaskWidgetState) {
             ) {
                 Text(
                     text = error,
-                    style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 14.sp),
+                    style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 13.sp),
                 )
             }
         } else if (state.tasks.isEmpty()) {
@@ -269,7 +269,7 @@ private fun ScrollableWidget(state: TaskWidgetState) {
             ) {
                 Text(
                     text = if (state.lastUpdated.isEmpty()) "Loading..." else "No tasks",
-                    style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 14.sp),
+                    style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 13.sp),
                 )
             }
         } else {
@@ -293,7 +293,7 @@ private fun WidgetHeader(state: TaskWidgetState) {
             style = TextStyle(
                 color = GlanceTheme.colors.onSurface,
                 fontWeight = FontWeight.Medium,
-                fontSize = 18.sp,
+                fontSize = 14.sp,
             ),
             modifier = GlanceModifier
                 .defaultWeight()
@@ -394,7 +394,7 @@ private fun WidgetTaskRow(task: WidgetTaskItem) {
                 text = task.title,
                 style = TextStyle(
                     color = GlanceTheme.colors.onSurface,
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                 ),
                 maxLines = 1,
             )

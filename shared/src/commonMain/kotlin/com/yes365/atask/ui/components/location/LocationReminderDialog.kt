@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,15 +22,17 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -63,7 +66,7 @@ import com.yes365.atask.location.SavedPlace
  * saved place can be picked even when this phone does not know where it is (saved on another
  * phone): the reminder syncs, and this phone reminds there once the place is set here.
  */
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LocationReminderDialog(
     taskId: Long,
@@ -115,15 +118,24 @@ fun LocationReminderDialog(
     // Back from the system settings page.
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.refreshAccess() }
 
-    AlertDialog(
+    // A sheet from the bottom edge, full width, like the project editor.
+    ModalBottomSheet(
         onDismissRequest = {
             viewModel.clearSearch()
             onDismiss()
         },
-        title = { Text(t("Location reminder")) },
-        text = {
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            Text(t("Location reminder"), style = MaterialTheme.typography.headlineSmall)
+            Spacer(Modifier.height(12.dp))
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 520.dp)
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (access != LocationAccess.ALWAYS) {
@@ -243,43 +255,48 @@ fun LocationReminderDialog(
                     }
                 }
             }
-        },
-        confirmButton = {
-            TextButton(
-                enabled = hasChoice,
-                onClick = {
-                    viewModel.saveReminder(
-                        LocationReminder(
-                            taskId = taskId,
-                            placeId = chosenPlaceId,
-                            placeName = chosenName,
-                            latitude = chosenLat,
-                            longitude = chosenLon,
-                            radiusMeters = radius,
-                            trigger = LocationTrigger.valueOf(trigger),
-                        ),
-                    )
-                    viewModel.clearSearch()
-                    onSaved()
-                },
-            ) { Text(t("Save")) }
-        },
-        dismissButton = {
-            Row {
+            Spacer(Modifier.height(12.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 if (existing != null) {
                     TextButton(onClick = {
                         viewModel.removeReminder(taskId)
                         viewModel.clearSearch()
                         onDismiss()
                     }) { Text(t("Remove")) }
+                } else {
+                    Spacer(Modifier.width(1.dp))
                 }
-                TextButton(onClick = {
-                    viewModel.clearSearch()
-                    onDismiss()
-                }) { Text(t("Cancel")) }
+                Row {
+                    TextButton(onClick = {
+                        viewModel.clearSearch()
+                        onDismiss()
+                    }) { Text(t("Cancel")) }
+                    TextButton(
+                        enabled = hasChoice,
+                        onClick = {
+                            viewModel.saveReminder(
+                                LocationReminder(
+                                    taskId = taskId,
+                                    placeId = chosenPlaceId,
+                                    placeName = chosenName,
+                                    latitude = chosenLat,
+                                    longitude = chosenLon,
+                                    radiusMeters = radius,
+                                    trigger = LocationTrigger.valueOf(trigger),
+                                ),
+                            )
+                            viewModel.clearSearch()
+                            onSaved()
+                        },
+                    ) { Text(t("Save")) }
+                }
             }
-        },
-    )
+        }
+    }
 
     naming?.let { suggestion ->
         PlaceNameDialog(
@@ -377,6 +394,7 @@ private fun SearchNote(text: String, error: Boolean = false) {
 }
 
 /** Asks for a place's name (saving a searched place, renaming one). */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PlaceNameDialog(
     title: String,
@@ -388,10 +406,16 @@ internal fun PlaceNameDialog(
     var name by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(initial, TextRange(initial.length)))
     }
-    AlertDialog(
+    // A sheet from the bottom edge, full width, like the project editor.
+    ModalBottomSheet(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = {
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            Text(title, style = MaterialTheme.typography.headlineSmall)
+            Spacer(Modifier.height(12.dp))
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -401,12 +425,13 @@ internal fun PlaceNameDialog(
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 modifier = Modifier.fillMaxWidth(),
             )
-        },
-        confirmButton = {
-            TextButton(onClick = { onSave(name.text.trim()) }, enabled = name.text.isNotBlank()) { Text(t("Save")) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(t("Cancel")) } },
-    )
+            Spacer(Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onDismiss) { Text(t("Cancel")) }
+                TextButton(onClick = { onSave(name.text.trim()) }, enabled = name.text.isNotBlank()) { Text(t("Save")) }
+            }
+        }
+    }
 }
 
 private const val MAX_RESULTS = 6

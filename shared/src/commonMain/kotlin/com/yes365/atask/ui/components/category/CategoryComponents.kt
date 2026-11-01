@@ -4,11 +4,13 @@ import com.yes365.atask.ui.i18n.t
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,14 +25,17 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -212,6 +217,7 @@ fun CategoryHeader(
  * Asks for a category's name: a new one ([initialName] empty) or a rename. A blank name is not
  * taken; it says "Enter a name" instead.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryNameDialog(
     title: String,
@@ -222,10 +228,16 @@ fun CategoryNameDialog(
 ) {
     var name by rememberSaveable { mutableStateOf(initialName) }
     var showError by rememberSaveable { mutableStateOf(false) }
-    AlertDialog(
+    // A sheet from the bottom edge, full width, like the project editor.
+    ModalBottomSheet(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = {
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            Text(title, style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
                 value = name,
                 onValueChange = {
@@ -243,18 +255,17 @@ fun CategoryNameDialog(
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                 modifier = Modifier.fillMaxWidth(),
             )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    if (name.isBlank()) showError = true else onConfirm(name.trim())
-                },
-            ) { Text(confirmLabel) }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(t("Cancel")) }
-        },
-    )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onDismiss) { Text(t("Cancel")) }
+                TextButton(
+                    onClick = {
+                        if (name.isBlank()) showError = true else onConfirm(name.trim())
+                    },
+                ) { Text(confirmLabel) }
+            }
+        }
+    }
 }
 
 /**

@@ -19,7 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +27,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -175,11 +176,26 @@ fun CustomListDialog(
     var showProjectPicker by remember { mutableStateOf(false) }
     var showLabelPicker by remember { mutableStateOf(false) }
 
-    AlertDialog(
+    // A sheet from the bottom edge, full width, like the project editor.
+    ModalBottomSheet(
         onDismissRequest = onDismiss,
-        title = { Text(if (isEdit) t("Edit List") else t("New List")) },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            Text(
+                if (isEdit) t("Edit List") else t("New List"),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            // The filter sections can make the sheet taller than the screen.
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 520.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -487,49 +503,46 @@ fun CustomListDialog(
                     )
                 }
             }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    if (name.isNotBlank()) {
-                        onSave(
-                            CustomList(
-                                id = customList?.id ?: randomUuid(),
-                                name = name.trim(),
-                                icon = icon,
-                                // A copy, so conditions this editor does not show (priorities set
-                                // on desktop) are kept.
-                                filter = (customList?.filter ?: CustomListFilter()).copy(
-                                    projectIds = selectedProjectIds.toList(),
-                                    projectFilterMode = projectFilterMode,
-                                    addToProjectId = addToProjectId,
-                                    sortBy = sortBy,
-                                    orderBy = orderBy,
-                                    dueDateFilter = dueDateFilter,
-                                    labelIds = selectedLabelIds.toList(),
-                                    includeDone = includeDone,
-                                    includeTodayAllProjects = includeTodayAllProjects,
-                                    includeOverdue = includeOverdueToStore(includeOverdue),
-                                    assigned = assigned.ifEmpty { null },
-                                    comments = comments.ifEmpty { null },
-                                    sharedOnly = sharedOnly,
-                                    changedWithinDays = changedWithinDays.takeIf { it >= 1 },
-                                ),
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onDismiss) { Text(t("Cancel")) }
+                TextButton(
+                    onClick = {
+                        if (name.isNotBlank()) {
+                            onSave(
+                                CustomList(
+                                    id = customList?.id ?: randomUuid(),
+                                    name = name.trim(),
+                                    icon = icon,
+                                    // A copy, so conditions this editor does not show (priorities set
+                                    // on desktop) are kept.
+                                    filter = (customList?.filter ?: CustomListFilter()).copy(
+                                        projectIds = selectedProjectIds.toList(),
+                                        projectFilterMode = projectFilterMode,
+                                        addToProjectId = addToProjectId,
+                                        sortBy = sortBy,
+                                        orderBy = orderBy,
+                                        dueDateFilter = dueDateFilter,
+                                        labelIds = selectedLabelIds.toList(),
+                                        includeDone = includeDone,
+                                        includeTodayAllProjects = includeTodayAllProjects,
+                                        includeOverdue = includeOverdueToStore(includeOverdue),
+                                        assigned = assigned.ifEmpty { null },
+                                        comments = comments.ifEmpty { null },
+                                        sharedOnly = sharedOnly,
+                                        changedWithinDays = changedWithinDays.takeIf { it >= 1 },
+                                    ),
+                                )
                             )
-                        )
-                    }
-                },
-                enabled = name.isNotBlank(),
-            ) {
-                Text(if (isEdit) "Save" else "Create")
+                        }
+                    },
+                    enabled = name.isNotBlank(),
+                ) {
+                    Text(if (isEdit) t("Save") else t("Create"))
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(t("Cancel"))
-            }
-        },
-    )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

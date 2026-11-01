@@ -132,16 +132,16 @@ class DrawerViewModelProgressTest {
         val rig = rig(source(), prefs)
         backgroundScope.launch { rig.viewModel.uiState.collect { } }
         runCurrent()
-        assertEquals(listOf(DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW), rig.viewModel.uiState.value.views(askReady = false))
+        assertEquals(listOf(DrawerView.CALENDAR, DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW), rig.viewModel.uiState.value.views(askReady = false))
 
         prefs.setDrawerViewHidden(DrawerView.LOGBOOK, hidden = true)
         prefs.setDrawerViewHidden(DrawerView.ROUTINES, hidden = true)
         runCurrent()
-        assertEquals(listOf(DrawerView.REVIEW), rig.viewModel.uiState.value.views(askReady = false))
+        assertEquals(listOf(DrawerView.CALENDAR, DrawerView.REVIEW), rig.viewModel.uiState.value.views(askReady = false))
 
         prefs.setDrawerViewHidden(DrawerView.LOGBOOK, hidden = false)
         runCurrent()
-        assertEquals(listOf(DrawerView.LOGBOOK, DrawerView.REVIEW), rig.viewModel.uiState.value.views(askReady = false))
+        assertEquals(listOf(DrawerView.CALENDAR, DrawerView.LOGBOOK, DrawerView.REVIEW), rig.viewModel.uiState.value.views(askReady = false))
         rig.close()
     }
 

@@ -3,6 +3,7 @@ package com.yes365.atask.ui.components.shared
 import com.yes365.atask.ui.i18n.t
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -27,9 +27,11 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -76,12 +78,26 @@ fun BottomBarSlotEditor(
         BottomBarSlotType.CUSTOM_LIST -> selectedReferenceId.isNotEmpty() && customLists.any { it.id == selectedReferenceId }
     }
 
-    AlertDialog(
+    // A sheet from the bottom edge, full width, like the project editor.
+    ModalBottomSheet(
         onDismissRequest = onDismiss,
-        title = { Text("${t("Bottom Bar Slot")} ${slotIndex + 1}") },
-        text = {
-            // Scrolls on a short screen: the lists inside have a fixed maximum height.
-            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        dragHandle = null,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+            Text(
+                "${t("Bottom Bar Slot")} ${slotIndex + 1}",
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Spacer(Modifier.height(12.dp))
+            // The lists inside have a fixed maximum height, so a short screen scrolls the whole sheet.
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 520.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
                 // Type dropdown
                 Text(
                     t("View type"),
@@ -245,37 +261,34 @@ fun BottomBarSlotEditor(
                     )
                 }
             }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onSave(
-                        BottomBarSlot(
-                            type = selectedType,
-                            referenceId = when (selectedType) {
-                                BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.ANYTIME -> ""
-                                else -> selectedReferenceId
-                            },
-                            iconKey = when (selectedType) {
-                                BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.ANYTIME -> ""
-                                else -> selectedIconKey
-                            },
-                            colorHex = when (selectedType) {
-                                BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.ANYTIME -> ""
-                                else -> selectedColorHex
-                            },
-                        ),
-                    )
-                },
-                enabled = isValid,
-            ) {
-                Text(t("Save"))
+            Spacer(Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                TextButton(onClick = onDismiss) { Text(t("Cancel")) }
+                TextButton(
+                    onClick = {
+                        onSave(
+                            BottomBarSlot(
+                                type = selectedType,
+                                referenceId = when (selectedType) {
+                                    BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.ANYTIME -> ""
+                                    else -> selectedReferenceId
+                                },
+                                iconKey = when (selectedType) {
+                                    BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.ANYTIME -> ""
+                                    else -> selectedIconKey
+                                },
+                                colorHex = when (selectedType) {
+                                    BottomBarSlotType.TODAY, BottomBarSlotType.UPCOMING, BottomBarSlotType.ANYTIME -> ""
+                                    else -> selectedColorHex
+                                },
+                            ),
+                        )
+                    },
+                    enabled = isValid,
+                ) {
+                    Text(t("Save"))
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(t("Cancel"))
-            }
-        },
-    )
+        }
+    }
 }

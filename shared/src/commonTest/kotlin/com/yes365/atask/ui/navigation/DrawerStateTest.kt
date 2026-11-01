@@ -197,12 +197,12 @@ class DrawerStateTest {
     // --- the views above the projects ---
 
     @Test
-    fun `with the default bar the drawer lists the logbook - routines and review`() {
+    fun `with the default bar the drawer lists the calendar - logbook - routines and review`() {
         val state = build(sources())
 
-        assertEquals(listOf(DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW), state.views(askReady = false))
+        assertEquals(listOf(DrawerView.CALENDAR, DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW), state.views(askReady = false))
         assertEquals(
-            listOf(DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW, DrawerView.ASK),
+            listOf(DrawerView.CALENDAR, DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW, DrawerView.ASK),
             state.views(askReady = true),
         )
     }
@@ -216,7 +216,7 @@ class DrawerStateTest {
         )
 
         assertEquals(
-            listOf(DrawerView.UPCOMING, DrawerView.ANYTIME, DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW),
+            listOf(DrawerView.UPCOMING, DrawerView.CALENDAR, DrawerView.ANYTIME, DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW),
             drawerViewChoices(slots, routinesEnabled = true, reviewEnabled = true, askReady = false),
         )
     }
@@ -224,7 +224,7 @@ class DrawerStateTest {
     @Test
     fun `routines and review that are turned off are no choice at all`() {
         assertEquals(
-            listOf(DrawerView.LOGBOOK, DrawerView.ASK),
+            listOf(DrawerView.CALENDAR, DrawerView.LOGBOOK, DrawerView.ASK),
             drawerViewChoices(BottomBarSlot.DEFAULT_SLOTS, routinesEnabled = false, reviewEnabled = false, askReady = true),
         )
     }
@@ -242,7 +242,7 @@ class DrawerStateTest {
         )
 
         assertEquals(setOf(DrawerView.ANYTIME, DrawerView.LOGBOOK, DrawerView.ASK), state.hiddenViews)
-        assertEquals(listOf(DrawerView.ROUTINES, DrawerView.REVIEW), state.views(askReady = true))
+        assertEquals(listOf(DrawerView.CALENDAR, DrawerView.ROUTINES, DrawerView.REVIEW), state.views(askReady = true))
     }
 
     @Test
@@ -257,6 +257,6 @@ class DrawerStateTest {
             hiddenViews = setOf(DrawerView.ANYTIME),
         )
 
-        assertEquals(listOf(DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW), state.views(askReady = false))
+        assertEquals(listOf(DrawerView.CALENDAR, DrawerView.LOGBOOK, DrawerView.ROUTINES, DrawerView.REVIEW), state.views(askReady = false))
     }
 }

@@ -8,6 +8,8 @@ data class DeviceEvent(
     val endMillis: Long,
     val allDay: Boolean,
     val calendarName: String,
+    /** The calendar's own colour as ARGB; 0 when unknown (the row falls back to the theme colour). */
+    val colorArgb: Long = 0L,
 )
 
 /** One calendar of the phone, for the "which calendars" setting. */
@@ -15,6 +17,8 @@ data class DeviceCalendarInfo(
     val id: String,
     val title: String,
     val source: String,
+    /** The calendar's own colour as ARGB; 0 when unknown. */
+    val colorArgb: Long = 0L,
 )
 
 /** Whether the app may read the device calendar. */

@@ -223,12 +223,12 @@ struct TaskListWidgetView: View {
     private var header: some View {
         HStack(spacing: 8) {
             Text(entry.name)
-                .font(family == .systemSmall ? .subheadline.weight(.semibold) : .headline)
+                .font(.footnote.weight(.semibold))
                 .foregroundStyle(colors.onSurface)
                 .lineLimit(1)
             if entry.message == nil, entry.totalCount > 0 {
                 Text("\(entry.totalCount)")
-                    .font(.subheadline)
+                    .font(.footnote)
                     .foregroundStyle(colors.onSurfaceVariant)
             }
             Spacer(minLength: 0)
@@ -236,9 +236,9 @@ struct TaskListWidgetView: View {
             if family != .systemSmall, let addURL = entry.addURL {
                 Link(destination: addURL) {
                     Image(systemName: "plus")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(colors.onPrimary)
-                        .frame(width: 38, height: 24)
+                        .frame(width: 32, height: 22)
                         .background(Capsule().fill(colors.primary))
                         .widgetAccentable()
                 }
@@ -257,9 +257,9 @@ struct TaskRowView: View {
         HStack(spacing: 8) {
             Button(intent: ToggleTaskIntent(taskId: row.id)) {
                 Image(systemName: row.done ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 18))
+                    .font(.system(size: 15))
                     .foregroundStyle(row.done ? colors.done : colors.outline)
-                    .frame(width: 24, height: family == .systemLarge ? 28 : 22)
+                    .frame(width: 20, height: family == .systemLarge ? 26 : 20)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -290,7 +290,7 @@ struct TaskRowView: View {
 
     private var title: some View {
         Text(row.title)
-            .font(.subheadline)
+            .font(.footnote)
             .strikethrough(row.done)
             .foregroundStyle(row.done ? colors.onSurfaceVariant : colors.onSurface)
             .lineLimit(1)
