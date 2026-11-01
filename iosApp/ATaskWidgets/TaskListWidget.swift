@@ -172,7 +172,7 @@ struct TaskListWidgetView: View {
 
     private var rowLimit: Int {
         switch family {
-        case .systemSmall: 3
+        case .systemSmall: 5
         case .systemMedium: 4
         default: 7
         }
