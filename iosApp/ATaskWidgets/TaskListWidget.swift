@@ -178,13 +178,15 @@ struct TaskListWidgetView: View {
         }
     }
 
-    /// The count in the header says how many there are; the medium widget has no room for a footer.
+    /// The count in the header says how many there are; the medium widget has no room for a
+    /// footer. On small the footer does not fit next to five rows either — the header count
+    /// already says the total, so only the large one shows it.
     private var showsMore: Bool {
-        family != .systemMedium && entry.totalCount > min(rowLimit, entry.rows.count)
+        family == .systemLarge && entry.totalCount > min(rowLimit, entry.rows.count)
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: family == .systemSmall ? 6 : 8) {
+        VStack(alignment: .leading, spacing: family == .systemSmall ? 4 : 8) {
             header
             if let message = entry.message {
                 Spacer(minLength: 0)
@@ -202,7 +204,7 @@ struct TaskListWidgetView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 Spacer(minLength: 0)
             } else {
-                VStack(alignment: .leading, spacing: family == .systemLarge ? 6 : 4) {
+                VStack(alignment: .leading, spacing: family == .systemSmall ? 2 : (family == .systemLarge ? 6 : 4)) {
                     ForEach(entry.rows.prefix(rowLimit)) { row in
                         TaskRowView(row: row, colors: colors, family: family)
                     }
@@ -216,6 +218,9 @@ struct TaskListWidgetView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        // Nudge the rows left past the system's content margins (contentMarginsDisabled
+        // is not in this SDK; a negative padding does the same for the row block).
+        .padding(.horizontal, -6)
         .containerBackground(for: .widget) { colors.background }
         .widgetURL(entry.openURL)
     }
@@ -256,10 +261,10 @@ struct TaskRowView: View {
     var body: some View {
         HStack(spacing: 8) {
             Button(intent: ToggleTaskIntent(taskId: row.id)) {
-                Image(systemName: row.done ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 15))
+                Image(systemName: row.done ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 14, weight: .light))
                     .foregroundStyle(row.done ? colors.done : colors.outline)
-                    .frame(width: 20, height: family == .systemLarge ? 26 : 20)
+                    .frame(width: 18, height: family == .systemLarge ? 26 : 17)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
