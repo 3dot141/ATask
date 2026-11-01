@@ -421,7 +421,14 @@ private fun DayCell(
             horizontalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             repeat(cell.taskCount.coerceAtMost(3)) { Dot(taskColor) }
-            repeat(cell.eventCount.coerceAtMost(2)) { Dot(eventColor) }
+            // An event dot carries its calendar's own colour (one per calendar); the theme
+            // colour stands in while the colour is unknown or for a day with no events read.
+            val calendarDots = cell.eventColors.take(2)
+            if (calendarDots.isEmpty()) {
+                repeat(cell.eventCount.coerceAtMost(2)) { Dot(eventColor) }
+            } else {
+                for (argb in calendarDots) Dot(Color(argb))
+            }
         }
     }
 }

@@ -33,6 +33,8 @@ data class CalendarCell(
     val inMonth: Boolean,
     val taskCount: Int,
     val eventCount: Int,
+    /** The calendars' own colours the day's events come from, deduped, in start order. */
+    val eventColors: List<Long> = emptyList(),
 )
 
 data class CalendarUiState(
@@ -192,6 +194,10 @@ class CalendarViewModel(
                     inMonth = day.inMonth,
                     taskCount = tasksByDay[day.date]?.size ?: 0,
                     eventCount = eventsByDay[day.date]?.size ?: 0,
+                    eventColors = eventsByDay[day.date].orEmpty()
+                        .mapNotNull { it.colorArgb.takeIf { c -> c != 0L } }
+                        .distinct()
+                        .take(2),
                 )
             }
             state.copy(

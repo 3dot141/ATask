@@ -1,7 +1,13 @@
 package com.yes365.atask.device
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.value
 import kotlinx.coroutines.suspendCancellableCoroutine
+import platform.CoreGraphics.CGFloat
+import platform.CoreGraphics.CGFloatVar
 import platform.EventKit.EKAuthorizationStatusAuthorized
 import platform.EventKit.EKAuthorizationStatusDenied
 import platform.EventKit.EKAuthorizationStatusFullAccess
@@ -13,6 +19,7 @@ import platform.EventKit.EKEventStore
 import platform.Foundation.NSDate
 import platform.Foundation.dateWithTimeIntervalSince1970
 import platform.Foundation.timeIntervalSince1970
+import platform.UIKit.UIColor
 import kotlin.coroutines.resume
 
 /**
@@ -25,6 +32,21 @@ import kotlin.coroutines.resume
 actual class DeviceCalendar actual constructor() {
 
     private val store = EKEventStore()
+
+    /** A calendar colour as ARGB (0 when the colour cannot be read). */
+    private fun argbOf(color: UIColor?): Long {
+        if (color == null) return 0L
+        return memScoped {
+            val red: CGFloatVar = alloc()
+            val green: CGFloatVar = alloc()
+            val blue: CGFloatVar = alloc()
+            val alpha: CGFloatVar = alloc()
+            if (!color.getRed(red.ptr, green.ptr, blue.ptr, alpha.ptr)) return@memScoped 0L
+            fun channel(value: CGFloat): Long = ((value.coerceIn(0.0, 1.0) * 255) + 0.5).toLong()
+            (channel(alpha.value) shl 24) or (channel(red.value) shl 16) or
+                (channel(green.value) shl 8) or channel(blue.value)
+        }
+    }
 
     actual fun access(): CalendarAccess =
         when (EKEventStore.authorizationStatusForEntityType(EKEntityType.EKEntityTypeEvent)) {
@@ -53,6 +75,8 @@ actual class DeviceCalendar actual constructor() {
                     id = calendar.calendarIdentifier,
                     title = calendar.title,
                     source = calendar.source?.title.orEmpty(),
+                    // The ObjC property keeps its original spelling (Swift's cgColor).
+                    colorArgb = argbOf(UIColor.colorWithCGColor(calendar.CGColor)),
                 )
             }
             .sortedBy { it.title.lowercase() }
@@ -86,6 +110,7 @@ actual class DeviceCalendar actual constructor() {
                     endMillis = ((event.endDate?.timeIntervalSince1970 ?: 0.0) * 1000).toLong(),
                     allDay = event.allDay,
                     calendarName = event.calendar?.title.orEmpty(),
+                    colorArgb = argbOf(event.calendar?.CGColor?.let { UIColor.colorWithCGColor(it) }),
                 )
             }
             .sortedBy { it.startMillis }
