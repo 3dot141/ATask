@@ -1,9 +1,11 @@
 #!/bin/bash
 # Archives the release app on this Mac and uploads it to TestFlight, without GitHub Actions.
 #
-# Signing is automatic and uses the Apple account signed in to Xcode (Settings > Accounts) with
-# DEVELOPMENT_TEAM from Configuration/Local.xcconfig, or an App Store Connect API key when
-# ASC_KEY_PATH, ASC_KEY_ID and ASC_ISSUER_ID are set. The version is version.properties;
+# Upload auth prefers an App Store Connect API key over the Apple account signed in to Xcode
+# (Settings > Accounts), whose session expires every few weeks: the key is read from
+# ~/Run/Env/apple/appstore-connect.env (ASC_KEY_PATH/ASC_KEY_ID/ASC_ISSUER_ID) when it exists,
+# or from those variables if already exported. Without a key it falls back to the Xcode account
+# with DEVELOPMENT_TEAM from Configuration/Local.xcconfig. The version is version.properties;
 # BUILD_ATTEMPT (default 0) uploads the same version again. --no-upload stops after the archive.
 #
 # The optimized Kotlin link takes about 10 minutes and needs a Mac with 16 GB of memory.
@@ -25,11 +27,21 @@ if [ -z "$team" ]; then
   exit 1
 fi
 
+# The App Store Connect key from ~/Run/Env unless the caller exported one.
+if [ -z "${ASC_KEY_PATH:-}" ] && [ -f "$HOME/Run/Env/apple/appstore-connect.env" ]; then
+  . "$HOME/Run/Env/apple/appstore-connect.env"
+fi
+
 auth=()
 if [ -n "${ASC_KEY_PATH:-}" ]; then
-  auth=(-authenticationKeyPath "$ASC_KEY_PATH"
-        -authenticationKeyID "${ASC_KEY_ID:?ASC_KEY_ID is needed with ASC_KEY_PATH}"
-        -authenticationKeyIssuerID "${ASC_ISSUER_ID:?ASC_ISSUER_ID is needed with ASC_KEY_PATH}")
+  if [ ! -f "${ASC_KEY_PATH/#\~/$HOME}" ]; then
+    echo "warning: ASC_KEY_PATH not found ($ASC_KEY_PATH); falling back to the Xcode account" >&2
+  else
+    auth=(-authenticationKeyPath "${ASC_KEY_PATH/#\~/$HOME}"
+          -authenticationKeyID "${ASC_KEY_ID:?ASC_KEY_ID is needed with ASC_KEY_PATH}"
+          -authenticationKeyIssuerID "${ASC_ISSUER_ID:?ASC_ISSUER_ID is needed with ASC_KEY_PATH}")
+    echo "Uploading with the App Store Connect API key ${ASC_KEY_ID}"
+  fi
 fi
 
 memory_gb=$(( $(sysctl -n hw.memsize) / 1073741824 ))
