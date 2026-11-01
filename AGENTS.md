@@ -16,7 +16,8 @@ Apple 账号的登录态（该 session 会不定期失效，失效时 export 报
 - 构建号 = `versionCode × 100 + BUILD_ATTEMPT`（`iosApp/scripts/generate.sh`）。同一
   version 重复上传递增 `BUILD_ATTEMPT`（如 `BUILD_ATTEMPT=1 iosApp/scripts/testflight.sh`），
   不要为此改 `version.properties`（那是 Android 共用的 `versionCode`）。
-- Team `C6422MSGP6`，App ID `6829200618`（env 里的 `ASC_APP_ID=6826964058` 是 Sapling 的，勿混用）。上传成功后 App Store Connect 还要处理几分钟
+- Team `C6422MSGP6`，App ID `6829200618`（env 里的 `ASC_APP_ID=6826964058` 是 Sapling 的，勿混用）。
+- **上传 ≠ 可见**：测试组是手动选构建模式（`hasAccessToAllBuilds=false`），新 build 处理完后**必须分配进组**测试员才能看到（API：`POST /v1/betaGroups/{gid}/relationships/builds`，组 id 经 `GET /v1/betaGroups?filter[app]=6829200618` 查）。症状：build `VALID` 且 `READY_FOR_BETA_TESTING` 但 TestFlight 无推送。上传成功后 App Store Connect 还要处理几分钟
   到几十分钟，TestFlight 列表才出现新构建。
 - 本机模拟器 UI 自动化：无 Simulator.app（Xcode 27 仅 Device Hub，AX 遥控点击不可靠），
   驱动 springboard 用独立 XCUITest 工程（见 Flow 仓库
