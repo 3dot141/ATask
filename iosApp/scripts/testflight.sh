@@ -77,3 +77,77 @@ xcodebuild -exportArchive \
   -allowProvisioningUpdates ${auth[@]+"${auth[@]}"}
 
 echo "Uploaded ATask $version ($build). It shows in TestFlight once App Store Connect has processed it."
+
+# The beta groups pick builds by hand (hasAccessToAllBuilds=false): a processed build is invisible
+# to testers until it is added to a group. Assign the new build to every group of the app with the
+# ASC API key, waiting for processing to finish first. A failure here only warns: the upload is
+# done, and the build can be added in App Store Connect by hand.
+if [ -n "${ASC_KEY_PATH:-}" ] && python3 -c 'import cryptography' 2>/dev/null; then
+  echo "Assigning build $build to the app's beta groups..."
+  if ! python3 - "$archive" "$build" <<'PY'
+import base64, glob, json, os, plistlib, sys, time, urllib.error, urllib.request
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
+
+archive, build_no = sys.argv[1], sys.argv[2]
+key = load_pem_private_key(open(os.path.expanduser(os.environ['ASC_KEY_PATH']), 'rb').read(), None)
+b64u = lambda d: base64.urlsafe_b64encode(d).rstrip(b'=')
+h = b64u(json.dumps({'alg': 'ES256', 'kid': os.environ['ASC_KEY_ID']}).encode())
+p = b64u(json.dumps({'iss': os.environ['ASC_ISSUER_ID'], 'exp': int(time.time()) + 600,
+                     'aud': 'appstoreconnect-v1'}).encode())
+r, s = decode_dss_signature(key.sign(h + b'.' + p, ec.ECDSA(hashes.SHA256())))
+jwt = (h + b'.' + p + b'.' + b64u(r.to_bytes(32, 'big') + s.to_bytes(32, 'big'))).decode()
+
+def asc(path, data=None):
+    headers = {'Authorization': 'Bearer ' + jwt}
+    if data is not None:
+        headers['Content-Type'] = 'application/json'
+    req = urllib.request.Request('https://api.appstoreconnect.apple.com' + path,
+                                 data=data, headers=headers)
+    try:
+        with urllib.request.urlopen(req) as resp:
+            body = resp.read()
+            return resp.status, json.loads(body) if body else None
+    except urllib.error.HTTPError as e:
+        return e.code, json.loads(e.read() or b'{}')
+
+# The app comes from the archive's bundle id, not from ASC_APP_ID (which belongs to another app).
+app_bundle = plistlib.load(open(glob.glob(archive + '/Products/Applications/*.app/Info.plist')[0], 'rb'))['CFBundleIdentifier']
+st, apps = asc('/v1/apps?filter[bundleId]=' + app_bundle + '&limit=1')
+if st != 200 or not apps.get('data'):
+    sys.exit('no app found for bundle id ' + app_bundle)
+app_id = apps['data'][0]['id']
+print('app: %s (%s)' % (app_bundle, app_id))
+
+# Wait for the build record to appear and reach a state a group can be given (about 10 min max).
+build_id, state = None, None
+for _ in range(20):
+    st, b = asc('/v1/builds?filter[app]=' + app_id + '&filter[version]=' + build_no + '&limit=1')
+    if st == 200 and b.get('data'):
+        build_id = b['data'][0]['id']
+        state = b['data'][0]['attributes'].get('processingState')
+        if state != 'PROCESSING' and state != 'UPLOADING':
+            break
+    print('  build %s is %s, waiting...' % (build_no, state or 'not listed yet'))
+    time.sleep(30)
+if not build_id:
+    sys.exit('build ' + build_no + ' never appeared')
+print('build %s is %s' % (build_no, state))
+
+st, groups = asc('/v1/betaGroups?filter[app]=' + app_id + '&limit=50')
+if st != 200 or not groups.get('data'):
+    sys.exit('no beta groups to assign to')
+for g in groups['data']:
+    name = g['attributes'].get('name', g['id'])
+    body = json.dumps({'data': [{'type': 'builds', 'id': build_id}]}).encode()
+    st, _ = asc('/v1/betaGroups/' + g['id'] + '/relationships/builds', body)
+    print('  %s: %s' % (name, 'assigned' if st in (200, 204) else 'HTTP %d (add it by hand)' % st))
+PY
+  then
+    echo "warning: build assignment failed; add build $build to its groups in App Store Connect" >&2
+  fi
+else
+  echo "note: no ASC key (or cryptography module) — add build $build to its groups by hand" >&2
+fi

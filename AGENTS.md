@@ -17,7 +17,7 @@ Apple 账号的登录态（该 session 会不定期失效，失效时 export 报
   version 重复上传递增 `BUILD_ATTEMPT`（如 `BUILD_ATTEMPT=1 iosApp/scripts/testflight.sh`），
   不要为此改 `version.properties`（那是 Android 共用的 `versionCode`）。
 - Team `C6422MSGP6`，App ID `6829200618`（env 里的 `ASC_APP_ID=6826964058` 是 Sapling 的，勿混用）。
-- **上传 ≠ 可见**：测试组是手动选构建模式（`hasAccessToAllBuilds=false`），新 build 处理完后**必须分配进组**测试员才能看到（API：`POST /v1/betaGroups/{gid}/relationships/builds`，组 id 经 `GET /v1/betaGroups?filter[app]=6829200618` 查）。症状：build `VALID` 且 `READY_FOR_BETA_TESTING` 但 TestFlight 无推送。上传成功后 App Store Connect 还要处理几分钟
+- **上传 ≠ 可见**：测试组是手动选构建模式（`hasAccessToAllBuilds=false`），新 build 处理完后必须分配进组测试员才能看到。`testflight.sh` 上传后已自动完成（脚本尾部 python 段：按 archive 的 bundleId 解析 app → 轮询处理状态 → `POST /v1/betaGroups/{gid}/relationships/builds` 进全部组）；仅当无 ASC key 或 python 缺 cryptography 时需手动。症状识别：build `VALID` 且 `READY_FOR_BETA_TESTING` 但 TestFlight 无推送 = 没进组。上传成功后 App Store Connect 还要处理几分钟
   到几十分钟，TestFlight 列表才出现新构建。
 - 本机模拟器 UI 自动化：无 Simulator.app（Xcode 27 仅 Device Hub，AX 遥控点击不可靠），
   驱动 springboard 用独立 XCUITest 工程（见 Flow 仓库
