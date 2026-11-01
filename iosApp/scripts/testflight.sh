@@ -29,7 +29,10 @@ fi
 
 # The App Store Connect key from ~/Run/Env unless the caller exported one.
 if [ -z "${ASC_KEY_PATH:-}" ] && [ -f "$HOME/Run/Env/apple/appstore-connect.env" ]; then
+  # set -a exports what the env file sets, so the python step below sees the variables.
+  set -a
   . "$HOME/Run/Env/apple/appstore-connect.env"
+  set +a
 fi
 
 auth=()
