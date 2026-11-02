@@ -204,9 +204,12 @@ struct TaskListWidgetView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 Spacer(minLength: 0)
             } else {
-                VStack(alignment: .leading, spacing: family == .systemSmall ? 2 : (family == .systemLarge ? 6 : 4)) {
+                VStack(alignment: .leading, spacing: 0) {
                     ForEach(entry.rows.prefix(rowLimit)) { row in
                         TaskRowView(row: row, colors: colors, family: family)
+                            // Rows share the leftover height evenly, the way TickTick's
+                            // widget fills the box with its five rows.
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                     }
                 }
                 Spacer(minLength: 0)
@@ -228,12 +231,12 @@ struct TaskListWidgetView: View {
     private var header: some View {
         HStack(spacing: 8) {
             Text(entry.name)
-                .font(.footnote.weight(.semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(colors.onSurface)
                 .lineLimit(1)
             if entry.message == nil, entry.totalCount > 0 {
                 Text("\(entry.totalCount)")
-                    .font(.footnote)
+                    .font(.subheadline)
                     .foregroundStyle(colors.onSurfaceVariant)
             }
             Spacer(minLength: 0)
@@ -262,9 +265,9 @@ struct TaskRowView: View {
         HStack(spacing: 8) {
             Button(intent: ToggleTaskIntent(taskId: row.id)) {
                 Image(systemName: row.done ? "checkmark.square.fill" : "square")
-                    .font(.system(size: 14, weight: .light))
+                    .font(.system(size: 15, weight: .light))
                     .foregroundStyle(row.done ? colors.done : colors.outline)
-                    .frame(width: 18, height: family == .systemLarge ? 26 : 17)
+                    .frame(width: 20)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
