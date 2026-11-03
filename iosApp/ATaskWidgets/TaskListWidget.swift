@@ -204,12 +204,11 @@ struct TaskListWidgetView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                 Spacer(minLength: 0)
             } else {
-                VStack(alignment: .leading, spacing: 0) {
+                // Rows keep their natural height: a list shorter than the widget leaves the
+                // rest of the box empty instead of stretching its rows to fill it.
+                VStack(alignment: .leading, spacing: family == .systemSmall ? 2 : (family == .systemLarge ? 6 : 4)) {
                     ForEach(entry.rows.prefix(rowLimit)) { row in
                         TaskRowView(row: row, colors: colors, family: family)
-                            // Rows share the leftover height evenly, the way TickTick's
-                            // widget fills the box with its five rows.
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                     }
                 }
                 Spacer(minLength: 0)
@@ -264,7 +263,7 @@ struct TaskRowView: View {
     var body: some View {
         HStack(spacing: 8) {
             Button(intent: ToggleTaskIntent(taskId: row.id)) {
-                Image(systemName: row.done ? "checkmark.square.fill" : "square")
+                Image(systemName: row.done ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 15, weight: .light))
                     .foregroundStyle(row.done ? colors.done : colors.outline)
                     .frame(width: 20)
